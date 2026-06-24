@@ -14,6 +14,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     
     <style>
+        /* Guardrail ketat untuk mencegah scroll horizontal pada HP */
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #080C14;
@@ -94,10 +99,12 @@
 </head>
 <body class="overflow-x-hidden min-h-screen relative selection:bg-indigo-500 selection:text-white pb-20 lg:pb-0">
 
-    <!-- Background Decorative Blobs -->
-    <div class="blob bg-indigo-600 w-[300px] h-[300px] top-10 left-[-100px] md:w-[500px] md:h-[500px]"></div>
-    <div class="blob bg-purple-600 w-[250px] h-[250px] top-[35%] right-[-100px] md:w-[450px] md:h-[450px]"></div>
-    <div class="blob bg-blue-600 w-[300px] h-[300px] bottom-10 left-[20%] md:w-[500px] md:h-[500px]"></div>
+    <!-- Container Pengaman Blobs Latar Belakang (Mencegah Overflow pada HP) -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="blob bg-indigo-600 w-[300px] h-[300px] top-10 left-[-100px] md:w-[500px] md:h-[500px]"></div>
+        <div class="blob bg-purple-600 w-[250px] h-[250px] top-[35%] right-[-100px] md:w-[450px] md:h-[450px]"></div>
+        <div class="blob bg-blue-600 w-[300px] h-[300px] bottom-10 left-[20%] md:w-[500px] md:h-[500px]"></div>
+    </div>
 
     <!-- Custom Notification Toast -->
     <div id="toast" class="hidden fixed bottom-24 lg:bottom-5 right-5 z-50 p-4 rounded-xl glass border border-indigo-500/30 text-sm font-semibold flex items-center gap-3 shadow-2xl transition-all duration-300 transform translate-y-10 opacity-0">
@@ -124,13 +131,13 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
             
             <!-- Brand Logo Left -->
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="window.location.hash='#beranda'">
-                <div id="brand-logo-container" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                    <span id="brand-logo-text" class="font-extrabold text-white text-base sm:text-lg">15</span>
+            <div class="flex items-center space-x-2 sm:space-x-3 cursor-pointer" onclick="window.location.hash='#beranda'">
+                <div id="brand-logo-container" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                    <span id="brand-logo-text" class="font-extrabold text-white text-sm sm:text-lg">15</span>
                 </div>
                 <div>
-                    <h1 id="brand-title" class="text-sm sm:text-base font-extrabold tracking-tight bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">KATAR RW 15</h1>
-                    <p id="brand-subtitle" class="text-[9px] text-indigo-400 font-bold uppercase tracking-wider">SAMAWA BERDAYA</p>
+                    <h1 id="brand-title" class="text-xs sm:text-base font-extrabold tracking-tight bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">KATAR RW 15</h1>
+                    <p id="brand-subtitle" class="text-[8px] sm:text-[9px] text-indigo-400 font-bold uppercase tracking-wider">SAMAWA BERDAYA</p>
                 </div>
             </div>
 
@@ -148,7 +155,7 @@
             </nav>
 
             <!-- Menu Right: Profile / Login buttons -->
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-2 sm:space-x-3">
                 <!-- User Status Info -->
                 <div id="user-status" class="hidden md:flex items-center space-x-2 bg-white/5 pl-2 pr-3 py-1.5 rounded-xl border border-white/5 text-xs transition-all hover:bg-white/10">
                     <div class="relative cursor-pointer" onclick="openProfileModal()">
@@ -161,7 +168,7 @@
                     </div>
                 </div>
 
-                <button id="btn-login-modal" onclick="openLoginModal()" class="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-indigo-500/20 bg-indigo-500/5 hover:bg-indigo-500/10 font-bold text-xs text-indigo-300 transition duration-200">
+                <button id="btn-login-modal" onclick="openLoginModal()" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-indigo-500/20 bg-indigo-500/5 hover:bg-indigo-500/10 font-bold text-xs text-indigo-300 transition duration-200">
                     <i class="fa-solid fa-right-to-bracket mr-1"></i> Login
                 </button>
 
@@ -169,15 +176,15 @@
                     <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
                 </button>
 
-                <!-- Dynamic Join CTA -->
-                <a href="#daftar" id="nav-btn-join" class="hidden sm:inline-block px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 font-bold text-xs transition-all duration-300 transform hover:-translate-y-0.5 shadow-md shadow-indigo-500/20">
+                <!-- Dynamic Join CTA - Diubah ke md:inline-block agar tidak overflow di HP -->
+                <a href="#daftar" id="nav-btn-join" class="hidden md:inline-block px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 font-bold text-xs transition-all duration-300 transform hover:-translate-y-0.5 shadow-md shadow-indigo-500/20">
                     Gabung Squad
                 </a>
             </div>
         </div>
     </header>
 
-    <!-- Mobile Bottom Navigation (Shown only on mobile devices) -->
+    <!-- Mobile Bottom Navigation -->
     <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-[#0d121e]/95 backdrop-blur-md border-t border-white/5 z-40 px-2 py-2.5 flex justify-around items-center shadow-[0_-8px_30px_rgba(0,0,0,0.6)]">
         <a href="#beranda" class="nav-link-mobile flex flex-col items-center justify-center text-center gap-1 flex-1 py-1">
             <i class="fa-solid fa-house text-sm"></i>
@@ -219,7 +226,7 @@
                 
                 <!-- Left Hero Content -->
                 <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
-                    <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-bold uppercase tracking-wider">
+                    <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
                         <i class="fa-solid fa-bolt text-indigo-400 animate-bounce"></i>
                         <span>Generasi Kolaboratif • Transparansi Digital</span>
                     </div>
@@ -274,7 +281,7 @@
                                 <div class="p-2.5 rounded-lg bg-green-500/10 text-green-400 mt-1">
                                     <i class="fa-solid fa-eye"></i>
                                 </div>
-                                <<div>
+                                <div>
                                     <h4 class="font-bold text-sm text-white">Transparansi Keuangan Absolut</h4>
                                     <p class="text-[11px] text-gray-400 leading-normal">Setiap rupiah dicatat transparan disertai unggahan bukti kuitansi fisik dari bendahara yang dapat diakses semua.</p>
                                 </div>
@@ -929,7 +936,7 @@
                 <input type="hidden" id="edit-own-staff-id">
                 <div>
                     <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Nama Pengurus (Sesuai Akun)</label>
-                    <input type="text" id="edit-own-staff-name" readonly class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-gray-400 text-xs sm:text-sm focus:outline-none cursor-not-allowed">
+                    <input type="text" id="edit-own-staff-name" readonly class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-gray-404 text-xs sm:text-sm focus:outline-none cursor-not-allowed">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Asal RT & Keahlian</label>
@@ -1124,7 +1131,7 @@
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
             <div class="w-full bg-[#080C14] p-2 rounded-2xl border border-white/10 overflow-hidden flex items-center justify-center max-h-[80vh]">
-                <img id="proof-viewer-img" src="" class="max-w-full max-h-[75vh] object-contain rounded-xl">
+                <img id="proof-viewer-img" src="" class="max-w-full max-h-full object-contain rounded-xl">
             </div>
             <div class="text-center mt-3">
                 <p class="text-xs text-gray-400">Bukti Fisik Transaksi - Diunggah oleh Bendahara</p>
@@ -1854,6 +1861,7 @@
             closeRtInfoModal();
         }
 
+        // Memperbaiki Typo HTML pembuka ganda <<div> -> <div> pada fungsi render
         function deleteRtInfo(rtKey, infoId) {
             if (!canManageRtInfo(rtKey)) {
                 showToast("Anda tidak berhak menghapus informasi di RT ini!", true);
@@ -1874,7 +1882,6 @@
             grid.innerHTML = '';
             staffData.forEach(staff => {
                 // Check if current user can edit this specific staff card
-                // Rules: Must be either Super-Admin OR their own profile card matching current user's name
                 const canEditThisCard = currentUser && (
                     currentUser.role === 'admin' || 
                     (currentUser.name && currentUser.name.toLowerCase().includes(staff.name.toLowerCase())) ||
@@ -2516,6 +2523,7 @@
             openProfileModal();
         }
 
+        // Simpan Hasil Potong Profil
         function applyCroppedImage() {
             if (!cropperInstance) return;
             
