@@ -1491,46 +1491,43 @@
 
         // --- DINAMIS INTEGRASI FIREBASE SECARA AMAN (Vercel Friendly) ---
         async function initFirebase() {
-            let config = null;
+    let config = null;
 
-            // Cek variabel lingkungan global lokal (Disediakan oleh Sandbox)
-            if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-                config = JSON.parse(__firebase_config);
-            } else {
-                // Skenario Vercel: memuat dari endpoint json rahasia tanpa hardcode
-                try {
-                    const res = await fetch('/api/firebase-config');
-                    if (res.ok) {
-                        config = await res.json();
-                    }
-                } catch (e) {
-                    console.log("Tidak ada berkas firebase-config.json eksternal. Berjalan dalam mode Local Offline.");
-                }
+    // 1. Cek apakah ada config global dari sandbox/iframe
+    if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+        config = JSON.parse(__firebase_config);
+    } else {
+        // 2. Jika di Vercel, panggil serverless function yang aman
+        try {
+            const res = await fetch('/api/firebase-config');
+            if (res.ok) {
+                config = await res.json();
             }
-
-            if (config) {
-                try {
-                    firebase.initializeApp(config);
-                    const db = firebase.firestore();
-                    const auth = firebase.auth();
-
-                    // Aturan 3 - Otentikasi sebelum memanggil database
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await auth.signInWithCustomToken(__initial_auth_token);
-                    } else {
-                        await auth.signInAnonymously();
-                    }
-
-                    console.log("Firebase Terhubung! Berhasil masuk secara anonim.");
-                    setupFirestoreSync(db, auth);
-                } catch (err) {
-                    console.error("Kesalahan otentikasi/inisialisasi Firebase:", err);
-                    showToast("Koneksi cloud gagal. Berjalan dalam mode lokal.", true);
-                }
-            } else {
-                console.log("Menjalankan aplikasi dalam mode persistensi memori lokal.");
-            }
+        } catch (e) {
+            console.log("Gagal memuat config cloud. Menggunakan mode Local/sessionStorage.");
         }
+    }
+
+    if (config && config.apiKey) {
+        try {
+            firebase.initializeApp(config);
+            const db = firebase.firestore();
+            const auth = firebase.auth();
+
+            // Lakukan login anonim/token sebelum memanggil database
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await auth.signInWithCustomToken(__initial_auth_token);
+            } else {
+                await auth.signInAnonymously();
+            }
+
+            console.log("Firebase Connected!");
+            setupFirestoreSync(db, auth);
+        } catch (err) {
+            console.error("Firebase Auth Error:", err);
+        }
+    }
+}
 
         // --- SISTEM SINKRONISASI FIRESTORE (Aturan 1: Jalur Ketat, Aturan 2: Tanpa query kompleks) ---
         function setupFirestoreSync(db, auth) {
