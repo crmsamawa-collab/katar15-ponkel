@@ -508,7 +508,7 @@
                     <!-- Jika Sudah Login -->
                     <div id="forum-authenticated" class="hidden glass-premium rounded-2xl p-5 sm:p-6 border border-indigo-500/30">
                         <div class="flex items-center space-x-3 mb-4">
-                            <img id="forum-user-avatar" src="https://placehold.co/100x100/1e1b4b/ffffff?text=U" class="w-9 h-9 rounded-full object-cover border border-white/10" alt="Avatar">
+                            <img id="forum-user-avatar" src="https://placehold.co/1e1b4b" class="w-9 h-9 rounded-full object-cover border border-white/10" alt="Avatar">
                             <div>
                                 <h4 class="font-bold text-sm text-white" id="auth-username">User Active</h4>
                                 <p class="text-[10px] text-gray-400">Tulis aspirasi segar Anda hari ini</p>
@@ -1446,7 +1446,7 @@
 
             // 1. Sinkronisasi Profil Branding
             db.doc(`artifacts/${appId}/public/data/branding/config`).onSnapshot(docSnap => {
-                if (docSnap.exists()) {
+                if (docSnap.exists) { // Diperbaiki dari docSnap.exists()
                     appBranding = docSnap.data();
                     applySavedBranding();
                 } else {
@@ -1540,7 +1540,7 @@
 
             // 5. Sinkronisasi Modul Keuangan
             db.doc(`artifacts/${appId}/public/data/keuangan/config`).onSnapshot(docSnap => {
-                if (docSnap.exists()) {
+                if (docSnap.exists) { // Diperbaiki dari docSnap.exists()
                     keuangan = docSnap.data();
                     renderFinance();
                 } else {
@@ -2494,6 +2494,7 @@
             document.getElementById('reset-success-popup').classList.add('hidden');
         }
 
+        // Format WA URL dengan Country Code Indonesia yang Valid
         function formatWAUrl(phone, message) {
             let cleanPhone = phone.replace(/\D/g, ''); 
             if (cleanPhone.startsWith('08')) {
