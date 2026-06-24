@@ -161,7 +161,7 @@
 
             <!-- Menu Right: Profile / Login buttons -->
             <div class="flex items-center space-x-2 sm:space-x-3">
-                <!-- User Status Info -->
+                <!-- User Status Info (Selalu hidden di awal, dimunculkan lewat JS saat logged in) -->
                 <div id="user-status" class="hidden md:flex items-center space-x-2 bg-white/5 pl-2 pr-3 py-1.5 rounded-xl border border-white/5 text-xs transition-all hover:bg-white/10">
                     <div class="relative cursor-pointer" onclick="openProfileModal()">
                         <img id="user-avatar-img" src="https://placehold.co/100x100/1e1b4b/ffffff?text=U" class="w-7 h-7 rounded-full border border-indigo-500/40 object-cover" alt="Avatar">
@@ -214,7 +214,7 @@
     </div>
 
     <!-- Admin Banner Indicator (Mengikuti Header Melayang) -->
-    <div id="admin-banner" class="hidden bg-gradient-to-r from-[#e0a82e] to-[#c28410] text-gray-950 text-center py-2 px-4 text-xs font-bold fixed top-16 sm:top-18 left-0 right-0 z-40 shadow-md">
+    <div id="admin-banner" class="hidden bg-gradient-to-r from-[#e0a82e] to-[#c28410] text-gray-950 text-center py-2 px-4 text-xs font-bold fixed top-16 sm:top-18 z-30 shadow-md">
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
             <div>
                 <i class="fa-solid fa-circle-exclamation mr-1.5 text-base align-middle animate-pulse"></i> 
@@ -254,7 +254,7 @@
                             <i class="fa-solid fa-arrow-right"></i>
                         </a>
 
-                        <a href="#forum-diskusi" id="hero-cta-member" class="hidden w-full sm:w-auto text-center px-8 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:opacity-90 font-bold text-white transition-all duration-300 shadow-xl shadow-indigo-500/25 flex items-center justify-center space-x-2 text-xs sm:text-sm">
+                        <a href="#forum-diskusi" id="hero-cta-member" class="hidden w-full sm:w-auto text-center px-8 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:opacity-90 font-bold text-white transition-all duration-300 shadow-xl shadow-emerald-500/25 flex items-center justify-center space-x-2 text-xs sm:text-sm">
                             <span>Buka Forum Diskusi Aktif 🚀</span>
                         </a>
 
@@ -980,7 +980,7 @@
         </div>
     </div>
 
-    <!-- MODAL: CORE STAFF MEMBER OWN PROFILE EDITOR -->
+    <!-- MODAL: CORE STAFF MEMBER OWN PROFILE EDITOR (Mendukung upload foto profil pengurus inti) -->
     <div id="edit-own-staff-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="relative glass-premium max-w-md w-full p-5 sm:p-8 rounded-3xl border border-indigo-500/30">
             <button onclick="closeEditOwnStaffModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
@@ -989,11 +989,21 @@
             
             <div class="text-center space-y-2 mb-6">
                 <h3 class="text-lg sm:text-xl font-extrabold text-white">Edit Profil Pengurus Anda</h3>
-                <p class="text-xs text-gray-400">Perbarui rincian kutipan motivasi, keahlian, dan minat Anda pada bagan Struktur Inti.</p>
+                <p class="text-xs text-gray-400">Perbarui rincian foto, kutipan motivasi, keahlian, dan minat Anda pada bagan Struktur Inti.</p>
             </div>
 
             <form onsubmit="handleSaveOwnStaff(event)" class="space-y-4">
                 <input type="hidden" id="edit-own-staff-id">
+                
+                <!-- Input Edit Foto Profil Pengurus Inti -->
+                <div class="text-center space-y-3">
+                    <label class="block text-xs font-bold text-gray-400 uppercase text-left">Foto Profil Pengurus</label>
+                    <div class="relative inline-block">
+                        <img id="edit-own-staff-preview" src="https://placehold.co/100x100/1e1b4b/ffffff?text=U" class="w-20 h-24 rounded-xl object-cover border border-white/10 mx-auto" alt="Preview">
+                    </div>
+                    <input type="file" id="edit-own-staff-file" accept="image/*" onchange="handleOwnStaffFileSelect(event)" class="w-full text-xs text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[11px] file:font-semibold file:bg-indigo-500/10 file:text-indigo-300 hover:file:bg-indigo-500/20">
+                </div>
+
                 <div>
                     <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Nama Pengurus (Sesuai Akun)</label>
                     <input type="text" id="edit-own-staff-name" readonly class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-gray-404 text-xs sm:text-sm focus:outline-none cursor-not-allowed">
@@ -1698,6 +1708,9 @@
 
                 const chatOverlay = document.getElementById('livechat-lock-overlay');
                 if (chatOverlay) chatOverlay.classList.add('hidden');
+            } else {
+                // HILANGKAN PROFIL PENGGUNA SAAT TIDAK SEDANG LOGIN
+                document.getElementById('user-status').classList.add('hidden');
             }
 
             switchRtTab('RT-01');
@@ -2299,7 +2312,7 @@
             });
         }
 
-        // Render Pengurus Inti
+        // Render Pengurus Inti (Mendukung penayangan foto profil asli yang keren)
         function renderPengurus() {
             const grid = document.getElementById('pengurus-grid');
             grid.innerHTML = '';
@@ -2316,14 +2329,18 @@
                     </button>
                 ` : '';
 
+                // Gunakan foto profil kustom pengurus jika tersedia, atau placeholder default
+                const avatarUrl = staff.profileImage || `https://placehold.co/150x150/1e1b4b/ffffff?text=${encodeURIComponent(staff.name[0])}`;
+
                 grid.innerHTML += `
                     <div class="group relative rounded-2xl glass p-5 transition-all duration-300 hover:-translate-y-2 hover:border-indigo-500/40">
-                        <div class="w-full h-40 rounded-xl bg-indigo-900/40 mb-4 overflow-hidden relative flex items-center justify-center">
-                            <i class="fa-solid fa-user-astronaut text-4xl text-indigo-400 absolute opacity-25"></i>
-                            <div class="text-center z-10">
+                        <div class="w-full h-40 rounded-xl bg-indigo-900/40 mb-4 overflow-hidden relative flex items-center justify-center cursor-pointer" onclick="zoomImage('${avatarUrl}')">
+                            <img src="${avatarUrl}" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-all duration-500" alt="Avatar">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+                            <div class="text-center z-10 absolute bottom-3 left-0 right-0 px-3">
                                 <span class="px-3 py-1 rounded-full bg-indigo-500 text-[10px] font-bold text-white uppercase tracking-wider">${staff.role}</span>
-                                <h4 class="font-bold text-lg text-white mt-3">${staff.name}</h4>
-                                <p class="text-[11px] text-indigo-300">${staff.detail}</p>
+                                <h4 class="font-bold text-base text-white mt-2 leading-tight">${staff.name}</h4>
+                                <p class="text-[10px] text-indigo-300 mt-1">${staff.detail}</p>
                             </div>
                         </div>
                         <div class="space-y-2">
@@ -2344,7 +2361,7 @@
             toggleAdminFeatures();
         }
 
-        // Edit Own Staff Profile Modal Handlers
+        // Edit Own Staff Profile Modal Handlers (Ditambahkan fitur upload foto profil pengurus inti)
         function openEditOwnStaffModal(id) {
             const staff = staffData.find(s => s.id === id);
             if (!staff) return;
@@ -2354,12 +2371,50 @@
             document.getElementById('edit-own-staff-detail').value = staff.detail;
             document.getElementById('edit-own-staff-quote').value = staff.quote;
             document.getElementById('edit-own-staff-tags').value = staff.tags;
+            
+            const previewImg = document.getElementById('edit-own-staff-preview');
+            if (previewImg) {
+                previewImg.src = staff.profileImage || `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(staff.name[0])}`;
+            }
+            uploadedBase64Image = staff.profileImage || ""; // simpan base64 yang sudah ada
 
             document.getElementById('edit-own-staff-modal').classList.remove('hidden');
         }
 
         function closeEditOwnStaffModal() {
             document.getElementById('edit-own-staff-modal').classList.add('hidden');
+        }
+
+        // Fungsi seleksi dan trigger crop foto pengurus inti
+        function handleOwnStaffFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Sembunyikan modal pengurus sementara
+                    document.getElementById('edit-own-staff-modal').classList.add('hidden');
+                    
+                    const workspaceImg = document.getElementById('cropper-workspace-image');
+                    workspaceImg.src = e.target.result;
+                    
+                    document.getElementById('cropper-modal').classList.remove('hidden');
+                    
+                    if (cropperInstance) {
+                        cropperInstance.destroy();
+                    }
+                    setTimeout(() => {
+                        cropperInstance = new Cropper(workspaceImg, {
+                            aspectRatio: 1,
+                            viewMode: 1,
+                            background: false,
+                            autoCropArea: 1
+                        });
+                        // Beri penanda bahwa kita sedang meng-crop foto pengurus
+                        cropperInstance.isEditingStaff = true;
+                    }, 100);
+                };
+                reader.readAsDataURL(file);
+            }
         }
 
         function handleSaveOwnStaff(event) {
@@ -2377,6 +2432,7 @@
                 staff.detail = document.getElementById('edit-own-staff-detail').value;
                 staff.quote = document.getElementById('edit-own-staff-quote').value;
                 staff.tags = document.getElementById('edit-own-staff-tags').value;
+                staff.profileImage = uploadedBase64Image; // simpan foto baru!
 
                 if (isFirebaseEnabled()) {
                     const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
@@ -2887,30 +2943,67 @@
             document.getElementById('proof-viewer-modal').classList.add('hidden');
         }
 
-        // Render Forum Diskusi Beserta Balasan Real-Time (Mendukung paragraf terformat)
+        // Render Forum Diskusi Beserta Balasan Real-Time (Mendukung paragraf terformat & Zoom foto profil asli)
         function renderDiskusi() {
             const container = document.getElementById('diskusi-list-container');
             container.innerHTML = '';
 
             diskusiList.forEach((item, index) => {
+                // SINKRONISASI INIDIAL ATAU FOTO PROFIL ASLI SINKRON
+                let userAvatar = "";
+                let foundStaff = staffData.find(s => s.name === item.user || s.username === item.username);
+                if (foundStaff && foundStaff.profileImage) {
+                    userAvatar = foundStaff.profileImage;
+                } else {
+                    let foundMem = membersData.find(m => m.name === item.user || m.username === item.username);
+                    if (foundMem && foundMem.profileImage) {
+                        userAvatar = foundMem.profileImage;
+                    }
+                }
+                if (!userAvatar && item.profileImage) {
+                    userAvatar = item.profileImage;
+                }
+                if (!userAvatar) {
+                    userAvatar = `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(item.user[0])}`;
+                }
+
                 let repliesHtml = '';
                 if (item.replies && item.replies.length > 0) {
                     repliesHtml = `
                         <div class="mt-4 pt-4 border-t border-white/5 space-y-3 pl-4 sm:pl-8 border-l-2 border-indigo-500/30">
                             <h5 class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">Balasan (${item.replies.length})</h5>
-                            ${item.replies.map(rep => `
-                                <div class="bg-white/[0.02] p-3 rounded-xl border border-white/5 space-y-1">
-                                    <div class="flex justify-between items-center">
-                                        <div class="flex items-center space-x-2">
-                                            <div class="w-6 h-6 rounded-full bg-indigo-500/10 flex items-center justify-center text-[10px] font-bold text-indigo-300">${rep.user[0]}</div>
-                                            <span class="font-bold text-xs text-white">${rep.user}</span>
-                                            <span class="px-1 py-0.5 rounded bg-white/10 text-[8px] text-gray-400 uppercase tracking-wide font-semibold">${rep.role}</span>
+                            ${item.replies.map(rep => {
+                                let repAvatar = "";
+                                let foundRepStaff = staffData.find(s => s.name === rep.user || s.username === rep.username);
+                                if (foundRepStaff && foundRepStaff.profileImage) {
+                                    repAvatar = foundRepStaff.profileImage;
+                                } else {
+                                    let foundRepMem = membersData.find(m => m.name === rep.user || m.username === rep.username);
+                                    if (foundRepMem && foundRepMem.profileImage) {
+                                        repAvatar = foundRepMem.profileImage;
+                                    }
+                                }
+                                if (!repAvatar && rep.profileImage) {
+                                    repAvatar = rep.profileImage;
+                                }
+                                if (!repAvatar) {
+                                    repAvatar = `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(rep.user[0])}`;
+                                }
+
+                                return `
+                                    <div class="bg-white/[0.02] p-3 rounded-xl border border-white/5 space-y-1">
+                                        <div class="flex justify-between items-center">
+                                            <div class="flex items-center space-x-2">
+                                                <img src="${repAvatar}" class="w-6 h-6 rounded-full object-cover border border-white/10" alt="Avatar">
+                                                <span class="font-bold text-xs text-white">${rep.user}</span>
+                                                <span class="px-1 py-0.5 rounded bg-white/10 text-[8px] text-gray-400 uppercase tracking-wide font-semibold">${rep.role}</span>
+                                            </div>
+                                            <span class="text-[9px] text-gray-500">${rep.tanggal}</span>
                                         </div>
-                                        <span class="text-[9px] text-gray-500">${rep.tanggal}</span>
+                                        <p class="text-xs text-gray-300 pl-8 leading-relaxed whitespace-pre-line">${rep.isi}</p>
                                     </div>
-                                    <p class="text-xs text-gray-300 pl-8 leading-relaxed whitespace-pre-line">${rep.isi}</p>
-                                </div>
-                            `).join('')}
+                                `;
+                            }).join('')}
                         </div>
                     `;
                 } else {
@@ -2945,9 +3038,7 @@
                     <div class="glass p-5 rounded-2xl border border-white/5 space-y-4">
                         <div class="flex justify-between items-start">
                             <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold text-xs">
-                                    ${item.user[0]}
-                                </div>
+                                <img src="${userAvatar}" class="w-8 h-8 rounded-full object-cover border border-white/10" alt="Avatar">
                                 <div>
                                     <h4 class="font-bold text-sm text-white">${item.user}</h4>
                                     <p class="text-[10px] text-gray-500">${item.role} • ${item.tanggal}</p>
@@ -2994,7 +3085,9 @@
             if (diskusi) {
                 diskusi.replies.push({
                     user: currentUser.name,
+                    username: currentUser.username,
                     role: getUserFriendlyRole(currentUser.role),
+                    profileImage: currentUser.profileImage || "",
                     isi: replyText,
                     tanggal: "Hari ini"
                 });
@@ -3011,7 +3104,7 @@
             }
         }
 
-        // Render Live Chat
+        // Render Live Chat (SINKRONISASI INIDIAL ATAU FOTO PROFIL ASLI SINKRON)
         function renderLivechat() {
             const container = document.getElementById('livechat-messages-container');
             container.innerHTML = '';
@@ -3022,11 +3115,26 @@
                 const colorBubble = isCurrentUser ? "bg-indigo-600 text-white rounded-tr-none" : "bg-white/5 text-gray-300 rounded-tl-none";
                 const layoutDirection = isCurrentUser ? "flex-row-reverse space-x-reverse" : "flex-row";
 
+                let chatAvatar = "";
+                let foundChatStaff = staffData.find(s => s.name === msg.user || s.username === msg.username);
+                if (foundChatStaff && foundChatStaff.profileImage) {
+                    chatAvatar = foundChatStaff.profileImage;
+                } else {
+                    let foundChatMem = membersData.find(m => m.name === msg.user || m.username === msg.username);
+                    if (foundChatMem && foundChatMem.profileImage) {
+                        chatAvatar = foundChatMem.profileImage;
+                    }
+                }
+                if (!chatAvatar && msg.profileImage) {
+                    chatAvatar = msg.profileImage;
+                }
+                if (!chatAvatar) {
+                    chatAvatar = `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(msg.user[0])}`;
+                }
+
                 container.innerHTML += `
                     <div class="flex items-start gap-3 ${layoutDirection} ${alignmentClass}">
-                        <div class="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center text-xs font-bold text-indigo-300">
-                            ${msg.user[0]}
-                        </div>
+                        <img src="${chatAvatar}" class="w-8 h-8 rounded-full object-cover border border-white/10" alt="Avatar">
                         <div class="space-y-1 max-w-[80%]">
                             <div class="flex items-center gap-1.5 text-[10px] text-gray-500 ${isCurrentUser ? 'justify-end' : 'justify-start'}">
                                 <span class="font-bold text-white">${msg.user}</span>
@@ -3062,7 +3170,9 @@
             const newMsg = {
                 id: Date.now(),
                 user: currentUser.name,
+                username: currentUser.username,
                 role: getUserFriendlyRole(currentUser.role),
+                profileImage: currentUser.profileImage || "",
                 msg: chatVal,
                 time: formatTime
             };
@@ -3180,7 +3290,7 @@
                 'sekretaris': { id: 3, name: "Rian Pratama", role: "sekretaris", username: "rian", profileImage: "" },
                 'bendahara': { id: 4, name: "Zahra Amalia", role: "bendahara", username: "zahra", profileImage: "" },
                 'koordinator_rt': { id: 12, name: "Doni Setiawan", role: "koordinator_rt", username: "doni", profileImage: "" },
-                'warga': { id: 13, name: "Rendra Prasetyo", role: "warga", username: "rendra", profileImage: "" }
+                'warga': { id: 13, name: "Rendra Prasetyo", role: "warga", username: "guest", profileImage: "" }
             };
 
             currentUser = mappings[role] || { id: Date.now(), name: "Guest Warga", role: "warga", username: "guest", profileImage: "" };
@@ -3303,11 +3413,19 @@
 
         function cancelCropping() {
             if (cropperInstance) {
+                const wasEditingStaff = cropperInstance.isEditingStaff;
                 cropperInstance.destroy();
                 cropperInstance = null;
+                document.getElementById('cropper-modal').classList.add('hidden');
+                if (wasEditingStaff) {
+                    document.getElementById('edit-own-staff-modal').classList.remove('hidden');
+                } else {
+                    openProfileModal();
+                }
+            } else {
+                document.getElementById('cropper-modal').classList.add('hidden');
+                openProfileModal();
             }
-            document.getElementById('cropper-modal').classList.add('hidden');
-            openProfileModal();
         }
 
         function applyCroppedImage() {
@@ -3319,34 +3437,45 @@
             });
             const base64Img = canvas.toDataURL();
             
-            currentUser.profileImage = base64Img;
-            saveStateToSession(); 
-
-            document.getElementById('user-avatar-img').src = base64Img;
-            document.getElementById('profile-preview-img').src = base64Img;
-            updateAuthAvatarUI();
-
-            // SINKRONISASI AKTIF KE FIRESTORE DATABASE
-            if (isFirebaseEnabled()) {
-                const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+            if (cropperInstance.isEditingStaff) {
+                // Update pratinjau di modal edit pengurus
+                document.getElementById('edit-own-staff-preview').src = base64Img;
+                uploadedBase64Image = base64Img; 
                 
-                const inStaff = staffData.find(s => s.id === currentUser.id || s.username === currentUser.username);
-                if (inStaff) {
-                    firebase.firestore().doc(`artifacts/${appId}/public/data/staff/${inStaff.id}`).update({ profileImage: base64Img })
-                        .catch(err => console.error("Gagal sinkronisasi foto pengurus:", err));
+                cropperInstance.destroy();
+                cropperInstance = null;
+                document.getElementById('cropper-modal').classList.add('hidden');
+                document.getElementById('edit-own-staff-modal').classList.remove('hidden');
+            } else {
+                currentUser.profileImage = base64Img;
+                saveStateToSession(); 
+
+                document.getElementById('user-avatar-img').src = base64Img;
+                document.getElementById('profile-preview-img').src = base64Img;
+                updateAuthAvatarUI();
+
+                // SINKRONISASI AKTIF KE FIRESTORE DATABASE
+                if (isFirebaseEnabled()) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                    
+                    const inStaff = staffData.find(s => s.id === currentUser.id || s.username === currentUser.username);
+                    if (inStaff) {
+                        firebase.firestore().doc(`artifacts/${appId}/public/data/staff/${inStaff.id}`).update({ profileImage: base64Img })
+                            .catch(err => console.error("Gagal sinkronisasi foto pengurus:", err));
+                    }
+
+                    const inMembers = membersData.find(m => m.id === currentUser.id || m.username === currentUser.username);
+                    if (inMembers) {
+                        firebase.firestore().doc(`artifacts/${appId}/public/data/members/${inMembers.id}`).update({ profileImage: base64Img })
+                            .catch(err => console.error("Gagal sinkronisasi foto anggota:", err));
+                    }
                 }
 
-                const inMembers = membersData.find(m => m.id === currentUser.id || m.username === currentUser.username);
-                if (inMembers) {
-                    firebase.firestore().doc(`artifacts/${appId}/public/data/members/${inMembers.id}`).update({ profileImage: base64Img })
-                        .catch(err => console.error("Gagal sinkronisasi foto anggota:", err));
-                }
+                cropperInstance.destroy();
+                cropperInstance = null;
+                document.getElementById('cropper-modal').classList.add('hidden');
+                openProfileModal();
             }
-
-            cropperInstance.destroy();
-            cropperInstance = null;
-            document.getElementById('cropper-modal').classList.add('hidden');
-            openProfileModal();
             showToast("Foto profil berhasil dipotong & diperbarui!");
         }
 
@@ -3546,7 +3675,12 @@
 
                 // 3. Bersihkan pengurus kustom tambahan
                 db.collection(`artifacts/${appId}/public/data/staff`).get().then(snap => {
-                    snap.forEach(doc => doc.ref.delete());
+                    snap.forEach(doc => {
+                        const data = doc.data();
+                        if (data.username !== 'edhos') {
+                            doc.ref.delete();
+                        }
+                    });
                 }).catch(e => console.error("Error clearing staff:", e));
 
                 // 4. Reset laporan Keuangan Kas
@@ -3616,7 +3750,9 @@
             const newPost = {
                 id: Date.now(),
                 user: currentUser.name,
+                username: currentUser.username,
                 role: getUserFriendlyRole(currentUser.role),
+                profileImage: currentUser.profileImage || "",
                 judul: judul,
                 isi: isi,
                 tanggal: "Hari ini",
@@ -3756,6 +3892,7 @@
             closeAddStaffModal();
         }
 
+        // Hapus staff
         function deleteStaff(id) {
             const staff = staffData.find(s => s.id === id);
             if (staff) {
