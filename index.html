@@ -102,7 +102,7 @@
         }
     </style>
 </head>
-<body class="overflow-x-hidden min-h-screen relative selection:bg-indigo-500 selection:text-white pb-20 lg:pb-0">
+<body class="overflow-x-hidden min-h-screen relative selection:bg-indigo-500 selection:text-white pb-20 lg:pb-0 pt-16 sm:pt-20">
 
     <!-- Container Pengaman Blobs Latar Belakang (Mencegah Overflow pada HP) -->
     <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
@@ -131,9 +131,9 @@
         </div>
     </div>
 
-    <!-- Navigation Header (Sticky & Selalu Tampil Teratas saat Di-scroll) -->
-    <header class="sticky top-0 z-50 glass border-b border-white/5 shadow-lg shadow-black/40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
+    <!-- Navigation Header (Fixed/Sticky Melayang Tanpa Goyang) -->
+    <header class="fixed top-0 left-0 right-0 z-50 glass border-b border-white/5 shadow-lg shadow-black/40 h-16 sm:h-18 flex items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex items-center justify-between">
             
             <!-- Brand Logo Left (Dapat dikustomisasi oleh Admin) -->
             <div class="flex items-center space-x-2 sm:space-x-3 cursor-pointer" onclick="window.location.hash='#beranda'">
@@ -213,8 +213,8 @@
         </a>
     </div>
 
-    <!-- Admin Banner Indicator -->
-    <div id="admin-banner" class="hidden bg-gradient-to-r from-[#e0a82e] to-[#c28410] text-gray-950 text-center py-2 px-4 text-xs font-bold sticky top-16 sm:top-18 z-30 shadow-md">
+    <!-- Admin Banner Indicator (Mengikuti Header Melayang) -->
+    <div id="admin-banner" class="hidden bg-gradient-to-r from-[#e0a82e] to-[#c28410] text-gray-950 text-center py-2 px-4 text-xs font-bold fixed top-16 sm:top-18 left-0 right-0 z-40 shadow-md">
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
             <div>
                 <i class="fa-solid fa-circle-exclamation mr-1.5 text-base align-middle animate-pulse"></i> 
@@ -254,7 +254,7 @@
                             <i class="fa-solid fa-arrow-right"></i>
                         </a>
 
-                        <a href="#forum-diskusi" id="hero-cta-member" class="hidden w-full sm:w-auto text-center px-8 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:opacity-90 font-bold text-white transition-all duration-300 shadow-xl shadow-emerald-500/25 flex items-center justify-center space-x-2 text-xs sm:text-sm">
+                        <a href="#forum-diskusi" id="hero-cta-member" class="hidden w-full sm:w-auto text-center px-8 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:opacity-90 font-bold text-white transition-all duration-300 shadow-xl shadow-indigo-500/25 flex items-center justify-center space-x-2 text-xs sm:text-sm">
                             <span>Buka Forum Diskusi Aktif 🚀</span>
                         </a>
 
@@ -1185,17 +1185,17 @@
         </div>
     </div>
 
-    <!-- MODAL: VIEW PROOF TRANSCRIPTION IMAGE -->
-    <div id="proof-viewer-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
+    <!-- MODAL: VIEW PROOF TRANSCRIPTION IMAGE (KINI MENJADI MODAL DETAIL ZOOM GAMBAR UMUM) -->
+    <div id="proof-viewer-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/95 backdrop-blur-sm">
         <div class="relative max-w-2xl w-full p-4 rounded-3xl bg-transparent">
             <button onclick="closeProofViewer()" class="absolute top-2 right-2 p-3 text-white hover:text-red-400 bg-black/60 rounded-full transition z-50">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
             <div class="w-full bg-[#080C14] p-2 rounded-2xl border border-white/10 overflow-hidden flex items-center justify-center max-h-[80vh]">
-                <img id="proof-viewer-img" src="" class="max-w-full max-h-full object-contain rounded-xl">
+                <img id="proof-viewer-img" src="" class="max-w-full max-h-full object-contain rounded-xl cursor-zoom-out transition-transform duration-300 hover:scale-110">
             </div>
             <div class="text-center mt-3">
-                <p class="text-xs text-gray-400">Bukti Fisik Transaksi - Diunggah oleh Bendahara</p>
+                <p class="text-xs text-gray-400">Tekan tombol silang atau area gambar untuk kembali</p>
             </div>
         </div>
     </div>
@@ -1446,7 +1446,7 @@
 
             // 1. Sinkronisasi Profil Branding
             db.doc(`artifacts/${appId}/public/data/branding/config`).onSnapshot(docSnap => {
-                if (docSnap.exists) { // Diperbaiki dari docSnap.exists()
+                if (docSnap.exists) { 
                     appBranding = docSnap.data();
                     applySavedBranding();
                 } else {
@@ -1540,7 +1540,7 @@
 
             // 5. Sinkronisasi Modul Keuangan
             db.doc(`artifacts/${appId}/public/data/keuangan/config`).onSnapshot(docSnap => {
-                if (docSnap.exists) { // Diperbaiki dari docSnap.exists()
+                if (docSnap.exists) { 
                     keuangan = docSnap.data();
                     renderFinance();
                 } else {
@@ -1718,6 +1718,7 @@
             return ['admin', 'ketua', 'wakil', 'sekretaris', 'bendahara'].includes(currentUser.role);
         }
 
+        // Verifikasi anggota bisa dilakukan oleh Admin atau Pengurus Inti
         function canVerifyMembers() {
             if (!currentUser) return false;
             return ['admin', 'ketua', 'wakil', 'sekretaris', 'bendahara'].includes(currentUser.role);
@@ -1801,6 +1802,16 @@
             }
         }
 
+        // Fungsi Zoom/Pratinjau Gambar Resolusi Tinggi (Utuh & Klik Zoom)
+        function zoomImage(src) {
+            if (!src) return;
+            const modal = document.getElementById('proof-viewer-modal');
+            const img = document.getElementById('proof-viewer-img');
+            img.src = src;
+            img.className = "max-w-full max-h-full object-contain rounded-xl cursor-zoom-out transition-transform duration-300 hover:scale-110";
+            modal.classList.remove('hidden');
+        }
+
         // Preview local image (Beranda Article)
         function previewImageLocal(event) {
             const file = event.target.files[0];
@@ -1871,7 +1882,7 @@
             showToast("Desain logo dikembalikan ke default teks.");
         }
 
-        // Render Artikel / Informasi Beranda RW (Mendukung paragraf terformat)
+        // Render Artikel / Informasi Beranda RW (Mendukung paragraf terformat & Zoom)
         function renderArticles() {
             const grid = document.getElementById('articles-grid');
             grid.innerHTML = '';
@@ -1892,7 +1903,7 @@
                 grid.innerHTML += `
                     <div class="glass rounded-2xl overflow-hidden flex flex-col justify-between border border-white/5 group hover:border-indigo-500/20 transition-all duration-300">
                         <div>
-                            <div class="h-48 w-full bg-[#080C14] overflow-hidden relative flex items-center justify-center border-b border-white/5">
+                            <div class="h-48 w-full bg-[#080C14] overflow-hidden relative flex items-center justify-center border-b border-white/5 cursor-pointer" onclick="zoomImage('${art.image}')">
                                 <img src="${art.image}" alt="${art.title}" class="max-w-full max-h-full object-contain transition-all duration-500">
                                 <span class="absolute top-3 left-3 px-2 py-1 bg-indigo-600 text-white rounded text-[10px] font-bold uppercase tracking-wider">${art.category}</span>
                             </div>
@@ -2035,7 +2046,7 @@
             });
         }
 
-        // Switch Sub-RT Tabs & Content Render (Mendukung paragraf terformat)
+        // Switch Sub-RT Tabs & Content Render (Mendukung paragraf terformat & Zoom)
         function switchRtTab(rtKey) {
             document.querySelectorAll('.rt-tab-btn').forEach(btn => {
                 btn.className = "rt-tab-btn px-4 py-2.5 rounded-xl bg-white/5 text-gray-400 text-xs sm:text-sm font-semibold hover:bg-white/10 transition";
@@ -2061,7 +2072,7 @@
                     ` : '';
 
                     const imgTag = info.image ? `
-                        <div class="h-40 w-full bg-[#080C14] rounded-xl overflow-hidden mb-2 flex items-center justify-center border border-white/5">
+                        <div class="h-40 w-full bg-[#080C14] rounded-xl overflow-hidden mb-2 flex items-center justify-center border border-white/5 cursor-pointer" onclick="zoomImage('${info.image}')">
                             <img src="${info.image}" class="max-w-full max-h-full object-contain">
                         </div>
                     ` : '';
@@ -2405,7 +2416,12 @@
                 const escUsername = u.username.replace(/'/g, "\\'");
 
                 // Akun edhos dilindungi penuh di daftar reset jika bukan edhos yang mengakses
-                const disableBtn = (escUsername === 'edhos' && currentUser.username !== 'edhos') ? 'disabled opacity-50 cursor-not-allowed bg-gray-500/20 text-gray-500 border-none' : '';
+                let disableBtn = (escUsername === 'edhos' && currentUser.username !== 'edhos') ? 'disabled opacity-50 cursor-not-allowed bg-gray-500/20 text-gray-500 border-none' : '';
+                
+                // PROTEKSI AKUN JX JIKA CURRENT USER ADALAH KETUA
+                if (escUsername === 'jx' && currentUser && currentUser.role === 'ketua') {
+                    disableBtn = 'disabled opacity-50 cursor-not-allowed bg-gray-500/20 text-gray-500 border-none';
+                }
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-white/5 border-b border-white/5 transition duration-150">
@@ -2447,6 +2463,12 @@
             // Pengamanan akun Edhos
             if (username === 'edhos' && currentUser.username !== 'edhos') {
                 showToast("Kata sandi Super-Admin edhos hanya bisa direset oleh dirinya sendiri!", true);
+                return;
+            }
+            
+            // PROTEKSI AKUN JX JIKA LOGGED IN SEBAGAI KETUA
+            if (username === 'jx' && currentUser && currentUser.role === 'ketua') {
+                showToast("Ketua tidak diperbolehkan mereset sandi akun jx!", true);
                 return;
             }
 
@@ -2494,7 +2516,6 @@
             document.getElementById('reset-success-popup').classList.add('hidden');
         }
 
-        // Format WA URL dengan Country Code Indonesia yang Valid
         function formatWAUrl(phone, message) {
             let cleanPhone = phone.replace(/\D/g, ''); 
             if (cleanPhone.startsWith('08')) {
@@ -2512,8 +2533,13 @@
             closeResetSuccessPopup();
         }
 
+        // LUPA SANDI DITUJUKAN LANGSUNG KE WA ADMIN UTAMA (Ahmad Nandar - edhos)
         function handleForgotPassword() {
-            showToast("Silakan hubungi Admin (Edhos), Ketua (Alif), atau Wakil (Fuji) untuk melakukan reset sandi akun Anda menjadi 'Katar15'.", false);
+            const adminPhone = "6282220691212";
+            const waMessage = "Halo Admin Edhos, saya lupa kata sandi akun Katar15 saya. Mohon bantuannya untuk mereset sandi saya.";
+            const url = `https://api.whatsapp.com/send?phone=${adminPhone}&text=${encodeURIComponent(waMessage)}`;
+            window.open(url, '_blank');
+            showToast("Membuka WhatsApp untuk menghubungi Admin (Edhos)!", false);
         }
 
         // Manual Login Form Handler (NAMA PANGGILAN & PASSWORD)
@@ -2603,6 +2629,13 @@
                             Super Admin
                         </span>
                     `;
+                } else if (member.username === 'jx' && currentUser && currentUser.role === 'ketua') {
+                    // PROTEKSI AKUN JX JIKA CURRENT USER ADALAH KETUA (TIDAK DAPAT DIEDIT JABATANNYA)
+                    jabatanSelectorHtml = `
+                        <span class="px-2.5 py-1 rounded bg-white/5 text-xs text-indigo-400 font-extrabold border border-indigo-400/20">
+                            ${member.jabatan || 'Anggota'}
+                        </span>
+                    `;
                 } else if (currentUser && ['admin', 'ketua'].includes(currentUser.role)) {
                     let optionsHtml = '';
                     daftarJabatan.forEach(jab => {
@@ -2625,17 +2658,25 @@
                     `;
                 }
 
-                // Jangan tampilkan tombol aksi hapus untuk edhos
-                const displayActionCell = member.username === 'edhos' ? `<td class="member-actions-cell px-4 py-3 hidden"><span class="text-xs text-indigo-400 font-semibold italic">Owner</span></td>` : `
-                    <td class="member-actions-cell px-4 py-3 hidden">
-                        <div class="flex items-center space-x-2">
-                            ${member.status === 'Pending Verifikasi' ? `
-                            <button onclick="approveMember(${member.id})" class="px-2 py-1 bg-green-500 text-white rounded text-[10px] font-bold hover:bg-green-600 transition">Setujui</button>
-                            ` : ''}
-                            <button onclick="deleteMember(${member.id})" class="px-2 py-1 bg-red-500/25 text-red-400 rounded text-[10px] font-bold hover:bg-red-500 hover:text-white transition">Hapus</button>
-                        </div>
-                    </td>
-                `;
+                // Jangan tampilkan tombol aksi hapus untuk edhos atau akun jx (jika login sebagai ketua)
+                let displayActionCell = "";
+                if (member.username === 'edhos') {
+                    displayActionCell = `<td class="member-actions-cell px-4 py-3 hidden"><span class="text-xs text-indigo-400 font-semibold italic">Owner</span></td>`;
+                } else if (member.username === 'jx' && currentUser && currentUser.role === 'ketua') {
+                    // PROTEKSI AKUN JX JIKA CURRENT USER ADALAH KETUA (TIDAK DAPAT DIHAPUS)
+                    displayActionCell = `<td class="member-actions-cell px-4 py-3 hidden"><span class="text-xs text-indigo-400 font-semibold italic">Protected</span></td>`;
+                } else {
+                    displayActionCell = `
+                        <td class="member-actions-cell px-4 py-3 hidden">
+                            <div class="flex items-center space-x-2">
+                                ${member.status === 'Pending Verifikasi' ? `
+                                <button onclick="approveMember(${member.id})" class="px-2 py-1 bg-green-500 text-white rounded text-[10px] font-bold hover:bg-green-600 transition">Setujui</button>
+                                ` : ''}
+                                <button onclick="deleteMember(${member.id})" class="px-2 py-1 bg-red-500/25 text-red-400 rounded text-[10px] font-bold hover:bg-red-500 hover:text-white transition">Hapus</button>
+                            </div>
+                        </td>
+                    `;
+                }
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-white/[0.02] transition border-b border-white/5">
@@ -2652,13 +2693,19 @@
             toggleAdminFeatures();
         }
 
-        // Set Jabatan Member
+        // Set Jabatan Member & Sinkronisasi Otomatis ke Struktur Inti / Koor Remaja RT
         function updateMemberJabatan(memberId, newJabatan) {
             const member = membersData.find(m => m.id === memberId);
             if (member) {
                 // Proteksi edhos dari modifikasi pengurus lain
                 if (member.username === 'edhos') {
                     showToast("Jabatan Super-Admin Ahmad Nandar (edhos) tidak bisa diubah!", true);
+                    return;
+                }
+                
+                // PROTEKSI AKUN JX JIKA CURRENT USER ADALAH KETUA
+                if (member.username === 'jx' && currentUser && currentUser.role === 'ketua') {
+                    showToast("Ketua tidak diperbolehkan mengubah jabatan akun jx!", true);
                     return;
                 }
 
@@ -2671,15 +2718,58 @@
                     showToast("Ketua tidak diperkenankan mengubah atau menetapkan jabatan Ketua!", true);
                     return;
                 }
+                
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                
+                // 1. INTEGRASI OTOMATIS JIKA DIUBAH MENJADI PENGURUS INTI
+                const coreRoles = ['Ketua', 'Wakil', 'Sekretaris', 'Bendahara'];
+                if (coreRoles.includes(newJabatan)) {
+                    let staff = staffData.find(s => s.username === member.username || s.name === member.name);
+                    if (!staff) {
+                        staff = {
+                            id: Date.now(),
+                            name: member.name,
+                            username: member.username,
+                            role: newJabatan,
+                            password: member.password || "123",
+                            detail: `Warga ${member.rt} • Keahlian: Umum`,
+                            quote: "Siap mendedikasikan diri untuk kemajuan pemuda RW 15!",
+                            tags: member.minat.slice(0, 2).join(' & ') || "Remaja Aktif",
+                            wa: member.wa || "081222223333",
+                            profileImage: member.profileImage || ""
+                        };
+                        staffData.push(staff);
+                    } else {
+                        staff.role = newJabatan;
+                    }
+                    if (isFirebaseEnabled()) {
+                        firebase.firestore().doc(`artifacts/${appId}/public/data/staff/${staff.id}`).set(staff);
+                    }
+                }
+
+                // 2. INTEGRASI OTOMATIS JIKA DIUBAH MENJADI KOORDINATOR REMAJA RT
+                if (newJabatan.startsWith("Koor. Remaja RT ")) {
+                    const rtNum = newJabatan.replace("Koor. Remaja RT ", "").trim();
+                    const rtKey = `RT-0${rtNum}`;
+                    if (subRtData[rtKey]) {
+                        subRtData[rtKey].ketua = member.name;
+                        subRtData[rtKey].slogan = `Sinergi Digital Remaja ${rtKey} Hebat!`;
+                        subRtData[rtKey].proker = `Mengembangkan kemandirian pemuda ${rtKey} berbasis minat hobi ${member.minat.join(', ')}.`;
+                        if (isFirebaseEnabled()) {
+                            firebase.firestore().doc(`artifacts/${appId}/public/data/subRtData/${rtKey}`).set(subRtData[rtKey]);
+                        }
+                    }
+                }
+
                 member.jabatan = newJabatan;
                 if (isFirebaseEnabled()) {
-                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
                     firebase.firestore().doc(`artifacts/${appId}/public/data/members/${memberId}`).update({ jabatan: newJabatan });
                 } else {
                     showToast(`Jabatan ${member.name} diperbarui menjadi ${newJabatan}!`);
                 }
                 saveStateToSession();
                 renderMembers();
+                renderPengurus();
             }
         }
 
@@ -2700,7 +2790,7 @@
                 const icon = log.type === 'pemasukan' ? 'fa-circle-arrow-up text-green-400/20' : 'fa-circle-arrow-down text-red-400/20';
 
                 const viewProofBtn = log.proofImage ? `
-                    <button onclick="viewProofImage('${log.proofImage}')" class="px-2.5 py-1.5 bg-indigo-500/10 hover:bg-indigo-500 text-indigo-300 hover:text-white rounded-lg text-[10px] font-bold transition flex items-center gap-1">
+                    <button onclick="zoomImage('${log.proofImage}')" class="px-2.5 py-1.5 bg-indigo-500/10 hover:bg-indigo-500 text-indigo-300 hover:text-white rounded-lg text-[10px] font-bold transition flex items-center gap-1">
                         <i class="fa-solid fa-receipt"></i> Lihat Bukti
                     </button>
                 ` : '<span class="text-[9px] text-gray-500 italic">Bukti fisik belum ada</span>';
@@ -2790,10 +2880,7 @@
         }
 
         function viewProofImage(base64Data) {
-            const modal = document.getElementById('proof-viewer-modal');
-            const img = document.getElementById('proof-viewer-img');
-            img.src = base64Data;
-            modal.classList.remove('hidden');
+            zoomImage(base64Data);
         }
 
         function closeProofViewer() {
@@ -3027,7 +3114,7 @@
             const lainnyaCheckbox = document.getElementById('minat-lainnya-checkbox');
             const lainnyaText = document.getElementById('minat-lainnya-text').value.trim();
             if (lainnyaCheckbox && lainnyaCheckbox.checked && lainnyaText !== '') {
-                minatList.push(lainnyaText);
+                minatList.push(openLainnyaInput);
             }
 
             const newMember = {
@@ -3593,6 +3680,12 @@
                 // Proteksi akun edhos
                 if (member.username === 'edhos') {
                     showToast("Akun Super-Admin Ahmad Nandar (edhos) tidak bisa dihapus oleh siapapun!", true);
+                    return;
+                }
+                
+                // PROTEKSI AKUN JX JIKA CURRENT USER ADALAH KETUA (TIDAK DAPAT DIHAPUS)
+                if (member.username === 'jx' && currentUser && currentUser.role === 'ketua') {
+                    showToast("Ketua tidak diperbolehkan menghapus akun jx!", true);
                     return;
                 }
 
