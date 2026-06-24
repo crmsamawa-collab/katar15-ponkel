@@ -220,7 +220,15 @@
 
     <!-- Admin Banner Indicator -->
     <div id="admin-banner" class="hidden bg-gradient-to-r from-[#e0a82e] to-[#c28410] text-gray-950 text-center py-2 px-4 text-xs font-bold sticky top-16 sm:top-18 z-30 shadow-md">
-        <i class="fa-solid fa-circle-exclamation mr-1.5 text-base align-middle animate-pulse"></i> <span class="align-middle">Mode Akses Istimewa Aktif (<span id="banner-role-name">Admin</span>). Anda memiliki otorisasi fitur internal.</span>
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+            <div>
+                <i class="fa-solid fa-circle-exclamation mr-1.5 text-base align-middle animate-pulse"></i> 
+                <span class="align-middle">Mode Akses Istimewa Aktif (<span id="banner-role-name">Admin</span>). Anda memiliki otorisasi fitur internal.</span>
+            </div>
+            <button id="admin-reset-all-db-btn" onclick="triggerEmptyDatabase()" class="hidden px-3 py-1 bg-red-800 hover:bg-red-900 text-white rounded-lg text-[10px] font-extrabold uppercase tracking-wider transition">
+                <i class="fa-solid fa-trash-can mr-1"></i> Kosongkan Database ⚠️
+            </button>
+        </div>
     </div>
 
     <main class="relative z-10">
@@ -695,7 +703,7 @@
 
     </main>
 
-    <!-- AUTHENTICATION / LOGIN MODAL (Kredensial) -->
+    <!-- AUTHENTICATION / LOGIN MODAL -->
     <div id="login-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
         <div class="relative glass-premium max-w-lg w-full p-5 sm:p-8 rounded-3xl border border-indigo-500/30 max-h-[90vh] overflow-y-auto">
             <button onclick="closeLoginModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
@@ -740,7 +748,7 @@
         </div>
     </div>
 
-    <!-- MODAL: MANAJEMEN RESET PASSWORD (Optimized: hidden password fields, Search input added) -->
+    <!-- MODAL: MANAJEMEN RESET PASSWORD -->
     <div id="reset-password-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
         <div class="relative glass-premium max-w-2xl w-full p-5 sm:p-8 rounded-3xl border border-red-500/30 max-h-[85vh] overflow-y-auto">
             <button onclick="closeResetPasswordManagerModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
@@ -859,7 +867,7 @@
             </div>
 
             <div class="w-full max-h-[50vh] bg-black/40 rounded-xl overflow-hidden mb-6 flex items-center justify-center border border-white/10">
-                <img id="cropper-workspace-image" src="" class="max-w-full max-h-full object-contain">
+                <img id="cropper-workspace-image" src="" class="max-w-full max-h-[50vh]">
             </div>
 
             <div class="flex justify-end gap-3">
@@ -871,7 +879,7 @@
         </div>
     </div>
 
-    <!-- ADMIN MODAL: BRANDING SETTINGS (Logo Image & Icon Customization added) -->
+    <!-- ADMIN MODAL: BRANDING SETTINGS -->
     <div id="branding-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="relative glass-premium max-w-md w-full p-5 sm:p-8 rounded-3xl border border-amber-500/30">
             <button onclick="closeBrandingModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
@@ -1207,7 +1215,7 @@
         let rtInfoUploadedBase64 = ""; 
         let cropperInstance = null; 
 
-        // Konfigurasi Branding Aplikasi Terintegrasi (Mendukung icon dan gambar kustom)
+        // Konfigurasi Branding Aplikasi Terintegrasi
         let appBranding = {
             title: "KATAR RW 15",
             subtitle: "SAMAWA BERDAYA",
@@ -1260,21 +1268,21 @@
             }
         };
 
-        // Data Pengurus Inti (Mendukung kredensial nomor WA pemulihan sandi)
+        // Data Pengurus Inti
         let staffData = [
-            { id: 1, name: "Alif Ramadhan", username: "alif", role: "Ketua", password: "123", detail: "Warga RT 02 • Mahasiswa Sistem Informasi", quote: "Gak perlu formal-formal amat, yang penting aksi nyata buat Samawa.", tags: "Mobile Legends & Ngopi", wa: "6281222223333" },
-            { id: 2, name: "Fuji Astuti", username: "fuji", role: "Wakil", password: "123", detail: "Warga RT 04 • Designer Grafis", quote: "Ada ide acara seru? Yuk langsung kita gaskan, gak pake birokrasi berbelit!", tags: "Seni & K-Pop", wa: "6281233334444" },
-            { id: 3, name: "Rian Pratama", username: "rian", role: "Sekretaris", password: "123", detail: "Warga RT 01 • Freelancer", quote: "Data katar rapi dan bisa dipantau siapa aja lewat drive bersama.", tags: "Futsal & Videografi", wa: "6281244445555" },
-            { id: 4, name: "Zahra Amalia", username: "zahra", role: "Bendahara", password: "123", detail: "Warga RT 03 • Pengusaha Kuliner", quote: "Setiap rupiah uang kas dicatat detail dan dipublish tiap bulan.", tags: "Memasak & Akuntansi", wa: "6281255556666" }
+            { id: 1, name: "Alif Ramadhan", username: "alif", role: "Ketua", password: "123", detail: "Warga RT 02 • Mahasiswa Sistem Informasi", quote: "Gak perlu formal-formal amat, yang penting aksi nyata buat Samawa.", tags: "Mobile Legends & Ngopi", wa: "6281222223333", profileImage: "" },
+            { id: 2, name: "Fuji Astuti", username: "fuji", role: "Wakil", password: "123", detail: "Warga RT 04 • Designer Grafis", quote: "Ada ide acara seru? Yuk langsung kita gaskan, gak pake birokrasi berbelit!", tags: "Seni & K-Pop", wa: "6281233334444", profileImage: "" },
+            { id: 3, name: "Rian Pratama", username: "rian", role: "Sekretaris", password: "123", detail: "Warga RT 01 • Freelancer", quote: "Data katar rapi dan bisa dipantau siapa aja lewat drive bersama.", tags: "Futsal & Videografi", wa: "6281244445555", profileImage: "" },
+            { id: 4, name: "Zahra Amalia", username: "zahra", role: "Bendahara", password: "123", detail: "Warga RT 03 • Pengusaha Kuliner", quote: "Setiap rupiah uang kas dicatat detail dan dipublish tiap bulan.", tags: "Memasak & Akuntansi", wa: "6281255556666", profileImage: "" }
         ];
 
-        // Data Anggota (Squad) Terdaftar beserta Kredensial password dan username
+        // Data Anggota (Squad) Terdaftar
         let membersData = [
-            { id: 11, name: "Ahmad Nandar", username: "edhos", rt: "RT 01", unit: "0436", minat: ["Ngopi"], status: "Aktif", wa: "082220691212", password: "cumaedhos", jabatan: "Admin" },
-            { id: 12, name: "Doni Setiawan", username: "doni", rt: "RT 01", unit: "0311", minat: ["Olahraga"], status: "Aktif", wa: "081211223344", password: "123", jabatan: "Koor. Remaja RT 1" },
-            { id: 13, name: "Rendra Prasetyo", username: "rendra", rt: "RT 02", unit: "0619", minat: ["E-Sports", "Olahraga"], status: "Aktif", wa: "081211112222", password: "123", jabatan: "Anggota" },
-            { id: 14, name: "Siti Rahmawati", username: "siti", rt: "RT 05", unit: "1808", minat: ["Sosial/Relawan", "Seni/Musik"], status: "Aktif", wa: "081233334444", password: "123", jabatan: "Anggota" },
-            { id: 15, name: "Taufik Hidayat", username: "taufik", rt: "RT 01", unit: "0412", minat: ["Olahraga"], status: "Pending Verifikasi", wa: "081255556666", password: "123", jabatan: "Anggota" }
+            { id: 11, name: "Ahmad Nandar", username: "edhos", rt: "RT 01", unit: "0436", minat: ["Ngopi"], status: "Aktif", wa: "082220691212", password: "cumaedhos", jabatan: "Admin", profileImage: "" },
+            { id: 12, name: "Doni Setiawan", username: "doni", rt: "RT 01", unit: "0311", minat: ["Olahraga"], status: "Aktif", wa: "081211223344", password: "123", jabatan: "Koor. Remaja RT 1", profileImage: "" },
+            { id: 13, name: "Rendra Prasetyo", username: "rendra", rt: "RT 02", unit: "0619", minat: ["E-Sports", "Olahraga"], status: "Aktif", wa: "081211112222", password: "123", jabatan: "Anggota", profileImage: "" },
+            { id: 14, name: "Siti Rahmawati", username: "siti", rt: "RT 05", unit: "1808", minat: ["Sosial/Relawan", "Seni/Musik"], status: "Aktif", wa: "081233334444", password: "123", jabatan: "Anggota", profileImage: "" },
+            { id: 15, name: "Taufik Hidayat", username: "taufik", rt: "RT 01", unit: "0412", minat: ["Olahraga"], status: "Pending Verifikasi", wa: "081255556666", password: "123", jabatan: "Anggota", profileImage: "" }
         ];
 
         // Data Keuangan
@@ -1397,11 +1405,9 @@
         async function initFirebase() {
             let config = null;
 
-            // 1. Cek apakah ada config global dari sandbox/iframe
             if (typeof __firebase_config !== 'undefined' && __firebase_config) {
                 config = JSON.parse(__firebase_config);
             } else {
-                // 2. Jika di Vercel, panggil serverless function yang aman
                 try {
                     const res = await fetch('/api/firebase-config');
                     if (res.ok) {
@@ -1418,7 +1424,6 @@
                     const db = firebase.firestore();
                     const auth = firebase.auth();
 
-                    // Lakukan login anonim/token sebelum memanggil database
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                         await auth.signInWithCustomToken(__initial_auth_token);
                     } else {
@@ -1433,11 +1438,11 @@
             }
         }
 
-        // --- SISTEM SINKRONISASI FIRESTORE (Aturan 1: Jalur Ketat, Aturan 2: Tanpa query kompleks) ---
+        // --- SISTEM SINKRONISASI FIRESTORE ---
         function setupFirestoreSync(db, auth) {
             const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
 
-            // 1. Sinkronisasi Profil Branding (Koleksi Publik)
+            // 1. Sinkronisasi Profil Branding
             db.doc(`artifacts/${appId}/public/data/branding/config`).onSnapshot(docSnap => {
                 if (docSnap.exists()) {
                     appBranding = docSnap.data();
@@ -1470,7 +1475,6 @@
                 });
                 if (tempStaff.length > 0) {
                     staffData = tempStaff;
-                    // Sinkronisasi foto profil mandiri pengguna jika terjadi pembaruan di database lain
                     if (currentUser) {
                         const updatedMe = staffData.find(s => s.id === currentUser.id || s.username === currentUser.username);
                         if (updatedMe && updatedMe.profileImage) {
@@ -1505,7 +1509,6 @@
                 });
                 if (tempMembers.length > 0) {
                     membersData = tempMembers;
-                    // Sinkronisasi foto profil dinamis jika pengguna aktif adalah bagian dari koleksi members
                     if (currentUser) {
                         const updatedMe = membersData.find(m => m.id === currentUser.id || m.username === currentUser.username);
                         if (updatedMe && updatedMe.profileImage) {
@@ -1567,26 +1570,28 @@
                 }
             }, err => console.error("Error diskusi:", err));
 
-            // 7. Sinkronisasi Obrolan Sembang (Live Chat)
+            // 7. Sinkronisasi & Auto-delete Live Chat (> 7 Hari)
             db.collection(`artifacts/${appId}/public/data/livechat`).onSnapshot(querySnap => {
                 let tempLive = [];
+                const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+
                 querySnap.forEach(doc => {
-                    tempLive.push({ id: Number(doc.id) || doc.id, ...doc.data() });
+                    const docId = Number(doc.id);
+                    if (docId && docId < sevenDaysAgo) {
+                        // Otomatis hapus pesan usang dari Firestore cloud secara berkala
+                        doc.ref.delete().catch(err => console.error("Gagal menghapus pesan usang secara otomatis:", err));
+                    } else {
+                        tempLive.push({ id: docId || doc.id, ...doc.data() });
+                    }
                 });
+
                 if (tempLive.length > 0) {
                     tempLive.sort((a, b) => a.id - b.id);
                     livechatMessages = tempLive;
-                    renderLivechat();
                 } else {
-                    livechatMessages.forEach(msg => {
-                        db.doc(`artifacts/${appId}/public/data/livechat/${msg.id}`).set({
-                            user: msg.user,
-                            role: msg.role,
-                            msg: msg.msg,
-                            time: msg.time
-                        });
-                    });
+                    livechatMessages = [];
                 }
+                renderLivechat();
             }, err => console.error("Error livechat:", err));
 
             // 8. Sinkronisasi Artikel RW
@@ -1623,7 +1628,6 @@
             const sections = ['beranda', 'sub-rt', 'pengurus', 'transparansi', 'forum-diskusi', 'live-chat', 'daftar'];
 
             if (currentUser) {
-                // Sembunyikan bagian yang tidak relevan sepenuhnya jika login
                 sections.forEach(id => {
                     const el = document.getElementById(id);
                     if (el) {
@@ -1634,10 +1638,8 @@
                         }
                     }
                 });
-                // Sesuai permintaan: selalu gulir halaman ke paling atas setiap pindah halaman
                 window.scrollTo(0, 0);
             } else {
-                // Tampilkan semua secara bergulir untuk tamu (standard landing-page scrolling)
                 sections.forEach(id => {
                     const el = document.getElementById(id);
                     if (el) {
@@ -1647,7 +1649,7 @@
                 const targetEl = document.getElementById(targetId);
                 if (targetEl && targetId !== 'beranda') {
                     targetEl.scrollIntoView({ behavior: 'smooth' });
-                    return; // Lewati scroll 0,0 agar mengarah langsung ke bagian target
+                    return; 
                 }
                 window.scrollTo(0, 0);
             }
@@ -1673,12 +1675,9 @@
         window.addEventListener('hashchange', handleNavigation);
 
         window.onload = async function() {
-            loadStateFromSession(); // Ambil data session agar refresh tidak logout
-            
-            // Coba inisialisasi cloud Firebase Firestore secara aman
+            loadStateFromSession(); 
             await initFirebase();
 
-            // Jika pengguna memang sudah login sebelumnya, pasang state visual UI-nya
             if (currentUser) {
                 document.getElementById('user-status').classList.remove('hidden');
                 document.getElementById('user-display-name').innerText = currentUser.name;
@@ -1718,18 +1717,17 @@
             return ['admin', 'ketua', 'wakil', 'sekretaris', 'bendahara'].includes(currentUser.role);
         }
 
-        // Verifikasi anggota bisa dilakukan oleh Admin atau Pengurus Inti
         function canVerifyMembers() {
             if (!currentUser) return false;
             return ['admin', 'ketua', 'wakil', 'sekretaris', 'bendahara'].includes(currentUser.role);
         }
 
-        // Kelola modul keuangan
         function canManageFinances() {
             if (!currentUser) return false;
             return ['admin', 'bendahara'].includes(currentUser.role);
         }
 
+        // Pengosongan & Aturan edit koordinator
         function canManageCoordinators() {
             if (!currentUser) return false;
             return currentUser.role === 'admin';
@@ -1740,7 +1738,6 @@
             return currentUser.role === 'admin';
         }
 
-        // Mengecek apakah user adalah koordinator RT atau admin
         function canManageRtInfo(rtKey) {
             if (!currentUser) return false;
             if (currentUser.role === 'admin') return true;
@@ -1754,7 +1751,6 @@
             return false;
         }
 
-        // Mengecek apakah user berhak menggunakan Panel Reset Sandi (Admin, Ketua, Wakil)
         function canResetPasswords() {
             if (!currentUser) return false;
             return ['admin', 'ketua', 'wakil'].includes(currentUser.role);
@@ -1787,7 +1783,7 @@
                 setTimeout(() => {
                     toast.classList.add('hidden');
                 }, 300);
-            }, 5000); // Tahan lebih lama agar sandi di toast sempat dibaca
+            }, 5000); 
         }
 
         // Custom Confirm Dialog Utility
@@ -1870,12 +1866,12 @@
                 const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
                 firebase.firestore().doc(`artifacts/${appId}/public/data/branding/config`).set(appBranding);
             } else {
-                saveStateToSession(); // Persist ke session storage
+                saveStateToSession(); 
             }
             showToast("Desain logo dikembalikan ke default teks.");
         }
 
-        // Render Artikel / Informasi Beranda RW
+        // Render Artikel / Informasi Beranda RW (Mendukung paragraf terformat)
         function renderArticles() {
             const grid = document.getElementById('articles-grid');
             grid.innerHTML = '';
@@ -1905,7 +1901,7 @@
                                     <i class="fa-solid fa-calendar"></i> ${art.date}
                                 </p>
                                 <h3 class="font-bold text-base text-white leading-snug hover:text-indigo-300 transition">${art.title}</h3>
-                                <p class="text-xs text-gray-400 leading-relaxed">${art.content}</p>
+                                <p class="text-xs text-gray-400 leading-relaxed whitespace-pre-line">${art.content}</p>
                             </div>
                         </div>
                         <div class="p-5 pt-0 flex flex-col gap-2">
@@ -1945,7 +1941,6 @@
             uploadedBase64Image = "";
         }
 
-        // Tutup modul pop up
         function closeArticleModal() {
             document.getElementById('article-modal').classList.add('hidden');
         }
@@ -2001,7 +1996,7 @@
                 }
             }
 
-            saveStateToSession(); // Simpan perubahan lokal
+            saveStateToSession(); 
             renderArticles();
             closeArticleModal();
         }
@@ -2040,7 +2035,7 @@
             });
         }
 
-        // Switch Sub-RT Tabs & Content Render
+        // Switch Sub-RT Tabs & Content Render (Mendukung paragraf terformat)
         function switchRtTab(rtKey) {
             document.querySelectorAll('.rt-tab-btn').forEach(btn => {
                 btn.className = "rt-tab-btn px-4 py-2.5 rounded-xl bg-white/5 text-gray-400 text-xs sm:text-sm font-semibold hover:bg-white/10 transition";
@@ -2077,7 +2072,7 @@
                                 ${imgTag}
                                 <span class="text-[9px] text-indigo-400 font-bold block mb-1">${info.date}</span>
                                 <h5 class="font-bold text-white text-xs sm:text-sm mb-1">${info.title}</h5>
-                                <p class="text-xs text-gray-400 leading-relaxed">${info.content}</p>
+                                <p class="text-xs text-gray-400 leading-relaxed whitespace-pre-line">${info.content}</p>
                             </div>
                             ${deleteBtn}
                         </div>
@@ -2112,7 +2107,7 @@
                             <h4 class="font-bold text-xs text-white uppercase tracking-wider flex items-center gap-2">
                                 <i class="fa-solid fa-lightbulb text-amber-400"></i> Fokus Kegiatan RT:
                             </h4>
-                            <div class="text-xs text-gray-300 italic">
+                            <div class="text-xs text-gray-300 italic whitespace-pre-line">
                                 "${rt.proker}"
                             </div>
                         </div>
@@ -2274,7 +2269,6 @@
             closeRtInfoModal();
         }
 
-        // Hapus Informasi RT
         function deleteRtInfo(rtKey, infoId) {
             if (!canManageRtInfo(rtKey)) {
                 showToast("Anda tidak berhak menghapus informasi di RT ini!", true);
@@ -2363,6 +2357,12 @@
             const staff = staffData.find(s => s.id === id);
 
             if (staff) {
+                // Cegah memodifikasi akun edhos jika diakses diluar hak miliknya
+                if (staff.username === 'edhos' && currentUser.username !== 'edhos') {
+                    showToast("Profil Super-Admin edhos dilindungi mutlak!", true);
+                    return;
+                }
+
                 staff.detail = document.getElementById('edit-own-staff-detail').value;
                 staff.quote = document.getElementById('edit-own-staff-quote').value;
                 staff.tags = document.getElementById('edit-own-staff-tags').value;
@@ -2404,13 +2404,16 @@
                 const escName = u.name.replace(/'/g, "\\'");
                 const escUsername = u.username.replace(/'/g, "\\'");
 
+                // Akun edhos dilindungi penuh di daftar reset jika bukan edhos yang mengakses
+                const disableBtn = (escUsername === 'edhos' && currentUser.username !== 'edhos') ? 'disabled opacity-50 cursor-not-allowed bg-gray-500/20 text-gray-500 border-none' : '';
+
                 tbody.innerHTML += `
                     <tr class="hover:bg-white/5 border-b border-white/5 transition duration-150">
                         <td class="p-3 font-semibold text-white">${u.name}</td>
                         <td class="p-3 text-indigo-300 font-mono">${u.username}</td>
                         <td class="p-3"><span class="px-2 py-0.5 rounded bg-white/10 text-gray-400 text-[10px] uppercase font-bold">${u.role}</span></td>
                         <td class="p-3 text-center">
-                            <button onclick="performPasswordReset('${u.type}', ${u.id}, '${escName}', '${escUsername}')" class="px-3 py-1.5 bg-red-500/20 border border-red-500/40 hover:bg-red-500 text-red-300 hover:text-white rounded-xl text-[11px] font-bold transition flex items-center justify-center gap-1 mx-auto shadow-md">
+                            <button ${disableBtn} onclick="performPasswordReset('${u.type}', ${u.id}, '${escName}', '${escUsername}')" class="px-3 py-1.5 bg-red-500/20 border border-red-500/40 hover:bg-red-500 text-red-300 hover:text-white rounded-xl text-[11px] font-bold transition flex items-center justify-center gap-1 mx-auto shadow-md">
                                 <i class="fa-solid fa-rotate-left"></i> Reset Sandi
                             </button>
                         </td>
@@ -2425,7 +2428,6 @@
             document.getElementById('reset-password-modal').classList.add('hidden');
         }
 
-        // Menyaring data pengguna di tabel Kredensial secara real-time
         function filterCredentialTable() {
             const query = document.getElementById('pw-search-input').value.toLowerCase().trim();
             const rows = document.querySelectorAll('#credential-table-body tr');
@@ -2441,8 +2443,13 @@
             });
         }
 
-        // Menjalankan reset sandi instan menjadi Katar15
         function performPasswordReset(type, id, name, username) {
+            // Pengamanan akun Edhos
+            if (username === 'edhos' && currentUser.username !== 'edhos') {
+                showToast("Kata sandi Super-Admin edhos hanya bisa direset oleh dirinya sendiri!", true);
+                return;
+            }
+
             const defaultNewPw = "Katar15";
             let targetPhone = "";
 
@@ -2460,7 +2467,6 @@
                 }
             }
 
-            // Sync ke Firestore jika aktif
             if (isFirebaseEnabled()) {
                 const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
                 if (type === 'staff') {
@@ -2470,13 +2476,10 @@
                 }
             }
 
-            saveStateToSession(); // Simpan perubahan kata sandi baru secara instan
-            openResetPasswordManagerModal(); // Render ulang tabel kredensial
+            saveStateToSession(); 
+            openResetPasswordManagerModal(); 
 
-            // Susun draf pesan WhatsApp yang siap dikirim/disalin
             const waMessage = `Halo ${name},\n\nKata sandi akun Katar15 Anda telah berhasil di-reset oleh pengurus.\n\nUsername Login: *${username}*\nKata Sandi Baru: *${defaultNewPw}*\n\nSilakan segera masuk sistem dan ubah kata sandi baru Anda di menu "Edit Profil" demi keamanan agar akun tetap terlindungi. Terima kasih!`;
-            
-            // Munculkan popup notifikasi salin pesan
             showResetSuccessPopup(name, targetPhone, waMessage);
         }
 
@@ -2491,16 +2494,14 @@
             document.getElementById('reset-success-popup').classList.add('hidden');
         }
 
-        // Format WA URL dengan Country Code Indonesia yang Valid
         function formatWAUrl(phone, message) {
-            let cleanPhone = phone.replace(/\D/g, ''); // Ambil angka saja
+            let cleanPhone = phone.replace(/\D/g, ''); 
             if (cleanPhone.startsWith('08')) {
                 cleanPhone = '62' + cleanPhone.substring(1);
             }
             return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
         }
 
-        // Mengirimkan teks draf reset sandi langsung ke WA penerima
         function sendResetText() {
             const targetPhone = document.getElementById('reset-popup-target-phone').value;
             const message = document.getElementById('reset-popup-wa-text').value;
@@ -2510,7 +2511,6 @@
             closeResetSuccessPopup();
         }
 
-        // Lupa Sandi Info Helper
         function handleForgotPassword() {
             showToast("Silakan hubungi Admin (Edhos), Ketua (Alif), atau Wakil (Fuji) untuk melakukan reset sandi akun Anda menjadi 'Katar15'.", false);
         }
@@ -2595,7 +2595,14 @@
                 const displayUsername = member.username || member.name.split(' ')[0].toLowerCase();
 
                 let jabatanSelectorHtml = "";
-                if (currentUser && ['admin', 'ketua'].includes(currentUser.role)) {
+                if (member.username === 'edhos') {
+                    // Proteksi visual untuk akun edhos
+                    jabatanSelectorHtml = `
+                        <span class="px-2.5 py-1 rounded bg-white/5 text-xs text-amber-400 font-extrabold border border-amber-400/20">
+                            Super Admin
+                        </span>
+                    `;
+                } else if (currentUser && ['admin', 'ketua'].includes(currentUser.role)) {
                     let optionsHtml = '';
                     daftarJabatan.forEach(jab => {
                         if (currentUser.role === 'ketua' && jab === 'Ketua') {
@@ -2604,19 +2611,11 @@
                         optionsHtml += `<option value="${jab}" ${member.jabatan === jab ? 'selected' : ''}>${jab}</option>`;
                     });
 
-                    if (member.jabatan === 'Ketua' && currentUser.role === 'ketua') {
-                        jabatanSelectorHtml = `
-                            <span class="px-2.5 py-1 rounded bg-white/5 text-xs text-amber-400 font-bold border border-amber-400/20">
-                                ${member.jabatan}
-                            </span>
-                        `;
-                    } else {
-                        jabatanSelectorHtml = `
-                            <select onchange="updateMemberJabatan(${member.id}, this.value)" class="bg-[#0d121e] border border-white/10 rounded-lg px-2 py-1 text-xs text-indigo-300 font-bold focus:outline-none">
-                                ${optionsHtml}
-                            </select>
-                        `;
-                    }
+                    jabatanSelectorHtml = `
+                        <select onchange="updateMemberJabatan(${member.id}, this.value)" class="bg-[#0d121e] border border-white/10 rounded-lg px-2 py-1 text-xs text-indigo-300 font-bold focus:outline-none">
+                            ${optionsHtml}
+                        </select>
+                    `;
                 } else {
                     jabatanSelectorHtml = `
                         <span class="px-2.5 py-1 rounded bg-white/5 text-xs ${member.jabatan !== 'Anggota' ? 'text-amber-400 font-bold border border-amber-400/20' : 'text-gray-300'}">
@@ -2624,6 +2623,18 @@
                         </span>
                     `;
                 }
+
+                // Jangan tampilkan tombol aksi hapus untuk edhos
+                const displayActionCell = member.username === 'edhos' ? `<td class="member-actions-cell px-4 py-3 hidden"><span class="text-xs text-indigo-400 font-semibold italic">Owner</span></td>` : `
+                    <td class="member-actions-cell px-4 py-3 hidden">
+                        <div class="flex items-center space-x-2">
+                            ${member.status === 'Pending Verifikasi' ? `
+                            <button onclick="approveMember(${member.id})" class="px-2 py-1 bg-green-500 text-white rounded text-[10px] font-bold hover:bg-green-600 transition">Setujui</button>
+                            ` : ''}
+                            <button onclick="deleteMember(${member.id})" class="px-2 py-1 bg-red-500/25 text-red-400 rounded text-[10px] font-bold hover:bg-red-500 hover:text-white transition">Hapus</button>
+                        </div>
+                    </td>
+                `;
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-white/[0.02] transition border-b border-white/5">
@@ -2633,14 +2644,7 @@
                         <td class="px-4 py-3">${minatBadges}</td>
                         <td class="px-4 py-3">${jabatanSelectorHtml}</td>
                         <td class="px-4 py-3"><span class="px-2 py-1 rounded text-[10px] font-bold ${badgeClass}">${member.status}</span></td>
-                        <td class="member-actions-cell px-4 py-3 hidden">
-                            <div class="flex items-center space-x-2">
-                                ${member.status === 'Pending Verifikasi' ? `
-                                <button onclick="approveMember(${member.id})" class="px-2 py-1 bg-green-500 text-white rounded text-[10px] font-bold hover:bg-green-600 transition">Setujui</button>
-                                ` : ''}
-                                <button onclick="deleteMember(${member.id})" class="px-2 py-1 bg-red-500/25 text-red-400 rounded text-[10px] font-bold hover:bg-red-500 hover:text-white transition">Hapus</button>
-                            </div>
-                        </td>
+                        ${displayActionCell}
                     </tr>
                 `;
             });
@@ -2649,12 +2653,19 @@
 
         // Set Jabatan Member
         function updateMemberJabatan(memberId, newJabatan) {
-            if (!currentUser || !['admin', 'ketua'].includes(currentUser.role)) {
-                showToast("Anda tidak memiliki otorisasi untuk mengubah jabatan!", true);
-                return;
-            }
             const member = membersData.find(m => m.id === memberId);
             if (member) {
+                // Proteksi edhos dari modifikasi pengurus lain
+                if (member.username === 'edhos') {
+                    showToast("Jabatan Super-Admin Ahmad Nandar (edhos) tidak bisa diubah!", true);
+                    return;
+                }
+
+                if (!currentUser || !['admin', 'ketua'].includes(currentUser.role)) {
+                    showToast("Anda tidak memiliki otorisasi untuk mengubah jabatan!", true);
+                    return;
+                }
+
                 if (currentUser.role === 'ketua' && (member.jabatan === 'Ketua' || newJabatan === 'Ketua')) {
                     showToast("Ketua tidak diperkenankan mengubah atau menetapkan jabatan Ketua!", true);
                     return;
@@ -2720,7 +2731,7 @@
             document.getElementById('proof-viewer-modal').classList.add('hidden');
         }
 
-        // Render Forum Diskusi Beserta Balasan Real-Time
+        // Render Forum Diskusi Beserta Balasan Real-Time (Mendukung paragraf terformat)
         function renderDiskusi() {
             const container = document.getElementById('diskusi-list-container');
             container.innerHTML = '';
@@ -2741,7 +2752,7 @@
                                         </div>
                                         <span class="text-[9px] text-gray-500">${rep.tanggal}</span>
                                     </div>
-                                    <p class="text-xs text-gray-300 pl-8 leading-relaxed">${rep.isi}</p>
+                                    <p class="text-xs text-gray-300 pl-8 leading-relaxed whitespace-pre-line">${rep.isi}</p>
                                 </div>
                             `).join('')}
                         </div>
@@ -2790,7 +2801,7 @@
                         </div>
                         <div class="space-y-1">
                             <h3 class="font-bold text-sm text-indigo-300">${item.judul}</h3>
-                            <p class="text-xs text-gray-300 leading-relaxed">${item.isi}</p>
+                            <p class="text-xs text-gray-300 leading-relaxed whitespace-pre-line">${item.isi}</p>
                         </div>
                         
                         <!-- Replies Container -->
@@ -2971,7 +2982,7 @@
                 membersData.push(newMember);
                 renderMembers();
             }
-            saveStateToSession(); // Simpan pendaftaran baru ke session storage
+            saveStateToSession(); 
 
             document.getElementById('alert-sukses').classList.remove('hidden');
             document.getElementById('form-daftar').reset();
@@ -2994,29 +3005,29 @@
             document.getElementById('login-modal').classList.add('hidden');
         }
 
-        function performDemoLoginWithData(id, name, roleCode, imgUrl) {
+        function performDemoLoginWithData(id, name, roleCode, imgUrl, username) {
             currentUser = {
                 id: id,
                 name: name,
                 role: roleCode,
+                username: username,
                 profileImage: imgUrl || `https://placehold.co/150x150/1e1b4b/ffffff?text=${encodeURIComponent(name[0])}`
             };
             completeLoginWorkflow();
         }
 
-        // Dipertahankan sebagai cadangan pemrosesan background, referensi ke Ahmad Nandar jika login admin dijalankan
         function performDemoLogin(role) {
             const mappings = {
-                'admin': { id: 11, name: "Ahmad Nandar", role: "admin", profileImage: "" },
-                'ketua': { id: 1, name: "Alif Ramadhan", role: "ketua", profileImage: "" },
-                'wakil_ketua': { id: 2, name: "Fuji Astuti", role: "wakil", profileImage: "" },
-                'sekretaris': { id: 3, name: "Rian Pratama", role: "sekretaris", profileImage: "" },
-                'bendahara': { id: 4, name: "Zahra Amalia", role: "bendahara", profileImage: "" },
-                'koordinator_rt': { id: 12, name: "Doni Setiawan", role: "koordinator_rt", profileImage: "" },
-                'warga': { id: 13, name: "Rendra Prasetyo", role: "warga", profileImage: "" }
+                'admin': { id: 11, name: "Ahmad Nandar", role: "admin", username: "edhos", profileImage: "" },
+                'ketua': { id: 1, name: "Alif Ramadhan", role: "ketua", username: "alif", profileImage: "" },
+                'wakil_ketua': { id: 2, name: "Fuji Astuti", role: "wakil", username: "fuji", profileImage: "" },
+                'sekretaris': { id: 3, name: "Rian Pratama", role: "sekretaris", username: "rian", profileImage: "" },
+                'bendahara': { id: 4, name: "Zahra Amalia", role: "bendahara", username: "zahra", profileImage: "" },
+                'koordinator_rt': { id: 12, name: "Doni Setiawan", role: "koordinator_rt", username: "doni", profileImage: "" },
+                'warga': { id: 13, name: "Rendra Prasetyo", role: "warga", username: "rendra", profileImage: "" }
             };
 
-            currentUser = mappings[role] || { id: Date.now(), name: "Guest Warga", role: "warga", profileImage: "" };
+            currentUser = mappings[role] || { id: Date.now(), name: "Guest Warga", role: "warga", username: "guest", profileImage: "" };
 
             if (!currentUser.profileImage) {
                 currentUser.profileImage = `https://placehold.co/150x150/1e1b4b/ffffff?text=${encodeURIComponent(currentUser.name[0])}`;
@@ -3044,7 +3055,7 @@
             toggleUIBasedOnLogin();
             toggleAdminFeatures();
             
-            saveStateToSession(); // Simpan status masuk di session
+            saveStateToSession(); 
             renderArticles();
             const currentRtTabActive = document.querySelector('.rt-tab-btn.bg-indigo-600')?.id?.replace('tab-', '') || 'RT-01';
             switchRtTab(currentRtTabActive);
@@ -3076,7 +3087,7 @@
 
                     toggleUIBasedOnLogin();
                     toggleAdminFeatures();
-                    saveStateToSession(); // Hapus status login di session
+                    saveStateToSession(); 
 
                     renderArticles();
                     const currentRtTabActive = document.querySelector('.rt-tab-btn.bg-indigo-600')?.id?.replace('tab-', '') || 'RT-01';
@@ -3153,7 +3164,7 @@
             const base64Img = canvas.toDataURL();
             
             currentUser.profileImage = base64Img;
-            saveStateToSession(); // Simpan foto profil baru
+            saveStateToSession(); 
 
             document.getElementById('user-avatar-img').src = base64Img;
             document.getElementById('profile-preview-img').src = base64Img;
@@ -3163,14 +3174,12 @@
             if (isFirebaseEnabled()) {
                 const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
                 
-                // Cari di staffData
                 const inStaff = staffData.find(s => s.id === currentUser.id || s.username === currentUser.username);
                 if (inStaff) {
                     firebase.firestore().doc(`artifacts/${appId}/public/data/staff/${inStaff.id}`).update({ profileImage: base64Img })
                         .catch(err => console.error("Gagal sinkronisasi foto pengurus:", err));
                 }
 
-                // Cari di membersData
                 const inMembers = membersData.find(m => m.id === currentUser.id || m.username === currentUser.username);
                 if (inMembers) {
                     firebase.firestore().doc(`artifacts/${appId}/public/data/members/${inMembers.id}`).update({ profileImage: base64Img })
@@ -3256,7 +3265,7 @@
                 const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
                 firebase.firestore().doc(`artifacts/${appId}/public/data/branding/config`).set(appBranding);
             } else {
-                saveStateToSession(); // Simpan branding lokal
+                saveStateToSession(); 
             }
             closeBrandingModal();
             showToast("Branding aplikasi berhasil diterapkan!");
@@ -3266,7 +3275,6 @@
             document.getElementById('brand-title').innerText = appBranding.title;
             document.getElementById('brand-subtitle').innerText = appBranding.subtitle;
             
-            // Kustomisasi Logo Kiri Atas secara dinamis (GAMBAR / ICON / TEKS)
             const logoContainer = document.getElementById('brand-logo-container');
             if (logoContainer) {
                 if (appBranding.logoImage) {
@@ -3299,6 +3307,14 @@
                 adminBanner.classList.add('hidden');
             }
 
+            // Tombol "Kosongkan Database" hanya boleh muncul untuk super-admin 'edhos' demi keamanan data
+            const emptyDbBtn = document.getElementById('admin-reset-all-db-btn');
+            if (currentUser && currentUser.username === 'edhos') {
+                emptyDbBtn.classList.remove('hidden');
+            } else {
+                emptyDbBtn.classList.add('hidden');
+            }
+
             const brandBtn = document.getElementById('admin-brand-btn');
             if (isSuperAdminOnly) {
                 brandBtn.classList.remove('hidden');
@@ -3306,7 +3322,6 @@
                 brandBtn.classList.add('hidden');
             }
 
-            // Atur tombol Reset Kata Sandi Anggota (Hanya untuk Admin, Ketua, & Wakil)
             const resetPwBtn = document.getElementById('admin-reset-pw-btn');
             if (canResetPasswords()) {
                 resetPwBtn.classList.remove('hidden');
@@ -3339,6 +3354,99 @@
             } else {
                 finUpdateBtn.classList.add('hidden');
             }
+        }
+
+        // --- SISTEM KOSONGKAN DATABASE CLOUD (MANDATORY ADMIN) ---
+        function triggerEmptyDatabase() {
+            if (!currentUser || currentUser.username !== 'edhos') {
+                showToast("Hanya Super-Admin Ahmad Nandar (edhos) yang berhak mengosongkan seluruh database!", true);
+                return;
+            }
+            showConfirm("PERINGATAN SANGAT KRITIS! Apakah Anda benar-benar yakin ingin menghapus seluruh isi database cloud (Artikel, Keuangan, Diskusi, RT, Livechat, dan semua Anggota kecuali edhos)? Tindakan ini tidak dapat dibatalkan.", (isConfirmed) => {
+                if (isConfirmed) {
+                    emptyAllDatabaseCollections();
+                }
+            });
+        }
+
+        function emptyAllDatabaseCollections() {
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+            showToast("Menghubungi cloud untuk membersihkan seluruh data...", false);
+
+            if (isFirebaseEnabled()) {
+                const db = firebase.firestore();
+
+                // 1. Bersihkan semua Artikel RW
+                db.collection(`artifacts/${appId}/public/data/articles`).get().then(snap => {
+                    snap.forEach(doc => doc.ref.delete());
+                }).catch(e => console.error("Error clearing articles:", e));
+
+                // 2. Bersihkan semua Anggota selain edhos
+                db.collection(`artifacts/${appId}/public/data/members`).get().then(snap => {
+                    snap.forEach(doc => {
+                        const data = doc.data();
+                        if (data.username !== 'edhos') {
+                            doc.ref.delete();
+                        }
+                    });
+                }).catch(e => console.error("Error clearing members:", e));
+
+                // 3. Bersihkan pengurus kustom tambahan
+                db.collection(`artifacts/${appId}/public/data/staff`).get().then(snap => {
+                    snap.forEach(doc => doc.ref.delete());
+                }).catch(e => console.error("Error clearing staff:", e));
+
+                // 4. Reset laporan Keuangan Kas
+                const resetKeuangan = { totalKas: 0, pemasukan: 0, pengeluaran: 0, logs: [] };
+                db.doc(`artifacts/${appId}/public/data/keuangan/config`).set(resetKeuangan)
+                    .catch(e => console.error("Error resetting finance:", e));
+
+                // 5. Bersihkan forum diskusi warga
+                db.collection(`artifacts/${appId}/public/data/diskusi`).get().then(snap => {
+                    snap.forEach(doc => doc.ref.delete());
+                }).catch(e => console.error("Error clearing diskusi:", e));
+
+                // 6. Bersihkan semua live chat
+                db.collection(`artifacts/${appId}/public/data/livechat`).get().then(snap => {
+                    snap.forEach(doc => doc.ref.delete());
+                }).catch(e => console.error("Error clearing livechat:", e));
+
+                // 7. Reset semua subRT pengumuman
+                const defaultRTs = ["RT-01", "RT-02", "RT-03", "RT-04", "RT-05"];
+                defaultRTs.forEach(rtKey => {
+                    const emptyRt = {
+                        ketua: subRtData[rtKey]?.ketua || "Belum Ditentukan",
+                        slogan: "Bersama Kita Maju",
+                        anggota: 0,
+                        proker: "Belum Ditentukan",
+                        informasi: []
+                    };
+                    db.doc(`artifacts/${appId}/public/data/subRtData/${rtKey}`).set(emptyRt)
+                        .catch(e => console.error(`Error resetting RT info for ${rtKey}:`, e));
+                });
+
+                showToast("Database cloud berhasil dibersihkan sepenuhnya!", false);
+            } else {
+                // Fallback reset memori lokal aplikasi jika Firebase tidak aktif
+                articlesList = [];
+                membersData = membersData.filter(m => m.username === 'edhos');
+                keuangan = { totalKas: 0, pemasukan: 0, pengeluaran: 0, logs: [] };
+                diskusiList = [];
+                livechatMessages = [];
+                for (let rtKey in subRtData) {
+                    subRtData[rtKey].anggota = 0;
+                    subRtData[rtKey].informasi = [];
+                }
+
+                renderArticles();
+                renderMembers();
+                renderFinance();
+                renderDiskusi();
+                renderLivechat();
+                switchRtTab('RT-01');
+                showToast("Pembersihan database lokal berhasil dilakukan!", false);
+            }
+            saveStateToSession();
         }
 
         // Save New Post in Forum
@@ -3414,23 +3522,33 @@
 
         // Delete Member
         function deleteMember(id) {
-            if (!canVerifyMembers()) {
-                showToast("Role Anda tidak memiliki otorisasi manajemen anggota!", true);
-                return;
-            }
-            showConfirm("Apakah Anda yakin ingin menghapus anggota ini?", (isConfirmed) => {
-                if (isConfirmed) {
-                    if (isFirebaseEnabled()) {
-                        const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
-                        firebase.firestore().doc(`artifacts/${appId}/public/data/members/${id}`).delete();
-                    } else {
-                        membersData = membersData.filter(m => m.id !== id);
-                        renderMembers();
-                        showToast("Anggota berhasil dihapus.");
-                    }
-                    saveStateToSession();
+            const member = membersData.find(m => m.id === id);
+            if (member) {
+                // Proteksi akun edhos
+                if (member.username === 'edhos') {
+                    showToast("Akun Super-Admin Ahmad Nandar (edhos) tidak bisa dihapus oleh siapapun!", true);
+                    return;
                 }
-            });
+
+                if (!canVerifyMembers()) {
+                    showToast("Role Anda tidak memiliki otorisasi manajemen anggota!", true);
+                    return;
+                }
+
+                showConfirm("Apakah Anda yakin ingin menghapus anggota ini?", (isConfirmed) => {
+                    if (isConfirmed) {
+                        if (isFirebaseEnabled()) {
+                            const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                            firebase.firestore().doc(`artifacts/${appId}/public/data/members/${id}`).delete();
+                        } else {
+                            membersData = membersData.filter(m => m.id !== id);
+                            renderMembers();
+                            showToast("Anggota berhasil dihapus.");
+                        }
+                        saveStateToSession();
+                    }
+                });
+            }
         }
 
         // STAFF MANIPULATION MODALS
@@ -3480,23 +3598,33 @@
         }
 
         function deleteStaff(id) {
-            if (!canManageCorePengurus()) {
-                showToast("Hanya Admin Utama yang berwenang menghapus pengurus katar inti!", true);
-                return;
-            }
-            showConfirm("Hapus pengurus ini dari struktur katar?", (isConfirmed) => {
-                if (isConfirmed) {
-                    if (isFirebaseEnabled()) {
-                        const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
-                        firebase.firestore().doc(`artifacts/${appId}/public/data/staff/${id}`).delete();
-                    } else {
-                        staffData = staffData.filter(staff => staff.id !== id);
-                        renderPengurus();
-                        showToast("Pengurus dihapus.");
-                    }
-                    saveStateToSession();
+            const staff = staffData.find(s => s.id === id);
+            if (staff) {
+                // Proteksi akun edhos
+                if (staff.username === 'edhos') {
+                    showToast("Akun Super-Admin Ahmad Nandar (edhos) tidak bisa dihapus!", true);
+                    return;
                 }
-            });
+
+                if (!canManageCorePengurus()) {
+                    showToast("Hanya Admin Utama yang berwenang menghapus pengurus katar inti!", true);
+                    return;
+                }
+
+                showConfirm("Hapus pengurus ini dari struktur katar?", (isConfirmed) => {
+                    if (isConfirmed) {
+                        if (isFirebaseEnabled()) {
+                            const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                            firebase.firestore().doc(`artifacts/${appId}/public/data/staff/${id}`).delete();
+                        } else {
+                            staffData = staffData.filter(s => s.id !== id);
+                            renderPengurus();
+                            showToast("Pengurus dihapus.");
+                        }
+                        saveStateToSession();
+                    }
+                });
+            }
         }
 
         // FINANCE UPDATE MODALS
