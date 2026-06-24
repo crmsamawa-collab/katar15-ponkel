@@ -1499,7 +1499,7 @@
             } else {
                 // Skenario Vercel: memuat dari endpoint json rahasia tanpa hardcode
                 try {
-                    const res = await fetch('./firebase-config.json');
+                    const res = await fetch('/api/firebase-config');
                     if (res.ok) {
                         config = await res.json();
                     }
