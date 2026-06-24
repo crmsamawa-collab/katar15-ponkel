@@ -859,7 +859,7 @@
             </div>
 
             <div class="w-full max-h-[50vh] bg-black/40 rounded-xl overflow-hidden mb-6 flex items-center justify-center border border-white/10">
-                <img id="cropper-workspace-image" src="" class="max-w-full max-h-[50vh]">
+                <img id="cropper-workspace-image" src="" class="max-w-full max-h-full object-contain">
             </div>
 
             <div class="flex justify-end gap-3">
@@ -1470,6 +1470,15 @@
                 });
                 if (tempStaff.length > 0) {
                     staffData = tempStaff;
+                    // Sinkronisasi foto profil mandiri pengguna jika terjadi pembaruan di database lain
+                    if (currentUser) {
+                        const updatedMe = staffData.find(s => s.id === currentUser.id || s.username === currentUser.username);
+                        if (updatedMe && updatedMe.profileImage) {
+                            currentUser.profileImage = updatedMe.profileImage;
+                            document.getElementById('user-avatar-img').src = updatedMe.profileImage;
+                            updateAuthAvatarUI();
+                        }
+                    }
                     renderPengurus();
                 } else {
                     staffData.forEach(s => {
@@ -1481,7 +1490,8 @@
                             detail: s.detail,
                             quote: s.quote,
                             tags: s.tags,
-                            wa: s.wa || "081222223333"
+                            wa: s.wa || "081222223333",
+                            profileImage: s.profileImage || ""
                         });
                     });
                 }
@@ -1495,6 +1505,15 @@
                 });
                 if (tempMembers.length > 0) {
                     membersData = tempMembers;
+                    // Sinkronisasi foto profil dinamis jika pengguna aktif adalah bagian dari koleksi members
+                    if (currentUser) {
+                        const updatedMe = membersData.find(m => m.id === currentUser.id || m.username === currentUser.username);
+                        if (updatedMe && updatedMe.profileImage) {
+                            currentUser.profileImage = updatedMe.profileImage;
+                            document.getElementById('user-avatar-img').src = updatedMe.profileImage;
+                            updateAuthAvatarUI();
+                        }
+                    }
                     renderMembers();
                 } else {
                     membersData.forEach(m => {
@@ -1507,7 +1526,8 @@
                             status: m.status,
                             wa: m.wa,
                             password: m.password,
-                            jabatan: m.jabatan
+                            jabatan: m.jabatan,
+                            profileImage: m.profileImage || ""
                         });
                     });
                 }
@@ -1704,6 +1724,7 @@
             return ['admin', 'ketua', 'wakil', 'sekretaris', 'bendahara'].includes(currentUser.role);
         }
 
+        // Kelola modul keuangan
         function canManageFinances() {
             if (!currentUser) return false;
             return ['admin', 'bendahara'].includes(currentUser.role);
@@ -1924,6 +1945,7 @@
             uploadedBase64Image = "";
         }
 
+        // Tutup modul pop up
         function closeArticleModal() {
             document.getElementById('article-modal').classList.add('hidden');
         }
@@ -2507,7 +2529,7 @@
                 const userPassword = foundUser.password || '123';
                 if (userPassword === passwordInput) {
                     roleMap = foundUser.role.toLowerCase().replace('.', '').replace(' ', '_');
-                    performDemoLoginWithData(foundUser.name, roleMap, foundUser.profileImage || "");
+                    performDemoLoginWithData(foundUser.id, foundUser.name, roleMap, foundUser.profileImage || "", foundUser.username);
                     document.getElementById('login-username').value = "";
                     document.getElementById('login-password').value = "";
                     return;
@@ -2530,7 +2552,7 @@
                     if (roleMap === 'anggota') roleMap = 'warga';
                     if (roleMap === 'admin') roleMap = 'admin';
 
-                    performDemoLoginWithData(foundUser.name, roleMap, foundUser.profileImage || "");
+                    performDemoLoginWithData(foundUser.id, foundUser.name, roleMap, foundUser.profileImage || "", foundUser.username);
                     document.getElementById('login-username').value = "";
                     document.getElementById('login-password').value = "";
                     return;
@@ -2938,7 +2960,8 @@
                 status: "Pending Verifikasi",
                 wa: wa,
                 password: password,
-                jabatan: "Anggota"
+                jabatan: "Anggota",
+                profileImage: ""
             };
 
             if (isFirebaseEnabled()) {
@@ -2971,8 +2994,9 @@
             document.getElementById('login-modal').classList.add('hidden');
         }
 
-        function performDemoLoginWithData(name, roleCode, imgUrl) {
+        function performDemoLoginWithData(id, name, roleCode, imgUrl) {
             currentUser = {
+                id: id,
                 name: name,
                 role: roleCode,
                 profileImage: imgUrl || `https://placehold.co/150x150/1e1b4b/ffffff?text=${encodeURIComponent(name[0])}`
@@ -2983,16 +3007,16 @@
         // Dipertahankan sebagai cadangan pemrosesan background, referensi ke Ahmad Nandar jika login admin dijalankan
         function performDemoLogin(role) {
             const mappings = {
-                'admin': { name: "Ahmad Nandar", role: "admin", profileImage: "" },
-                'ketua': { name: "Alif Ramadhan", role: "ketua", profileImage: "" },
-                'wakil_ketua': { name: "Fuji Astuti", role: "wakil", profileImage: "" },
-                'sekretaris': { name: "Rian Pratama", role: "sekretaris", profileImage: "" },
-                'bendahara': { name: "Zahra Amalia", role: "bendahara", profileImage: "" },
-                'koordinator_rt': { name: "Doni Setiawan", role: "koordinator_rt", profileImage: "" },
-                'warga': { name: "Rendra Prasetyo", role: "warga", profileImage: "" }
+                'admin': { id: 11, name: "Ahmad Nandar", role: "admin", profileImage: "" },
+                'ketua': { id: 1, name: "Alif Ramadhan", role: "ketua", profileImage: "" },
+                'wakil_ketua': { id: 2, name: "Fuji Astuti", role: "wakil", profileImage: "" },
+                'sekretaris': { id: 3, name: "Rian Pratama", role: "sekretaris", profileImage: "" },
+                'bendahara': { id: 4, name: "Zahra Amalia", role: "bendahara", profileImage: "" },
+                'koordinator_rt': { id: 12, name: "Doni Setiawan", role: "koordinator_rt", profileImage: "" },
+                'warga': { id: 13, name: "Rendra Prasetyo", role: "warga", profileImage: "" }
             };
 
-            currentUser = mappings[role] || { name: "Guest Warga", role: "warga", profileImage: "" };
+            currentUser = mappings[role] || { id: Date.now(), name: "Guest Warga", role: "warga", profileImage: "" };
 
             if (!currentUser.profileImage) {
                 currentUser.profileImage = `https://placehold.co/150x150/1e1b4b/ffffff?text=${encodeURIComponent(currentUser.name[0])}`;
@@ -3134,6 +3158,25 @@
             document.getElementById('user-avatar-img').src = base64Img;
             document.getElementById('profile-preview-img').src = base64Img;
             updateAuthAvatarUI();
+
+            // SINKRONISASI AKTIF KE FIRESTORE DATABASE
+            if (isFirebaseEnabled()) {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                
+                // Cari di staffData
+                const inStaff = staffData.find(s => s.id === currentUser.id || s.username === currentUser.username);
+                if (inStaff) {
+                    firebase.firestore().doc(`artifacts/${appId}/public/data/staff/${inStaff.id}`).update({ profileImage: base64Img })
+                        .catch(err => console.error("Gagal sinkronisasi foto pengurus:", err));
+                }
+
+                // Cari di membersData
+                const inMembers = membersData.find(m => m.id === currentUser.id || m.username === currentUser.username);
+                if (inMembers) {
+                    firebase.firestore().doc(`artifacts/${appId}/public/data/members/${inMembers.id}`).update({ profileImage: base64Img })
+                        .catch(err => console.error("Gagal sinkronisasi foto anggota:", err));
+                }
+            }
 
             cropperInstance.destroy();
             cropperInstance = null;
@@ -3420,7 +3463,8 @@
                 detail: detail,
                 quote: quote,
                 tags: tags,
-                wa: "081222223333"
+                wa: "081222223333",
+                profileImage: ""
             };
 
             if (isFirebaseEnabled()) {
