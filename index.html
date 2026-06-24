@@ -496,7 +496,7 @@
                     <div id="forum-unauthenticated" class="glass rounded-2xl p-6 text-center space-y-4 border border-indigo-500/20">
                         <i class="fa-solid fa-lock text-3xl text-indigo-400 animate-pulse"></i>
                         <h3 class="text-base font-bold text-white">Ingin ikut berdiskusi atau membalas aspirasi?</h3>
-                        <p class="text-xs text-gray-400 max-w-md mx-auto">Silakan masuk menggunakan kredensial akun Anda atau gunakan salah satu akun demo cepat kami.</p>
+                        <p class="text-xs text-gray-400 max-w-md mx-auto">Silakan masuk menggunakan kredensial akun Anda untuk berpartisipasi.</p>
                         <button onclick="openLoginModal()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition">
                             <i class="fa-solid fa-right-to-bracket mr-1"></i> Login Sekarang ⚡
                         </button>
@@ -695,16 +695,16 @@
 
     </main>
 
-    <!-- AUTHENTICATION / LOGIN MODAL (Kredensial + Pilihan Demo Cepat) -->
+    <!-- AUTHENTICATION / LOGIN MODAL (Kredensial) -->
     <div id="login-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
-        <div class="relative glass-premium max-w-2xl w-full p-5 sm:p-8 rounded-3xl border border-indigo-500/30 max-h-[90vh] overflow-y-auto">
+        <div class="relative glass-premium max-w-lg w-full p-5 sm:p-8 rounded-3xl border border-indigo-500/30 max-h-[90vh] overflow-y-auto">
             <button onclick="closeLoginModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
             
             <div class="text-center space-y-2 mb-6">
                 <h3 class="text-xl sm:text-2xl font-extrabold text-white">Login Katar15</h3>
-                <p class="text-xs text-gray-400">Gunakan akun kredensial Anda atau pilih peran demo untuk pengujian cepat.</p>
+                <p class="text-xs text-gray-400">Gunakan akun kredensial Anda untuk masuk ke sistem.</p>
             </div>
 
             <!-- Form Login Kredensial Manual -->
@@ -732,102 +732,6 @@
                         </button>
                     </div>
                 </form>
-            </div>
-
-            <!-- Predefined Demo Accounts (DIPERTAHANKAN) -->
-            <div class="space-y-3">
-                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1">
-                    <i class="fa-solid fa-user-shield"></i> Pilihan Demo Cepat (Klik untuk masuk instan):
-                </h4>
-                
-                <!-- Demo Admin (Super-Admin) -->
-                <button onclick="performDemoLogin('admin')" class="w-full p-3 rounded-xl bg-[#2d1b10] hover:bg-[#3d2714] border border-[#a66a12]/30 text-left flex items-center justify-between transition group">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center">
-                            <i class="fa-solid fa-user-gear"></i>
-                        </div>
-                        <div>
-                            <p class="font-bold text-xs sm:text-sm text-amber-300">ADMIN UTAMA (Pembuat - Iwan)</p>
-                            <p class="text-[10px] text-gray-400">Kata Sandi default: <strong>123</strong> (Kredensial ID: <span class="text-white">iwan</span>)</p>
-                        </div>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-amber-500"></i>
-                </button>
-
-                <!-- Grid untuk Pengurus Inti & Koordinator -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <!-- Demo Ketua -->
-                    <button onclick="performDemoLogin('ketua')" class="p-3 rounded-xl bg-indigo-500/5 hover:bg-indigo-500/10 border border-indigo-500/20 text-left flex items-center justify-between transition group">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-8 h-8 rounded bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs"><i class="fa-solid fa-crown"></i></div>
-                            <div>
-                                <p class="font-bold text-xs text-white">Ketua (Alif)</p>
-                                <p class="text-[9px] text-gray-400">ID: <strong>alif</strong> | Sandi: <strong>123</strong></p>
-                            </div>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-indigo-500 text-xs"></i>
-                    </button>
-
-                    <!-- Demo Wakil Ketua -->
-                    <button onclick="performDemoLogin('wakil_ketua')" class="p-3 rounded-xl bg-purple-500/5 hover:bg-purple-500/10 border border-purple-500/20 text-left flex items-center justify-between transition group">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-8 h-8 rounded bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs"><i class="fa-solid fa-user-astronaut"></i></div>
-                            <div>
-                                <p class="font-bold text-xs text-white">Wakil (Fuji)</p>
-                                <p class="text-[9px] text-gray-400">ID: <strong>fuji</strong> | Sandi: <strong>123</strong></p>
-                            </div>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-purple-500 text-xs"></i>
-                    </button>
-
-                    <!-- Demo Sekretaris -->
-                    <button onclick="performDemoLogin('sekretaris')" class="p-3 rounded-xl bg-blue-500/5 hover:bg-blue-500/10 border border-blue-500/20 text-left flex items-center justify-between transition group">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-8 h-8 rounded bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs"><i class="fa-solid fa-pen-nib"></i></div>
-                            <div>
-                                <p class="font-bold text-xs text-white">Sekretaris (Rian)</p>
-                                <p class="text-[9px] text-gray-400">ID: <strong>rian</strong> | Sandi: <strong>123</strong></p>
-                            </div>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-blue-500 text-xs"></i>
-                    </button>
-
-                    <!-- Demo Bendahara -->
-                    <button onclick="performDemoLogin('bendahara')" class="p-3 rounded-xl bg-pink-500/5 hover:bg-pink-500/10 border border-pink-500/20 text-left flex items-center justify-between transition group">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-8 h-8 rounded bg-pink-500/20 text-pink-400 flex items-center justify-center text-xs"><i class="fa-solid fa-wallet"></i></div>
-                            <div>
-                                <p class="font-bold text-xs text-white">Bendahara (Zahra)</p>
-                                <p class="text-[9px] text-gray-400">ID: <strong>zahra</strong> | Sandi: <strong>123</strong></p>
-                            </div>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-pink-500 text-xs"></i>
-                    </button>
-
-                    <!-- Demo Koordinator RT -->
-                    <button onclick="performDemoLogin('koordinator_rt')" class="p-3 rounded-xl bg-teal-500/5 hover:bg-teal-500/10 border border-teal-500/20 text-left flex items-center justify-between transition group">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-8 h-8 rounded bg-teal-500/20 text-teal-400 flex items-center justify-center text-xs"><i class="fa-solid fa-map-pin"></i></div>
-                            <div>
-                                <p class="font-bold text-xs text-white">Koor. RT 01 (Doni)</p>
-                                <p class="text-[9px] text-gray-400">ID: <strong>doni</strong> | Sandi: <strong>123</strong></p>
-                            </div>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-teal-500 text-xs"></i>
-                    </button>
-
-                    <!-- Demo Anggota -->
-                    <button onclick="performDemoLogin('warga')" class="p-3 rounded-xl bg-gray-500/5 hover:bg-gray-500/10 border border-gray-500/20 text-left flex items-center justify-between transition group">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-8 h-8 rounded bg-gray-500/20 text-gray-400 flex items-center justify-center text-xs"><i class="fa-solid fa-users"></i></div>
-                            <div>
-                                <p class="font-bold text-xs text-white">Anggota (Rendra)</p>
-                                <p class="text-[9px] text-gray-400">ID: <strong>rendra</strong> | Sandi: <strong>123</strong></p>
-                            </div>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
-                    </button>
-                </div>
             </div>
 
             <div class="text-center mt-5">
@@ -1366,7 +1270,7 @@
 
         // Data Anggota (Squad) Terdaftar beserta Kredensial password dan username
         let membersData = [
-            { id: 11, name: "Iwan (Super-Admin)", username: "iwan", rt: "RT 05", unit: "0001", minat: ["Sosial/Relawan"], status: "Aktif", wa: "081299999999", password: "123", jabatan: "Admin" },
+            { id: 11, name: "Ahmad Nandar", username: "edhos", rt: "RT 01", unit: "0436", minat: ["Ngopi"], status: "Aktif", wa: "082220691212", password: "cumaedhos", jabatan: "Admin" },
             { id: 12, name: "Doni Setiawan", username: "doni", rt: "RT 01", unit: "0311", minat: ["Olahraga"], status: "Aktif", wa: "081211223344", password: "123", jabatan: "Koor. Remaja RT 1" },
             { id: 13, name: "Rendra Prasetyo", username: "rendra", rt: "RT 02", unit: "0619", minat: ["E-Sports", "Olahraga"], status: "Aktif", wa: "081211112222", password: "123", jabatan: "Anggota" },
             { id: 14, name: "Siti Rahmawati", username: "siti", rt: "RT 05", unit: "1808", minat: ["Sosial/Relawan", "Seni/Musik"], status: "Aktif", wa: "081233334444", password: "123", jabatan: "Anggota" },
@@ -1491,43 +1395,43 @@
 
         // --- DINAMIS INTEGRASI FIREBASE SECARA AMAN (Vercel Friendly) ---
         async function initFirebase() {
-    let config = null;
+            let config = null;
 
-    // 1. Cek apakah ada config global dari sandbox/iframe
-    if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-        config = JSON.parse(__firebase_config);
-    } else {
-        // 2. Jika di Vercel, panggil serverless function yang aman
-        try {
-            const res = await fetch('/api/firebase-config');
-            if (res.ok) {
-                config = await res.json();
-            }
-        } catch (e) {
-            console.log("Gagal memuat config cloud. Menggunakan mode Local/sessionStorage.");
-        }
-    }
-
-    if (config && config.apiKey) {
-        try {
-            firebase.initializeApp(config);
-            const db = firebase.firestore();
-            const auth = firebase.auth();
-
-            // Lakukan login anonim/token sebelum memanggil database
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await auth.signInWithCustomToken(__initial_auth_token);
+            // 1. Cek apakah ada config global dari sandbox/iframe
+            if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                config = JSON.parse(__firebase_config);
             } else {
-                await auth.signInAnonymously();
+                // 2. Jika di Vercel, panggil serverless function yang aman
+                try {
+                    const res = await fetch('/api/firebase-config');
+                    if (res.ok) {
+                        config = await res.json();
+                    }
+                } catch (e) {
+                    console.log("Gagal memuat config cloud. Menggunakan mode Local/sessionStorage.");
+                }
             }
 
-            console.log("Firebase Connected!");
-            setupFirestoreSync(db, auth);
-        } catch (err) {
-            console.error("Firebase Auth Error:", err);
+            if (config && config.apiKey) {
+                try {
+                    firebase.initializeApp(config);
+                    const db = firebase.firestore();
+                    const auth = firebase.auth();
+
+                    // Lakukan login anonim/token sebelum memanggil database
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await auth.signInWithCustomToken(__initial_auth_token);
+                    } else {
+                        await auth.signInAnonymously();
+                    }
+
+                    console.log("Firebase Connected!");
+                    setupFirestoreSync(db, auth);
+                } catch (err) {
+                    console.error("Firebase Auth Error:", err);
+                }
+            }
         }
-    }
-}
 
         // --- SISTEM SINKRONISASI FIRESTORE (Aturan 1: Jalur Ketat, Aturan 2: Tanpa query kompleks) ---
         function setupFirestoreSync(db, auth) {
@@ -1794,6 +1698,7 @@
             return ['admin', 'ketua', 'wakil', 'sekretaris', 'bendahara'].includes(currentUser.role);
         }
 
+        // Verifikasi anggota bisa dilakukan oleh Admin atau Pengurus Inti
         function canVerifyMembers() {
             if (!currentUser) return false;
             return ['admin', 'ketua', 'wakil', 'sekretaris', 'bendahara'].includes(currentUser.role);
@@ -2347,6 +2252,7 @@
             closeRtInfoModal();
         }
 
+        // Hapus Informasi RT
         function deleteRtInfo(rtKey, infoId) {
             if (!canManageRtInfo(rtKey)) {
                 showToast("Anda tidak berhak menghapus informasi di RT ini!", true);
@@ -2584,7 +2490,7 @@
 
         // Lupa Sandi Info Helper
         function handleForgotPassword() {
-            showToast("Silakan hubungi Admin (Iwan), Ketua (Alif), atau Wakil (Fuji) untuk melakukan reset sandi akun Anda menjadi 'Katar15'.", false);
+            showToast("Silakan hubungi Admin (Edhos), Ketua (Alif), atau Wakil (Fuji) untuk melakukan reset sandi akun Anda menjadi 'Katar15'.", false);
         }
 
         // Manual Login Form Handler (NAMA PANGGILAN & PASSWORD)
@@ -3074,9 +2980,10 @@
             completeLoginWorkflow();
         }
 
+        // Dipertahankan sebagai cadangan pemrosesan background, referensi ke Ahmad Nandar jika login admin dijalankan
         function performDemoLogin(role) {
             const mappings = {
-                'admin': { name: "Iwan (Super-Admin)", role: "admin", profileImage: "" },
+                'admin': { name: "Ahmad Nandar", role: "admin", profileImage: "" },
                 'ketua': { name: "Alif Ramadhan", role: "ketua", profileImage: "" },
                 'wakil_ketua': { name: "Fuji Astuti", role: "wakil", profileImage: "" },
                 'sekretaris': { name: "Rian Pratama", role: "sekretaris", profileImage: "" },
