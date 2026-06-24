@@ -7,12 +7,17 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Plus Jakarta Sans -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Cropper.js CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     
+    <!-- Firebase Compat SDK (Mendukung integrasi instan tanpa modular bundler) -->
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+
     <style>
         /* Guardrail ketat untuk mencegah scroll horizontal pada HP */
         html, body {
@@ -163,7 +168,7 @@
                         <span class="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-green-500 border border-[#080C14]"></span>
                     </div>
                     <div class="text-left select-none cursor-pointer" onclick="openProfileModal()">
-                        <p id="user-display-name" class="text-gray-300 font-semibold hover:text-indigo-300 transition text-[11px] leading-tight font-bold">Guest</p>
+                        <p id="user-display-name" class="text-gray-300 font-semibold hover:text-indigo-300 transition text-[11px] leading-tight font-bold font-sans">Guest</p>
                         <p id="user-display-role" class="text-[8px] text-indigo-400 font-extrabold uppercase tracking-wide">Anggota</p>
                     </div>
                 </div>
@@ -882,7 +887,7 @@
         </div>
     </div>
 
-    <!-- MODAL: NOTIFIKASI RESET SANDI BERHASIL DENGAN DRAFT PESAN WA (Copy friendly) -->
+    <!-- MODAL: NOTIFIKASI RESET SANDI BERHASIL DENGAN INTEGRASI KIRIM WA LANGSUNG -->
     <div id="reset-success-popup" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
         <div class="glass-premium max-w-md w-full p-6 rounded-2xl border border-green-500/30 space-y-4">
             <h4 class="font-extrabold text-white text-base flex items-center gap-2">
@@ -895,17 +900,18 @@
             <div class="space-y-1 bg-[#080c14] p-3.5 rounded-xl border border-white/5">
                 <span class="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">Draft Pesan WhatsApp untuk Dikirim</span>
                 <textarea id="reset-popup-wa-text" readonly class="w-full bg-transparent border-0 rounded-lg p-1 text-xs text-gray-300 font-mono focus:outline-none h-32 leading-relaxed resize-none"></textarea>
+                <input type="hidden" id="reset-popup-target-phone">
             </div>
 
             <p class="text-[10px] text-amber-400/90 leading-normal">
-                <i class="fa-solid fa-triangle-exclamation mr-1"></i> Imbau pengguna untuk segera mengubah kata sandi baru mereka di menu edit profil setelah login demi keamanan data.
+                <i class="fa-solid fa-triangle-exclamation mr-1"></i> Tombol di bawah akan langsung membuka aplikasi WhatsApp dan memuat draf pesan kredensial ini secara otomatis.
             </p>
 
-            <div class="flex justify-between items-center pt-2">
-                <button onclick="copyResetText()" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-green-600 hover:bg-green-700 text-white flex items-center gap-1.5 shadow-lg shadow-green-600/20 transition-all">
-                    <i class="fa-solid fa-copy"></i> Salin Pesan WA 📋
+            <div class="flex justify-between items-center pt-2 gap-2">
+                <button onclick="sendResetText()" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-green-600 hover:bg-green-700 text-white flex items-center justify-center gap-1.5 shadow-lg shadow-green-600/20 transition-all">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> Kirim Pesan WA 🟢
                 </button>
-                <button onclick="closeResetSuccessPopup()" class="px-4 py-2.5 rounded-xl text-xs font-semibold bg-white/5 hover:bg-white/10 text-gray-300 transition">Tutup</button>
+                <button onclick="closeResetSuccessPopup()" class="px-4 py-2.5 rounded-xl text-xs font-semibold bg-white/5 hover:bg-white/10 text-gray-300 transition">Batal</button>
             </div>
         </div>
     </div>
@@ -1350,12 +1356,12 @@
             }
         };
 
-        // Data Pengurus Inti
+        // Data Pengurus Inti (Mendukung kredensial nomor WA pemulihan sandi)
         let staffData = [
-            { id: 1, name: "Alif Ramadhan", username: "alif", role: "Ketua", password: "123", detail: "Warga RT 02 • Mahasiswa Sistem Informasi", quote: "Gak perlu formal-formal amat, yang penting aksi nyata buat Samawa.", tags: "Mobile Legends & Ngopi" },
-            { id: 2, name: "Fuji Astuti", username: "fuji", role: "Wakil", password: "123", detail: "Warga RT 04 • Designer Grafis", quote: "Ada ide acara seru? Yuk langsung kita gaskan, gak pake birokrasi berbelit!", tags: "Seni & K-Pop" },
-            { id: 3, name: "Rian Pratama", username: "rian", role: "Sekretaris", password: "123", detail: "Warga RT 01 • Freelancer", quote: "Data katar rapi dan bisa dipantau siapa aja lewat drive bersama.", tags: "Futsal & Videografi" },
-            { id: 4, name: "Zahra Amalia", username: "zahra", role: "Bendahara", password: "123", detail: "Warga RT 03 • Pengusaha Kuliner", quote: "Setiap rupiah uang kas dicatat detail dan dipublish tiap bulan.", tags: "Memasak & Akuntansi" }
+            { id: 1, name: "Alif Ramadhan", username: "alif", role: "Ketua", password: "123", detail: "Warga RT 02 • Mahasiswa Sistem Informasi", quote: "Gak perlu formal-formal amat, yang penting aksi nyata buat Samawa.", tags: "Mobile Legends & Ngopi", wa: "6281222223333" },
+            { id: 2, name: "Fuji Astuti", username: "fuji", role: "Wakil", password: "123", detail: "Warga RT 04 • Designer Grafis", quote: "Ada ide acara seru? Yuk langsung kita gaskan, gak pake birokrasi berbelit!", tags: "Seni & K-Pop", wa: "6281233334444" },
+            { id: 3, name: "Rian Pratama", username: "rian", role: "Sekretaris", password: "123", detail: "Warga RT 01 • Freelancer", quote: "Data katar rapi dan bisa dipantau siapa aja lewat drive bersama.", tags: "Futsal & Videografi", wa: "6281244445555" },
+            { id: 4, name: "Zahra Amalia", username: "zahra", role: "Bendahara", password: "123", detail: "Warga RT 03 • Pengusaha Kuliner", quote: "Setiap rupiah uang kas dicatat detail dan dipublish tiap bulan.", tags: "Memasak & Akuntansi", wa: "6281255556666" }
         ];
 
         // Data Anggota (Squad) Terdaftar beserta Kredensial password dan username
@@ -1439,6 +1445,11 @@
             }
         ];
 
+        // Helper untuk memeriksa apakah database Firebase aktif terinisialisasi
+        function isFirebaseEnabled() {
+            return typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0;
+        }
+
         // --- SISTEM PERSISTENCE (Refresh Guard menggunakan sessionStorage) ---
         function saveStateToSession() {
             sessionStorage.setItem('katar15_currentUser', JSON.stringify(currentUser));
@@ -1476,6 +1487,211 @@
             if (sessionStorage.getItem('katar15_appBranding')) {
                 appBranding = JSON.parse(sessionStorage.getItem('katar15_appBranding'));
             }
+        }
+
+        // --- DINAMIS INTEGRASI FIREBASE SECARA AMAN (Vercel Friendly) ---
+        async function initFirebase() {
+            let config = null;
+
+            // Cek variabel lingkungan global lokal (Disediakan oleh Sandbox)
+            if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                config = JSON.parse(__firebase_config);
+            } else {
+                // Skenario Vercel: memuat dari endpoint json rahasia tanpa hardcode
+                try {
+                    const res = await fetch('./firebase-config.json');
+                    if (res.ok) {
+                        config = await res.json();
+                    }
+                } catch (e) {
+                    console.log("Tidak ada berkas firebase-config.json eksternal. Berjalan dalam mode Local Offline.");
+                }
+            }
+
+            if (config) {
+                try {
+                    firebase.initializeApp(config);
+                    const db = firebase.firestore();
+                    const auth = firebase.auth();
+
+                    // Aturan 3 - Otentikasi sebelum memanggil database
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await auth.signInWithCustomToken(__initial_auth_token);
+                    } else {
+                        await auth.signInAnonymously();
+                    }
+
+                    console.log("Firebase Terhubung! Berhasil masuk secara anonim.");
+                    setupFirestoreSync(db, auth);
+                } catch (err) {
+                    console.error("Kesalahan otentikasi/inisialisasi Firebase:", err);
+                    showToast("Koneksi cloud gagal. Berjalan dalam mode lokal.", true);
+                }
+            } else {
+                console.log("Menjalankan aplikasi dalam mode persistensi memori lokal.");
+            }
+        }
+
+        // --- SISTEM SINKRONISASI FIRESTORE (Aturan 1: Jalur Ketat, Aturan 2: Tanpa query kompleks) ---
+        function setupFirestoreSync(db, auth) {
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+
+            // 1. Sinkronisasi Profil Branding (Koleksi Publik)
+            db.doc(`artifacts/${appId}/public/data/branding/config`).onSnapshot(docSnap => {
+                if (docSnap.exists()) {
+                    appBranding = docSnap.data();
+                    applySavedBranding();
+                } else {
+                    db.doc(`artifacts/${appId}/public/data/branding/config`).set(appBranding);
+                }
+            }, err => console.error("Error sinkronisasi branding:", err));
+
+            // 2. Sinkronisasi Sub-Remaja RT
+            db.collection(`artifacts/${appId}/public/data/subRtData`).onSnapshot(querySnap => {
+                if (!querySnap.empty) {
+                    querySnap.forEach(doc => {
+                        subRtData[doc.id] = doc.data();
+                    });
+                    const currentRtTabActive = document.querySelector('.rt-tab-btn.bg-indigo-600')?.id?.replace('tab-', '') || 'RT-01';
+                    switchRtTab(currentRtTabActive);
+                } else {
+                    for (const rtKey in subRtData) {
+                        db.doc(`artifacts/${appId}/public/data/subRtData/${rtKey}`).set(subRtData[rtKey]);
+                    }
+                }
+            }, err => console.error("Error subRtData:", err));
+
+            // 3. Sinkronisasi Data Pengurus Inti
+            db.collection(`artifacts/${appId}/public/data/staff`).onSnapshot(querySnap => {
+                let tempStaff = [];
+                querySnap.forEach(doc => {
+                    tempStaff.push({ id: Number(doc.id) || doc.id, ...doc.data() });
+                });
+                if (tempStaff.length > 0) {
+                    staffData = tempStaff;
+                    renderPengurus();
+                } else {
+                    staffData.forEach(s => {
+                        db.doc(`artifacts/${appId}/public/data/staff/${s.id}`).set({
+                            name: s.name,
+                            username: s.username,
+                            role: s.role,
+                            password: s.password,
+                            detail: s.detail,
+                            quote: s.quote,
+                            tags: s.tags,
+                            wa: s.wa || "081222223333"
+                        });
+                    });
+                }
+            }, err => console.error("Error staffData:", err));
+
+            // 4. Sinkronisasi Database Anggota/Warga
+            db.collection(`artifacts/${appId}/public/data/members`).onSnapshot(querySnap => {
+                let tempMembers = [];
+                querySnap.forEach(doc => {
+                    tempMembers.push({ id: Number(doc.id) || doc.id, ...doc.data() });
+                });
+                if (tempMembers.length > 0) {
+                    membersData = tempMembers;
+                    renderMembers();
+                } else {
+                    membersData.forEach(m => {
+                        db.doc(`artifacts/${appId}/public/data/members/${m.id}`).set({
+                            name: m.name,
+                            username: m.username,
+                            rt: m.rt,
+                            unit: m.unit,
+                            minat: m.minat,
+                            status: m.status,
+                            wa: m.wa,
+                            password: m.password,
+                            jabatan: m.jabatan
+                        });
+                    });
+                }
+            }, err => console.error("Error membersData:", err));
+
+            // 5. Sinkronisasi Modul Keuangan
+            db.doc(`artifacts/${appId}/public/data/keuangan/config`).onSnapshot(docSnap => {
+                if (docSnap.exists()) {
+                    keuangan = docSnap.data();
+                    renderFinance();
+                } else {
+                    db.doc(`artifacts/${appId}/public/data/keuangan/config`).set(keuangan);
+                }
+            }, err => console.error("Error keuangan:", err));
+
+            // 6. Sinkronisasi Forum Diskusi
+            db.collection(`artifacts/${appId}/public/data/diskusi`).onSnapshot(querySnap => {
+                let tempDiskusi = [];
+                querySnap.forEach(doc => {
+                    tempDiskusi.push({ id: Number(doc.id) || doc.id, ...doc.data() });
+                });
+                if (tempDiskusi.length > 0) {
+                    tempDiskusi.sort((a, b) => b.id - a.id);
+                    diskusiList = tempDiskusi;
+                    renderDiskusi();
+                } else {
+                    diskusiList.forEach(d => {
+                        db.doc(`artifacts/${appId}/public/data/diskusi/${d.id}`).set({
+                            user: d.user,
+                            role: d.role,
+                            judul: d.judul,
+                            isi: d.isi,
+                            tanggal: d.tanggal,
+                            replies: d.replies
+                        });
+                    });
+                }
+            }, err => console.error("Error diskusi:", err));
+
+            // 7. Sinkronisasi Obrolan Sembang (Live Chat)
+            db.collection(`artifacts/${appId}/public/data/livechat`).onSnapshot(querySnap => {
+                let tempLive = [];
+                querySnap.forEach(doc => {
+                    tempLive.push({ id: Number(doc.id) || doc.id, ...doc.data() });
+                });
+                if (tempLive.length > 0) {
+                    tempLive.sort((a, b) => a.id - b.id);
+                    livechatMessages = tempLive;
+                    renderLivechat();
+                } else {
+                    livechatMessages.forEach(msg => {
+                        db.doc(`artifacts/${appId}/public/data/livechat/${msg.id}`).set({
+                            user: msg.user,
+                            role: msg.role,
+                            msg: msg.msg,
+                            time: msg.time
+                        });
+                    });
+                }
+            }, err => console.error("Error livechat:", err));
+
+            // 8. Sinkronisasi Artikel RW
+            db.collection(`artifacts/${appId}/public/data/articles`).onSnapshot(querySnap => {
+                let tempArticles = [];
+                querySnap.forEach(doc => {
+                    tempArticles.push({ id: Number(doc.id) || doc.id, ...doc.data() });
+                });
+                if (tempArticles.length > 0) {
+                    tempArticles.sort((a, b) => b.id - a.id);
+                    articlesList = tempArticles;
+                    renderArticles();
+                } else {
+                    articlesList.forEach(art => {
+                        db.doc(`artifacts/${appId}/public/data/articles/${art.id}`).set({
+                            title: art.title,
+                            category: art.category,
+                            content: art.content,
+                            image: art.image,
+                            date: art.date,
+                            author: art.author,
+                            role: art.role
+                        });
+                    });
+                }
+            }, err => console.error("Error articles:", err));
         }
 
         // Routing System (Single Page Application Switcher - Selalu mulai dari paling atas)
@@ -1535,8 +1751,11 @@
 
         window.addEventListener('hashchange', handleNavigation);
 
-        window.onload = function() {
+        window.onload = async function() {
             loadStateFromSession(); // Ambil data session agar refresh tidak logout
+            
+            // Coba inisialisasi cloud Firebase Firestore secara aman
+            await initFirebase();
 
             // Jika pengguna memang sudah login sebelumnya, pasang state visual UI-nya
             if (currentUser) {
@@ -1724,7 +1943,12 @@
             document.getElementById('brand-input-logo-icon').value = "";
             document.getElementById('brand-input-logo-file').value = "";
             applySavedBranding();
-            saveStateToSession(); // Persist ke session storage
+            if (isFirebaseEnabled()) {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                firebase.firestore().doc(`artifacts/${appId}/public/data/branding/config`).set(appBranding);
+            } else {
+                saveStateToSession(); // Persist ke session storage
+            }
             showToast("Desain logo dikembalikan ke default teks.");
         }
 
@@ -1817,6 +2041,8 @@
             const defaultImg = `https://placehold.co/600x400/1e1b4b/ffffff?text=${encodeURIComponent(category)}`;
             const imageUrl = uploadedBase64Image || defaultImg;
 
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+
             if (id) {
                 const article = articlesList.find(a => a.id == id);
                 if (article) {
@@ -1826,7 +2052,11 @@
                     if (uploadedBase64Image) {
                         article.image = uploadedBase64Image;
                     }
-                    showToast("Warta RW berhasil diperbarui!");
+                    if (isFirebaseEnabled()) {
+                        firebase.firestore().doc(`artifacts/${appId}/public/data/articles/${id}`).set(article);
+                    } else {
+                        showToast("Warta RW berhasil diperbarui!");
+                    }
                 }
             } else {
                 const newArticle = {
@@ -1839,11 +2069,15 @@
                     author: currentUser.name,
                     role: getUserFriendlyRole(currentUser.role)
                 };
-                articlesList.unshift(newArticle);
-                showToast("Warta RW berhasil diterbitkan!");
+                if (isFirebaseEnabled()) {
+                    firebase.firestore().doc(`artifacts/${appId}/public/data/articles/${newArticle.id}`).set(newArticle);
+                } else {
+                    articlesList.unshift(newArticle);
+                    showToast("Warta RW berhasil diterbitkan!");
+                }
             }
 
-            saveStateToSession(); // Simpan perubahan
+            saveStateToSession(); // Simpan perubahan lokal
             renderArticles();
             closeArticleModal();
         }
@@ -1869,10 +2103,15 @@
         function deleteArticle(id) {
             showConfirm("Apakah Anda yakin ingin menghapus warta RW ini?", (isConfirmed) => {
                 if (isConfirmed) {
-                    articlesList = articlesList.filter(a => a.id !== id);
+                    if (isFirebaseEnabled()) {
+                        const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                        firebase.firestore().doc(`artifacts/${appId}/public/data/articles/${id}`).delete();
+                    } else {
+                        articlesList = articlesList.filter(a => a.id !== id);
+                        renderArticles();
+                        showToast("Warta RW berhasil dihapus.");
+                    }
                     saveStateToSession();
-                    renderArticles();
-                    showToast("Warta RW berhasil dihapus.");
                 }
             });
         }
@@ -2047,7 +2286,12 @@
                 rt.anggota = parseInt(document.getElementById('rt-member-count').value);
                 rt.proker = document.getElementById('rt-proker').value;
 
-                showToast(`Data Koordinator ${rtKey} berhasil diperbarui!`);
+                if (isFirebaseEnabled()) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                    firebase.firestore().doc(`artifacts/${appId}/public/data/subRtData/${rtKey}`).set(rt);
+                } else {
+                    showToast(`Data Koordinator ${rtKey} berhasil diperbarui!`);
+                }
                 saveStateToSession();
                 switchRtTab(rtKey);
                 closeRtCoordModal();
@@ -2095,7 +2339,12 @@
             };
 
             subRtData[rtKey].informasi.unshift(newInfo);
-            showToast(`Informasi baru berhasil diterbitkan untuk ${rtKey}!`);
+            if (isFirebaseEnabled()) {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                firebase.firestore().doc(`artifacts/${appId}/public/data/subRtData/${rtKey}`).set(subRtData[rtKey]);
+            } else {
+                showToast(`Informasi baru berhasil diterbitkan untuk ${rtKey}!`);
+            }
             saveStateToSession();
             switchRtTab(rtKey);
             closeRtInfoModal();
@@ -2109,6 +2358,10 @@
             showConfirm("Hapus pengumuman RT ini?", (isConfirmed) => {
                 if (isConfirmed) {
                     subRtData[rtKey].informasi = subRtData[rtKey].informasi.filter(inf => inf.id !== infoId);
+                    if (isFirebaseEnabled()) {
+                        const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                        firebase.firestore().doc(`artifacts/${appId}/public/data/subRtData/${rtKey}`).set(subRtData[rtKey]);
+                    }
                     saveStateToSession();
                     switchRtTab(rtKey);
                     showToast("Informasi RT berhasil dihapus.");
@@ -2189,28 +2442,31 @@
                 staff.quote = document.getElementById('edit-own-staff-quote').value;
                 staff.tags = document.getElementById('edit-own-staff-tags').value;
 
+                if (isFirebaseEnabled()) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                    firebase.firestore().doc(`artifacts/${appId}/public/data/staff/${staff.id}`).set(staff);
+                } else {
+                    showToast("Profil pengurus berhasil diperbarui!");
+                }
                 saveStateToSession();
                 renderPengurus();
                 closeEditOwnStaffModal();
-                showToast("Profil pengurus berhasil diperbarui!");
             }
         }
 
-        // --- SISTEM RESET PASSWORD MANAGER (Kredensial disembunyikan, Reset Sandi interaktif, Filter Aktif) ---
+        // --- SISTEM RESET PASSWORD MANAGER ---
         function openResetPasswordManagerModal() {
             if (!canResetPasswords()) {
                 showToast("Anda tidak memiliki izin mengelola sandi!", true);
                 return;
             }
 
-            // Atur ulang filter pencarian
             const searchInput = document.getElementById('pw-search-input');
             if (searchInput) searchInput.value = "";
 
             const tbody = document.getElementById('credential-table-body');
             tbody.innerHTML = '';
 
-            // Kombinasikan data Staff dan Anggota
             const allUsers = [];
             staffData.forEach(s => {
                 allUsers.push({ id: s.id, type: 'staff', name: s.name, username: s.username || s.name.split(' ')[0].toLowerCase(), role: s.role });
@@ -2220,7 +2476,6 @@
             });
 
             allUsers.forEach(u => {
-                // Bersihkan kutipan tunggal untuk mencegah error sintaks JS pada atribut onclick
                 const escName = u.name.replace(/'/g, "\\'");
                 const escUsername = u.username.replace(/'/g, "\\'");
 
@@ -2264,17 +2519,32 @@
         // Menjalankan reset sandi instan menjadi Katar15
         function performPasswordReset(type, id, name, username) {
             const defaultNewPw = "Katar15";
+            let targetPhone = "";
+
             if (type === 'staff') {
                 const staff = staffData.find(s => s.id === id);
                 if (staff) {
                     staff.password = defaultNewPw;
+                    targetPhone = staff.wa || "081222223333";
                 }
             } else {
                 const member = membersData.find(m => m.id === id);
                 if (member) {
                     member.password = defaultNewPw;
+                    targetPhone = member.wa || "081222223333";
                 }
             }
+
+            // Sync ke Firestore jika aktif
+            if (isFirebaseEnabled()) {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                if (type === 'staff') {
+                    firebase.firestore().doc(`artifacts/${appId}/public/data/staff/${id}`).update({ password: defaultNewPw });
+                } else {
+                    firebase.firestore().doc(`artifacts/${appId}/public/data/members/${id}`).update({ password: defaultNewPw });
+                }
+            }
+
             saveStateToSession(); // Simpan perubahan kata sandi baru secara instan
             openResetPasswordManagerModal(); // Render ulang tabel kredensial
 
@@ -2282,12 +2552,13 @@
             const waMessage = `Halo ${name},\n\nKata sandi akun Katar15 Anda telah berhasil di-reset oleh pengurus.\n\nUsername Login: *${username}*\nKata Sandi Baru: *${defaultNewPw}*\n\nSilakan segera masuk sistem dan ubah kata sandi baru Anda di menu "Edit Profil" demi keamanan agar akun tetap terlindungi. Terima kasih!`;
             
             // Munculkan popup notifikasi salin pesan
-            showResetSuccessPopup(name, waMessage);
+            showResetSuccessPopup(name, targetPhone, waMessage);
         }
 
-        function showResetSuccessPopup(name, message) {
+        function showResetSuccessPopup(name, phone, message) {
             document.getElementById('reset-popup-user').innerText = name;
             document.getElementById('reset-popup-wa-text').value = message;
+            document.getElementById('reset-popup-target-phone').value = phone;
             document.getElementById('reset-success-popup').classList.remove('hidden');
         }
 
@@ -2295,21 +2566,23 @@
             document.getElementById('reset-success-popup').classList.add('hidden');
         }
 
-        // Fungsi menyalin teks ke clipboard (Aman dari pembatasan iFrame)
-        function copyResetText() {
-            const textarea = document.getElementById('reset-popup-wa-text');
-            textarea.select();
-            textarea.setSelectionRange(0, 99999); // Untuk HP / Mobile
-            try {
-                const successful = document.execCommand('copy');
-                if (successful) {
-                    showToast("Pesan draf WhatsApp berhasil disalin! Silakan kirimkan ke peminta.");
-                } else {
-                    showToast("Gagal menyalin. Silakan seleksi dan salin secara manual.", true);
-                }
-            } catch (err) {
-                showToast("Gagal menyalin. Silakan seleksi dan salin secara manual.", true);
+        // Format WA URL dengan Country Code Indonesia yang Valid
+        function formatWAUrl(phone, message) {
+            let cleanPhone = phone.replace(/\D/g, ''); // Ambil angka saja
+            if (cleanPhone.startsWith('08')) {
+                cleanPhone = '62' + cleanPhone.substring(1);
             }
+            return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
+        }
+
+        // Mengirimkan teks draf reset sandi langsung ke WA penerima
+        function sendResetText() {
+            const targetPhone = document.getElementById('reset-popup-target-phone').value;
+            const message = document.getElementById('reset-popup-wa-text').value;
+            const url = formatWAUrl(targetPhone, message);
+            window.open(url, '_blank');
+            showToast("Membuka WhatsApp untuk mengirim kredensial!");
+            closeResetSuccessPopup();
         }
 
         // Lupa Sandi Info Helper
@@ -2328,7 +2601,6 @@
             let roleMap = 'warga';
 
             if (foundUser) {
-                // Verifikasi password
                 const userPassword = foundUser.password || '123';
                 if (userPassword === passwordInput) {
                     roleMap = foundUser.role.toLowerCase().replace('.', '').replace(' ', '_');
@@ -2463,7 +2735,12 @@
                     return;
                 }
                 member.jabatan = newJabatan;
-                showToast(`Jabatan ${member.name} diperbarui menjadi ${newJabatan}!`);
+                if (isFirebaseEnabled()) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                    firebase.firestore().doc(`artifacts/${appId}/public/data/members/${memberId}`).update({ jabatan: newJabatan });
+                } else {
+                    showToast(`Jabatan ${member.name} diperbarui menjadi ${newJabatan}!`);
+                }
                 saveStateToSession();
                 renderMembers();
             }
@@ -2630,9 +2907,14 @@
                     tanggal: "Hari ini"
                 });
 
+                if (isFirebaseEnabled()) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                    firebase.firestore().doc(`artifacts/${appId}/public/data/diskusi/${diskusiId}`).update({ replies: diskusi.replies });
+                } else {
+                    showToast("Balasan Anda terkirim!");
+                }
                 saveStateToSession();
                 renderDiskusi();
-                showToast("Masukan Anda berhasil diterbitkan!");
                 input.value = '';
             }
         }
@@ -2693,29 +2975,18 @@
                 time: formatTime
             };
 
-            livechatMessages.push(newMsg);
-            saveStateToSession();
-            renderLivechat();
-            input.value = '';
-
-            setTimeout(() => {
-                const jokes = [
-                    { user: "Alif Ramadhan", role: "Ketua", msg: "Siap meluncur kawan! Terima kasih koordinasinya." },
-                    { user: "Fuji Astuti", role: "Wakil", msg: "Wkwk mantap, langsung digas besok malam ya!" },
-                    { user: "Zahra Amalia", role: "Bendahara", msg: "Tenang, anggaran katar aman sentosa buat konsumsi besok 😂🍟" },
-                    { user: "Rian Pratama", role: "Sekretaris", msg: "Semangat tim! Tetap jaga kerukunan." }
-                ];
-                const rMock = jokes[Math.floor(Math.random() * jokes.length)];
-                rMock.id = Date.now();
-                rMock.time = formatTime;
-
-                livechatMessages.push(rMock);
-                saveStateToSession();
+            if (isFirebaseEnabled()) {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                firebase.firestore().doc(`artifacts/${appId}/public/data/livechat/${newMsg.id}`).set(newMsg);
+            } else {
+                livechatMessages.push(newMsg);
                 renderLivechat();
-            }, 1000);
+            }
+            saveStateToSession();
+            input.value = '';
         }
 
-        // Handle Pendaftaran Form Submit (Kini Mendukung Input Password)
+        // Handle Pendaftaran Form Submit
         function handlePendaftaran(event) {
             event.preventDefault();
             
@@ -2742,7 +3013,6 @@
                 return;
             }
 
-            // Get checked interests
             const checkboxes = document.querySelectorAll('input[name="minat"]:checked');
             let minatList = [];
             checkboxes.forEach((checkbox) => {
@@ -2768,9 +3038,14 @@
                 jabatan: "Anggota"
             };
 
-            membersData.push(newMember);
+            if (isFirebaseEnabled()) {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                firebase.firestore().doc(`artifacts/${appId}/public/data/members/${newMember.id}`).set(newMember);
+            } else {
+                membersData.push(newMember);
+                renderMembers();
+            }
             saveStateToSession(); // Simpan pendaftaran baru ke session storage
-            renderMembers();
 
             document.getElementById('alert-sukses').classList.remove('hidden');
             document.getElementById('form-daftar').reset();
@@ -2793,7 +3068,6 @@
             document.getElementById('login-modal').classList.add('hidden');
         }
 
-        // Fungsi pembantu untuk login dengan profile image kustom
         function performDemoLoginWithData(name, roleCode, imgUrl) {
             currentUser = {
                 name: name,
@@ -3031,7 +3305,12 @@
             appBranding.logoIcon = document.getElementById('brand-input-logo-icon').value;
 
             applySavedBranding();
-            saveStateToSession(); // Simpan branding
+            if (isFirebaseEnabled()) {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                firebase.firestore().doc(`artifacts/${appId}/public/data/branding/config`).set(appBranding);
+            } else {
+                saveStateToSession(); // Simpan branding lokal
+            }
             closeBrandingModal();
             showToast("Branding aplikasi berhasil diterapkan!");
         }
@@ -3136,10 +3415,15 @@
                 replies: []
             };
 
-            diskusiList.unshift(newPost);
+            if (isFirebaseEnabled()) {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                firebase.firestore().doc(`artifacts/${appId}/public/data/diskusi/${newPost.id}`).set(newPost);
+            } else {
+                diskusiList.unshift(newPost);
+                renderDiskusi();
+                showToast("Aspirasi Anda berhasil diterbitkan!");
+            }
             saveStateToSession();
-            renderDiskusi();
-            showToast("Aspirasi Anda berhasil diterbitkan!");
 
             document.getElementById('diskusi-judul').value = '';
             document.getElementById('diskusi-isi').value = '';
@@ -3148,10 +3432,15 @@
         function deleteDiskusi(id) {
             showConfirm("Apakah Anda yakin ingin menghapus aspirasi ini?", (isConfirmed) => {
                 if (isConfirmed) {
-                    diskusiList = diskusiList.filter(item => item.id !== id);
+                    if (isFirebaseEnabled()) {
+                        const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                        firebase.firestore().doc(`artifacts/${appId}/public/data/diskusi/${id}`).delete();
+                    } else {
+                        diskusiList = diskusiList.filter(item => item.id !== id);
+                        renderDiskusi();
+                        showToast("Topik diskusi berhasil dihapus.");
+                    }
                     saveStateToSession();
-                    renderDiskusi();
-                    showToast("Topik diskusi berhasil dihapus.");
                 }
             });
         }
@@ -3164,10 +3453,15 @@
             }
             const member = membersData.find(m => m.id === id);
             if (member) {
-                member.status = 'Aktif';
+                if (isFirebaseEnabled()) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                    firebase.firestore().doc(`artifacts/${appId}/public/data/members/${id}`).update({ status: 'Aktif' });
+                } else {
+                    member.status = 'Aktif';
+                    renderMembers();
+                    showToast(`${member.name} berhasil disetujui bergabung!`);
+                }
                 saveStateToSession();
-                renderMembers();
-                showToast(`${member.name} berhasil disetujui bergabung!`);
             }
         }
 
@@ -3179,10 +3473,15 @@
             }
             showConfirm("Apakah Anda yakin ingin menghapus anggota ini?", (isConfirmed) => {
                 if (isConfirmed) {
-                    membersData = membersData.filter(m => m.id !== id);
+                    if (isFirebaseEnabled()) {
+                        const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                        firebase.firestore().doc(`artifacts/${appId}/public/data/members/${id}`).delete();
+                    } else {
+                        membersData = membersData.filter(m => m.id !== id);
+                        renderMembers();
+                        showToast("Anggota berhasil dihapus.");
+                    }
                     saveStateToSession();
-                    renderMembers();
-                    showToast("Anggota berhasil dihapus.");
                 }
             });
         }
@@ -3216,14 +3515,20 @@
                 password: "123",
                 detail: detail,
                 quote: quote,
-                tags: tags
+                tags: tags,
+                wa: "081222223333"
             };
 
-            staffData.push(newStaff);
+            if (isFirebaseEnabled()) {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                firebase.firestore().doc(`artifacts/${appId}/public/data/staff/${newStaff.id}`).set(newStaff);
+            } else {
+                staffData.push(newStaff);
+                renderPengurus();
+                showToast("Struktur pengurus berhasil diperbarui!");
+            }
             saveStateToSession();
-            renderPengurus();
             closeAddStaffModal();
-            showToast("Struktur pengurus berhasil diperbarui!");
         }
 
         function deleteStaff(id) {
@@ -3233,10 +3538,15 @@
             }
             showConfirm("Hapus pengurus ini dari struktur katar?", (isConfirmed) => {
                 if (isConfirmed) {
-                    staffData = staffData.filter(staff => staff.id !== id);
+                    if (isFirebaseEnabled()) {
+                        const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                        firebase.firestore().doc(`artifacts/${appId}/public/data/staff/${id}`).delete();
+                    } else {
+                        staffData = staffData.filter(staff => staff.id !== id);
+                        renderPengurus();
+                        showToast("Pengurus dihapus.");
+                    }
                     saveStateToSession();
-                    renderPengurus();
-                    showToast("Pengurus dihapus.");
                 }
             });
         }
@@ -3283,10 +3593,15 @@
                     keuangan.totalKas -= amount;
                 }
 
+                if (isFirebaseEnabled()) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                    firebase.firestore().doc(`artifacts/${appId}/public/data/keuangan/config`).set(keuangan);
+                } else {
+                    renderFinance();
+                    showToast("Transaksi Kas berhasil dicatat!");
+                }
                 saveStateToSession();
-                renderFinance();
                 closeFinUpdateModal();
-                showToast("Transaksi Kas berhasil dicatat!");
             };
 
             if (proofFile) {
