@@ -3,13 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Katar15 - Wajah Baru Karang Taruna RW 15 Samawa</title>
+    <title id="page-title">Katar15 - Wajah Baru Karang Taruna RW 15 Samawa</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Cropper.js untuk fitur crop foto profil -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -62,13 +66,13 @@
     <div class="blob bg-blue-600 w-[300px] h-[300px] bottom-10 left-[20%] md:w-[500px] md:h-[500px]"></div>
 
     <!-- Custom Notification Toast -->
-    <div id="toast" class="hidden fixed bottom-5 right-5 z-50 p-4 rounded-xl glass border border-indigo-500/30 text-sm font-semibold flex items-center gap-3 shadow-2xl transition-all duration-300 transform translate-y-10 opacity-0">
+    <div id="toast" class="hidden fixed bottom-5 right-5 z-[100] p-4 rounded-xl glass border border-indigo-500/30 text-sm font-semibold flex items-center gap-3 shadow-2xl transition-all duration-300 transform translate-y-10 opacity-0">
         <i id="toast-icon" class="fa-solid fa-circle-info text-indigo-400"></i>
         <span id="toast-message" class="text-white">Pesan Notifikasi</span>
     </div>
 
     <!-- Custom Confirm Dialog -->
-    <div id="confirm-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div id="confirm-modal" class="hidden fixed inset-0 z-[90] overflow-y-auto flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
         <div class="glass-premium max-w-sm w-full p-6 rounded-2xl border border-red-500/30 space-y-4">
             <h4 class="font-extrabold text-white text-lg flex items-center gap-2">
                 <i class="fa-solid fa-triangle-exclamation text-red-400"></i> Konfirmasi Tindakan
@@ -84,14 +88,13 @@
     <!-- Navigation Header -->
     <header class="sticky top-0 z-50 glass border-b border-white/10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div id="app-logo-badge" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 overflow-hidden">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="window.location.hash='#beranda'">
+                <div id="app-logo-container" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 overflow-hidden">
                     <span id="app-logo-text" class="font-extrabold text-white text-lg">15</span>
-                    <img id="app-logo-image" class="hidden w-full h-full object-cover" alt="Logo">
                 </div>
                 <div>
-                    <h1 id="app-title-display" class="text-lg font-extrabold tracking-tight bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">KATAR RW 15</h1>
-                    <p id="app-subtitle-display" class="text-[10px] text-indigo-400 font-semibold uppercase tracking-wider">SAMAWA BERDAYA</p>
+                    <h1 id="app-title-text" class="text-lg font-extrabold tracking-tight bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">KATAR RW 15</h1>
+                    <p id="app-subtitle-text" class="text-[10px] text-indigo-400 font-semibold uppercase tracking-wider">SAMAWA BERDAYA</p>
                 </div>
             </div>
 
@@ -109,31 +112,28 @@
             </nav>
 
             <div class="flex items-center space-x-4">
-                <!-- User Status Info with Profile Upload Support -->
+                <!-- User Status Info -->
                 <div id="user-status" class="hidden md:flex items-center space-x-2 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10 text-xs">
-                    <div class="relative group cursor-pointer" onclick="triggerProfileUpload()" title="Klik untuk ganti foto profil">
-                        <img id="user-avatar-img" src="" class="w-8 h-8 rounded-full object-cover border border-indigo-500/50 hidden">
-                        <div id="user-avatar-fallback" class="w-8 h-8 rounded-full bg-indigo-500/30 flex items-center justify-center text-indigo-300 font-bold text-sm uppercase">U</div>
-                        <div class="absolute -bottom-1 -right-1 bg-indigo-600 rounded-full w-4 h-4 flex items-center justify-center text-[9px] text-white border border-[#0B0F19] group-hover:scale-110 transition">
-                            <i class="fa-solid fa-camera"></i>
-                        </div>
+                    <div class="relative cursor-pointer group" onclick="openProfileModal()">
+                        <img id="user-avatar-img" src="https://placehold.co/100x100/1e1b4b/ffffff?text=U" class="w-7 h-7 rounded-full border border-indigo-500/40 object-cover" alt="Avatar">
+                        <span class="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-green-500 border border-[#0B0F19]"></span>
                     </div>
-                    <input type="file" id="user-avatar-upload-input" accept="image/*" class="hidden" onchange="handleProfileUpload(event)">
-                    <div class="text-left">
-                        <span id="user-display-name" class="text-gray-300 font-medium block leading-none">Guest</span>
-                        <span id="user-display-role" class="px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[9px] uppercase font-bold inline-block mt-0.5">Warga</span>
-                    </div>
+                    <span id="user-display-name" class="text-gray-300 font-medium cursor-pointer hover:text-indigo-300 transition" onclick="openProfileModal()">Guest</span>
+                    <span id="user-display-role" class="px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[9px] uppercase font-bold">Warga</span>
                 </div>
 
                 <button id="btn-login-modal" onclick="openLoginModal()" class="px-4 py-2 rounded-xl border border-white/10 hover:bg-white/5 font-semibold text-xs transition duration-200">
                     <i class="fa-solid fa-right-to-bracket mr-1"></i> Login
                 </button>
 
+                <button id="btn-app-settings" onclick="openAppSettingsModal()" class="hidden px-3 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 border border-amber-500/20 font-semibold text-xs transition duration-200" title="Pengaturan Aplikasi">
+                    <i class="fa-solid fa-gears"></i>
+                </button>
+
                 <button id="btn-logout" onclick="logout()" class="hidden px-4 py-2 rounded-xl bg-red-500/15 hover:bg-red-500/30 text-red-300 border border-red-500/20 font-semibold text-xs transition duration-200">
                     <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
                 </button>
 
-                <!-- Tombol gabung ini otomatis dihilangkan di JS saat login -->
                 <a href="#daftar" id="nav-btn-join" class="hidden sm:inline-block px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 font-semibold text-xs transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg shadow-indigo-500/20">
                     Gabung Squad
                 </a>
@@ -163,19 +163,14 @@
 
     <!-- Admin Banner Indicator -->
     <div id="admin-banner" class="hidden bg-gradient-to-r from-[#e0a82e] to-[#c28410] text-gray-950 text-center py-2.5 px-4 text-xs font-bold sticky top-20 z-40 shadow-md">
-        <i class="fa-solid fa-circle-exclamation mr-1.5 text-lg align-middle"></i> 
-        <span class="align-middle">Mode Akses Istimewa Aktif (<span id="banner-role-name">Admin</span>). Anda dapat memproses fitur-fitur internal katar sesuai otorisasi role Anda.</span>
-        <!-- Edit Branding Button (Hanya Admin Utama) -->
-        <button id="admin-branding-btn" onclick="openAppBrandingModal()" class="ml-3 px-3 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg text-[10px] font-bold transition flex items-center gap-1 inline-block align-middle">
-            <i class="fa-solid fa-wand-magic-sparkles"></i> Edit Branding App
-        </button>
+        <i class="fa-solid fa-circle-exclamation mr-1.5 text-lg align-middle"></i> <span class="align-middle">Mode Akses Istimewa Aktif (<span id="banner-role-name">Admin</span>). Anda dapat memproses fitur-fitur internal katar sesuai otorisasi role Anda.</span>
     </div>
 
     <main class="relative z-10">
 
         <!-- Hero Section & Beranda -->
         <section id="beranda" class="py-12 md:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-20">
+            <div id="hero-banner-container" class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-20 rounded-3xl p-6 md:p-12 transition-all duration-300">
                 
                 <!-- Left Content -->
                 <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
@@ -185,10 +180,10 @@
                     </div>
                     
                     <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-tight">
-                        Wajah Baru <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-500 bg-clip-text text-transparent text-glow">Karang Taruna 15</span> Samawa
+                        Wajah Baru <span id="hero-app-title" class="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-500 bg-clip-text text-transparent text-glow">Karang Taruna 15</span> Samawa
                     </h2>
                     
-                    <p class="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                    <p id="hero-app-desc" class="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed">
                         Kami merangkul seluruh pemuda-pemudi di RW 15 sampai ke unit terkecil RT! Dikelola dengan sistem <span class="text-indigo-300 font-semibold">100% transparan</span>, saling dukung, dan tanpa kubu-kubuan. Yuk, ikut andil dalam transformasi sosial yang seru dan asyik!
                     </p>
 
@@ -222,7 +217,7 @@
                                 <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
                                 <div class="w-3 h-3 rounded-full bg-green-500"></div>
                             </div>
-                            <span class="text-xs text-indigo-300 font-semibold tracking-wider">CORE PRINCIPLES</span>
+                            <span class="text-xs text-indigo-300 font-semibold tracking-wider">PRINSIP UTAMA</span>
                         </div>
 
                         <div class="space-y-4">
@@ -264,7 +259,7 @@
 
             </div>
 
-            <!-- Artikel & Warta RW 15 (Hanya Artikel Core Katar) -->
+            <!-- Artikel & Warta RW 15 (Moved directly here in Beranda) -->
             <div class="py-16 bg-white/[0.01] border-t border-white/5 mt-16">
                 <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
                     <div>
@@ -274,8 +269,8 @@
                             Pantau tulisan terbaru mengenai aksi, program kerja, dan sosialisasi penting yang dirancang khusus oleh pengurus Karang Taruna dan Koordinator RT.
                         </p>
                     </div>
-                    <!-- Tombol Tambah Artikel (Hanya muncul jika berwenang - Ketua, Wakil, Sekretaris, Bendahara, Admin) -->
-                    <button id="btn-add-article" onclick="openArticleModal(null)" class="hidden mt-4 md:mt-0 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-indigo-600/20">
+                    <!-- Tombol Tambah Artikel (Hanya muncul jika berwenang) -->
+                    <button id="btn-add-article" onclick="openArticleModal()" class="hidden mt-4 md:mt-0 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-indigo-600/20">
                         <i class="fa-solid fa-plus text-sm"></i> Tambah Informasi Baru
                     </button>
                 </div>
@@ -377,7 +372,7 @@
                     </div>
                     <h2 class="text-3xl font-extrabold text-white">Transparansi Keuangan Real-Time</h2>
                     <p class="text-gray-400 mt-2 text-sm sm:text-base max-w-2xl">
-                        Semua pemasukan dan pengeluaran dicatat secara rinci. Gak ada lagi manipulasi anggaran ataupun kecurigaan sesama warga.
+                        Semua pemasukan dan pengeluaran dicatat secara rinci. Setiap transaksi dapat dilampiri foto bukti yang diunggah bendahara agar bebas korupsi.
                     </p>
                 </div>
                 <!-- Admin Update Keuangan -->
@@ -442,13 +437,12 @@
                     <!-- Jika Sudah Login -->
                     <div id="forum-authenticated" class="hidden glass-premium rounded-2xl p-6 border border-indigo-500/30">
                         <div class="flex items-center space-x-3 mb-4">
-                            <div class="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center" id="auth-avatar-container">
-                                <span id="auth-avatar-fallback" class="bg-indigo-500/30 text-indigo-300 font-bold text-sm w-full h-full flex items-center justify-center">U</span>
-                                <img id="auth-avatar-img" class="hidden w-full h-full object-cover">
+                            <div class="w-9 h-9 rounded-full bg-indigo-500/30 flex items-center justify-center text-indigo-300 font-bold text-sm overflow-hidden" id="auth-avatar-container">
+                                <span id="auth-avatar">U</span>
                             </div>
                             <div>
                                 <h4 class="font-bold text-sm text-white" id="auth-username">User Active</h4>
-                                <p class="text-[10px] text-gray-400">Bagikan id segar untuk RW 15 hari ini</p>
+                                <p class="text-[10px] text-gray-400">Bagikan ide segar untuk RW 15 hari ini</p>
                             </div>
                         </div>
 
@@ -512,10 +506,10 @@
                         <!-- Terisi dinamis -->
                     </div>
 
-                    <!-- Chat Input (Kirim live chat) -->
+                    <!-- Chat Input -->
                     <form onsubmit="postLiveChatMessage(event)" class="pt-4 border-t border-white/5 flex gap-2">
                         <input type="text" id="livechat-input" placeholder="Tulis gurauan, candaan, atau sapa kawan-kawan di sini..." required class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500">
-                        <button type="submit" class="px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold transition flex items-center justify-center gap-1">
+                        <button type="submit" class="px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold transition flex items-center justify-center">
                             <i class="fa-solid fa-paper-plane"></i>
                         </button>
                     </form>
@@ -701,8 +695,8 @@
                         <div class="flex items-center space-x-2">
                             <div class="w-8 h-8 rounded bg-teal-500/20 text-teal-400 flex items-center justify-center text-xs"><i class="fa-solid fa-map-pin"></i></div>
                             <div>
-                                <p class="font-bold text-xs text-white">Koordinator RT 01 (Doni)</p>
-                                <p class="text-[9px] text-gray-400">Edit Info RT 01 Secara Mandiri</p>
+                                <p class="font-bold text-xs text-white">Koordinator RT (Doni)</p>
+                                <p class="text-[9px] text-gray-400">Tulis & Edit Artikel RT</p>
                             </div>
                         </div>
                         <i class="fa-solid fa-chevron-right text-teal-500 text-xs"></i>
@@ -769,7 +763,7 @@
         </div>
     </div>
 
-    <!-- ADMIN MODAL: UPDATE FINANCE WITH PROOF IMAGE -->
+    <!-- ADMIN MODAL: UPDATE FINANCE -->
     <div id="fin-update-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="relative glass-premium max-w-md w-full p-6 sm:p-8 rounded-3xl border border-amber-500/30">
             <button onclick="closeFinUpdateModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
@@ -778,7 +772,7 @@
             
             <div class="text-center space-y-2 mb-6">
                 <h3 class="text-xl font-extrabold text-amber-400">Update Keuangan (Live)</h3>
-                <p class="text-xs text-gray-400">Tambahkan catatan pemasukan atau pengeluaran baru ke log kas katar.</p>
+                <p class="text-xs text-gray-400">Tambahkan catatan pemasukan atau pengeluaran baru beserta foto bukti transaksi dari lokal.</p>
             </div>
 
             <form onsubmit="handleSaveFinance(event)" class="space-y-4">
@@ -798,12 +792,8 @@
                     <input type="text" id="fin-desc" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-amber-500" placeholder="Contoh: Donatur kas dari Pak RW">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Foto Bukti Transaksi (Pilih dari HP/Laptop)</label>
-                    <input type="file" id="fin-image-file" accept="image/*" onchange="previewFinImageLocal(event)" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-500/10 file:text-amber-300 hover:file:bg-amber-500/20">
-                    <div id="fin-image-preview-container" class="hidden mt-3 text-center">
-                        <p class="text-[10px] text-gray-500 mb-1">Pratinjau Bukti:</p>
-                        <img id="fin-image-preview" src="" class="mx-auto h-32 rounded-lg border border-white/10 object-contain">
-                    </div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Foto Bukti Transaksi (Pilih Gambar)</label>
+                    <input type="file" id="fin-proof-file" accept="image/*" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-500/10 file:text-amber-300 hover:file:bg-amber-500/20">
                 </div>
 
                 <button type="submit" class="w-full py-3 bg-amber-500 hover:bg-amber-600 font-bold text-white text-sm rounded-xl transition">
@@ -813,7 +803,7 @@
         </div>
     </div>
 
-    <!-- MODAL: ADD / EDIT ARTICLE (For General & RT) -->
+    <!-- MODAL: ADD / EDIT ARTICLE -->
     <div id="article-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="relative glass-premium max-w-lg w-full p-6 sm:p-8 rounded-3xl border border-indigo-500/30 max-h-[90vh] overflow-y-auto">
             <button onclick="closeArticleModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
@@ -822,7 +812,7 @@
             
             <div class="text-center space-y-2 mb-6">
                 <h3 id="article-modal-title" class="text-xl font-extrabold text-white">Publish Informasi Baru</h3>
-                <p id="article-modal-desc" class="text-xs text-gray-400">Bagikan update berita, sosialisasi, atau rencana program kerja terbaru katar.</p>
+                <p class="text-xs text-gray-400">Bagikan update berita, sosialisasi, atau rencana program kerja terbaru katar.</p>
             </div>
 
             <form onsubmit="handleSaveArticle(event)" class="space-y-4">
@@ -831,20 +821,21 @@
                     <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Judul Artikel / Informasi</label>
                     <input type="text" id="article-title" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500">
                 </div>
-                <div id="article-category-container">
+                <div>
                     <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Kategori / Tag</label>
                     <select id="article-category" class="w-full bg-[#111827] border border-white/10 rounded-xl px-4 py-2.5 text-gray-300 focus:outline-none focus:border-indigo-500">
                         <option value="Program Kerja">Program Kerja</option>
                         <option value="Sosial & Relawan">Sosial & Relawan</option>
                         <option value="Pemberitahuan">Pemberitahuan</option>
+                        <option value="Kegiatan RT">Kegiatan RT</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Foto Sampul (Upload Lokal)</label>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Foto Sampul (Upload Lokal - Akan Tampil Utuh)</label>
                     <input type="file" id="article-image-file" accept="image/*" onchange="previewImageLocal(event)" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-500/10 file:text-indigo-300 hover:file:bg-indigo-500/20">
                     <div id="article-image-preview-container" class="hidden mt-3 text-center">
-                        <p class="text-[10px] text-gray-500 mb-1">Pratinjau Foto Pilihan:</p>
-                        <img id="article-image-preview" src="" class="mx-auto h-32 rounded-lg border border-white/10 object-contain">
+                        <p class="text-[10px] text-gray-500 mb-1">Pratinjau Foto Pilihan (Tampil Utuh):</p>
+                        <img id="article-image-preview" src="" class="mx-auto h-32 rounded-lg border border-white/10 object-contain bg-[#111827]">
                     </div>
                 </div>
                 <div>
@@ -859,16 +850,16 @@
         </div>
     </div>
 
-    <!-- MODAL: EDIT COORDINATOR RT (With local photo upload) -->
+    <!-- MODAL: EDIT COORDINATOR RT -->
     <div id="rt-coord-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="relative glass-premium max-w-md w-full p-6 sm:p-8 rounded-3xl border border-indigo-500/30 max-h-[90vh] overflow-y-auto">
+        <div class="relative glass-premium max-w-md w-full p-6 sm:p-8 rounded-3xl border border-indigo-500/30">
             <button onclick="closeRtCoordModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
             
             <div class="text-center space-y-2 mb-6">
                 <h3 id="rt-coord-modal-title" class="text-xl font-extrabold text-white">Edit Koordinator RT</h3>
-                <p class="text-xs text-gray-400">Atur rincian kepemimpinan remaja dan program kerja per-RT.</p>
+                <p class="text-xs text-gray-400">Atur rincian kepemimpinan remaja dan program kerja per-RT. (Hanya Admin yang berwenang)</p>
             </div>
 
             <form onsubmit="handleSaveRtCoordinator(event)" class="space-y-4">
@@ -889,14 +880,6 @@
                     <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Fokus Program Kerja RT</label>
                     <textarea id="rt-proker" required rows="3" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500"></textarea>
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Foto Kegiatan / Program Kerja RT</label>
-                    <input type="file" id="rt-image-file" accept="image/*" onchange="previewRtImageLocal(event)" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-500/10 file:text-indigo-300 hover:file:bg-indigo-500/20">
-                    <div id="rt-image-preview-container" class="hidden mt-3 text-center">
-                        <p class="text-[10px] text-gray-500 mb-1">Pratinjau Foto Kegiatan:</p>
-                        <img id="rt-image-preview" src="" class="mx-auto h-32 rounded-lg border border-white/10 object-contain">
-                    </div>
-                </div>
 
                 <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 font-bold text-white text-sm rounded-xl transition">
                     Simpan Perubahan Koordinator
@@ -905,134 +888,189 @@
         </div>
     </div>
 
-    <!-- MODAL: APP BRANDING CONFIG (Hanya Admin) -->
-    <div id="app-branding-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="relative glass-premium max-w-md w-full p-6 sm:p-8 rounded-3xl border border-amber-500/30 max-h-[90vh] overflow-y-auto">
-            <button onclick="closeAppBrandingModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
+    <!-- MODAL: ADD / EDIT RT INFO -->
+    <div id="rt-info-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="relative glass-premium max-w-md w-full p-6 sm:p-8 rounded-3xl border border-indigo-500/30">
+            <button onclick="closeRtInfoModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
             
             <div class="text-center space-y-2 mb-6">
-                <h3 class="text-xl font-extrabold text-amber-400">Edit Branding Aplikasi</h3>
-                <p class="text-xs text-gray-400">Sesuaikan nama aplikasi, teks logo, logo gambar, dan banner utama.</p>
+                <h3 id="rt-info-modal-title" class="text-xl font-extrabold text-white">Kelola Informasi Remaja RT</h3>
+                <p class="text-xs text-gray-400">Terbitkan pengumuman atau kabar terbaru khusus untuk warga RT terpilih.</p>
             </div>
 
-            <form onsubmit="handleSaveAppBranding(event)" class="space-y-4">
+            <form onsubmit="handleSaveRtInfo(event)" class="space-y-4">
+                <input type="hidden" id="rt-info-key">
+                <input type="hidden" id="rt-info-id">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Nama Aplikasi / Logo Text</label>
-                    <input type="text" id="brand-name" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-amber-500">
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Judul Pengumuman</label>
+                    <input type="text" id="rt-info-title" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Badge Text (misal: '15')</label>
-                    <input type="text" id="brand-badge" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-amber-500">
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Keterangan / Detail Informasi</label>
+                    <textarea id="rt-info-content" required rows="3" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500"></textarea>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Slogan Aplikasi (Header Subtitle)</label>
-                    <input type="text" id="brand-slogan" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-amber-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Upload Kustom Logo / Gambar (Opsional)</label>
-                    <input type="file" id="brand-logo-file" accept="image/*" onchange="previewBrandLogoLocal(event)" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-500/10 file:text-amber-300 hover:file:bg-amber-500/20">
-                    <div id="brand-logo-preview-container" class="hidden mt-3 text-center">
-                        <p class="text-[10px] text-gray-500 mb-1">Pratinjau Kustom Logo:</p>
-                        <img id="brand-logo-preview" src="" class="mx-auto h-16 w-16 rounded-xl border border-white/10 object-contain">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Warna Banner Utama (CSS Gradient / Solid)</label>
-                    <input type="text" id="brand-banner-gradient" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-amber-500" placeholder="e.g. from-indigo-500 via-purple-500 to-purple-600">
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Foto Informasi RT (Unggah Lokal - Tampil Utuh)</label>
+                    <input type="file" id="rt-info-image-file" accept="image/*" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-500/10 file:text-indigo-300 hover:file:bg-indigo-500/20">
                 </div>
 
-                <button type="submit" class="w-full py-3 bg-amber-500 hover:bg-amber-600 font-bold text-white text-sm rounded-xl transition">
-                    Simpan Perubahan Branding
+                <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 font-bold text-white text-sm rounded-xl transition">
+                    Simpan Informasi RT
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- GLOBAL VIEW PROOF MODAL -->
-    <div id="view-proof-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
-        <div class="relative max-w-lg w-full p-6 rounded-2xl glass-premium border border-indigo-500/30 text-center">
-            <button onclick="closeProofModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
+    <!-- MODAL: CHANGE PROFILE PICTURE & DETAILS -->
+    <div id="profile-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="relative glass-premium max-w-md w-full p-6 sm:p-8 rounded-3xl border border-indigo-500/30">
+            <button onclick="closeProfileModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
-            <h3 class="text-base font-bold text-white mb-4">Bukti Transaksi Keuangan</h3>
-            <div class="bg-black/30 p-2 rounded-xl border border-white/5 max-h-[60vh] flex items-center justify-center overflow-hidden">
-                <img id="proof-modal-img" src="" class="max-w-full max-h-[50vh] object-contain rounded-lg">
+            
+            <div class="text-center space-y-2 mb-6">
+                <h3 class="text-xl font-extrabold text-white">Profil Pengguna</h3>
+                <p class="text-xs text-gray-400">Kelola foto profil Anda dari penyimpanan lokal.</p>
             </div>
+
+            <div class="space-y-6 text-center">
+                <div class="relative inline-block mx-auto">
+                    <img id="profile-preview-img" src="https://placehold.co/150x150/1e1b4b/ffffff?text=U" class="w-28 h-28 rounded-full object-cover border-2 border-indigo-500 mx-auto" alt="Foto Profil">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-2">Pilih Foto Baru dari Perangkat</label>
+                    <input type="file" id="profile-upload-file" accept="image/*" onchange="handleProfileFileSelect(event)" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-500/10 file:text-indigo-300 hover:file:bg-indigo-500/20">
+                </div>
+
+                <div class="border-t border-white/5 pt-4 text-left text-xs text-gray-400 space-y-1">
+                    <p><strong>Nama:</strong> <span id="profile-detail-name">Guest</span></p>
+                    <p><strong>Peran Sistem:</strong> <span id="profile-detail-role">Warga</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CROPPER WORKSPACE MODAL -->
+    <div id="cropper-modal" class="hidden fixed inset-0 z-[60] overflow-y-auto flex items-center justify-center p-4 bg-black/95 backdrop-blur-sm">
+        <div class="glass-premium max-w-lg w-full p-6 rounded-3xl border border-indigo-500/30">
+            <h3 class="text-lg font-bold text-white mb-4"><i class="fa-solid fa-crop-simple text-indigo-400 mr-2"></i>Sesuaikan Foto Profil (Crop)</h3>
+            <div class="max-h-[50vh] overflow-hidden bg-[#111827] rounded-xl mb-4 flex items-center justify-center">
+                <img id="cropper-image" src="" class="max-w-full h-auto">
+            </div>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeCropperModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-white/5 hover:bg-white/10 text-gray-300">Batal</button>
+                <button onclick="saveCroppedProfile()" class="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-500 hover:bg-indigo-600 text-white">Potong & Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: APP SETTINGS (Admin Only) -->
+    <div id="app-settings-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="relative glass-premium max-w-md w-full p-6 sm:p-8 rounded-3xl border border-amber-500/30">
+            <button onclick="closeAppSettingsModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            
+            <div class="text-center space-y-2 mb-6">
+                <h3 class="text-xl font-extrabold text-amber-400"><i class="fa-solid fa-gears mr-1.5"></i>Pengaturan Aplikasi</h3>
+                <p class="text-xs text-gray-400">Ubah Logo/Icon, Judul, Slogan, dan Banner aplikasi Katar15.</p>
+            </div>
+
+            <form onsubmit="handleSaveAppSettings(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Nama Aplikasi / Organisasi</label>
+                    <input type="text" id="set-app-title" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Slogan / Subtitle Aplikasi</label>
+                    <input type="text" id="set-app-subtitle" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Logo Icon (Teks Singkat)</label>
+                    <input type="text" id="set-logo-text" required maxlength="3" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Logo Image (Opsional, Ganti Teks)</label>
+                    <input type="file" id="set-logo-file" accept="image/*" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-500/10 file:text-amber-300 hover:file:bg-amber-500/20">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Banner Hero Utama (Lokal)</label>
+                    <input type="file" id="set-banner-file" accept="image/*" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-500/10 file:text-amber-300 hover:file:bg-amber-500/20">
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-amber-500 hover:bg-amber-600 font-bold text-white text-sm rounded-xl transition">
+                    Simpan Perubahan Tampilan
+                </button>
+            </form>
         </div>
     </div>
 
     <script>
         // State management internal aplikasi
-        let currentUser = null; // { name: "...", role: "admin|ketua|wakil_ketua|sekretaris|bendahara|koordinator_rt|warga", assignedRt: "RT-01" }
+        let currentUser = null; // { name: "...", role: "admin|ketua|...", profileImage: "..." }
         let currentConfirmCallback = null; // Custom confirm handler
         let uploadedBase64Image = ""; // Tampung image lokal hasil FileReader
-        let uploadedFinBase64Image = ""; // Tampung bukti transfer bendahara
-        let uploadedRtBase64Image = ""; // Tampung foto RT koordinator
-        let uploadedBrandLogoBase64 = ""; // Tampung logo aplikasi custom
-        let activeArticleRtKey = null; // null jika General (Beranda), "RT-01" dst jika RT-specific
+        let cropperInstance = null; // Instance cropper.js
 
-        // Dictionary Foto Profil Custom Pengguna
-        let userAvatars = {};
-
-        // App Branding State
+        // Konfigurasi Branding Aplikasi Terintegrasi
         let appBranding = {
-            name: "KATAR RW 15",
-            badge: "15",
-            slogan: "SAMAWA BERDAYA",
+            title: "KATAR RW 15",
+            subtitle: "SAMAWA BERDAYA",
+            logoText: "15",
             logoImg: "",
-            bannerGradient: "from-indigo-500 via-purple-500 to-purple-600"
+            bannerImg: ""
         };
 
-        // Data Remaja RT (Slogan, Fokus, Program & Bukti Kegiatan)
+        // Data Remaja RT (Ditambahkan struktur informasi mandiri per RT)
         const subRtData = {
             "RT-01": {
                 ketua: "Doni Setiawan (No. Unit: 0214)",
                 slogan: "Aksi Sosial & Gotong Royong Estetik",
                 anggota: 12,
                 proker: "Pengelolaan Bank Sampah Kering & Edukasi Lingkungan Hijau di RT 01.",
-                kontak: "081298765431",
-                image: "https://placehold.co/600x400/1e1b4b/ffffff?text=RT+01+Go+Green"
+                informasi: [
+                    { id: 1, title: "Penyuluhan Bank Sampah RT 01", content: "Akan dilaksanakan diskusi singkat mengenai pengumpulan sampah pilahan di gazebo RT 01 hari Minggu jam 09:00 WIB.", date: "24 Juni 2026", image: "" }
+                ]
             },
             "RT-02": {
                 ketua: "Alif Ramadhan (No. Unit: 0615)",
                 slogan: "Sinergi Digital & Turnamen Esport Berkala",
                 anggota: 15,
                 proker: "Penyediaan Wi-Fi gratis di Pos Ronda RT 02 & turnamen mobile legends bulanan.",
-                kontak: "081298765432",
-                image: "https://placehold.co/600x400/1e1b4b/ffffff?text=RT+02+Digital"
+                informasi: [
+                    { id: 1, title: "Uji Coba Wi-Fi Pos Ronda RT 02", content: "Layanan Wi-Fi pos ronda kini siap digunakan secara gratis untuk belajar bersama dan koordinasi warga.", date: "23 Juni 2026", image: "" }
+                ]
             },
             "RT-03": {
                 ketua: "Zahra Amalia (No. Unit: 1111)",
                 slogan: "Creative Economy & Bazar Kuliner Pemuda",
                 anggota: 9,
                 proker: "Bazar malam minggu pemuda RT 03 untuk modal UMKM kuliner kreatif.",
-                kontak: "081298765433",
-                image: "https://placehold.co/600x400/1e1b4b/ffffff?text=RT+03+Bazar"
+                informasi: []
             },
             "RT-04": {
                 ketua: "Fuji Astuti (No. Unit: 1405)",
                 slogan: "Seni, Musik Akustik & Desain Kreatif",
                 anggota: 11,
                 proker: "Kelas desain pamflet gratis & panggung musik akhir bulan di taman RT 04.",
-                kontak: "081298765434",
-                image: "https://placehold.co/600x400/1e1b4b/ffffff?text=RT+04+Seni"
+                informasi: []
             },
             "RT-05": {
                 ketua: "Dimas Adit (No. Unit: 1924)",
                 slogan: "Sehat Bersama & Turnamen Olahraga",
                 anggota: 14,
                 proker: "Senam pagi pemuda & turnamen bulutangkis antar-gang di RT 05.",
-                kontak: "081298765435",
-                image: "https://placehold.co/600x400/1e1b4b/ffffff?text=RT+05+Olahraga"
+                informasi: []
             }
         };
 
         // Data Pengurus Inti
         let staffData = [
             { id: 1, name: "Alif Ramadhan", role: "Ketua Katar", detail: "Warga RT 02 • Mahasiswa Sistem Informasi", quote: "Gak perlu formal-formal amat, yang penting aksi nyata buat Samawa.", tags: "Mobile Legends & Ngopi" },
-            { id: 2, name: "Fuji Astuti", role: "Wakil Ketua", detail: "Warga RT 04 • Designer Grafis", quote: "Ada id acara seru? Yuk langsung kita gaskan, gak pake birokrasi berbelit!", tags: "Seni & K-Pop" },
+            { id: 2, name: "Fuji Astuti", role: "Wakil Ketua", detail: "Warga RT 04 • Designer Grafis", quote: "Ada ide acara seru? Yuk langsung kita gaskan, gak pake birokrasi berbelit!", tags: "Seni & K-Pop" },
             { id: 3, name: "Rian Pratama", role: "Sekretaris", detail: "Warga RT 01 • Freelancer", quote: "Data katar rapi dan bisa dipantau siapa aja lewat drive bersama.", tags: "Futsal & Videografi" },
             { id: 4, name: "Zahra Amalia", role: "Bendahara", detail: "Warga RT 03 • Pengusaha Kuliner", quote: "Setiap rupiah uang kas dicatat detail dan dipublish tiap bulan.", tags: "Memasak & Akuntansi" }
         ];
@@ -1044,15 +1082,15 @@
             { id: 3, name: "Taufik Hidayat", rt: "RT 01", unit: "0412", minat: ["Olahraga"], status: "Pending Verifikasi", wa: "081255556666", jabatan: "Anggota" }
         ];
 
-        // Data Keuangan (Updated with custom image support)
+        // Data Keuangan (Ditambahkan atribut bukti transaksi gambar lokal)
         let keuangan = {
             totalKas: 2450000,
             pemasukan: 850000,
             pengeluaran: 300000,
             logs: [
-                { type: "pemasukan", desc: "Iuran Rutin Warga RT 01 & RT 02", amount: 450000, date: "22 Juni 2026", image: "" },
-                { type: "pemasukan", desc: "Donatur Kas dari Pak RW 15", amount: 400000, date: "18 Juni 2026", image: "" },
-                { type: "pengeluaran", desc: "Pembelian Bola Futsal Baru & Pompa", amount: 300000, date: "10 Juni 2026", image: "" }
+                { type: "pemasukan", desc: "Iuran Rutin Warga RT 01 & RT 02", amount: 450000, date: "22 Juni 2026", proofImage: "" },
+                { type: "pemasukan", desc: "Donatur Kas dari Pak RW 15", amount: 400000, date: "18 Juni 2026", proofImage: "" },
+                { type: "pengeluaran", desc: "Pembelian Bola Futsal Baru & Pompa", amount: 300000, date: "10 Juni 2026", proofImage: "" }
             ]
         };
 
@@ -1092,8 +1130,18 @@
             { id: 5, user: "Rian Pratama", role: "Sekretaris", msg: "Jangan lupa bawa cup kopi masing-masing ya rekan-rekan, ramah lingkungan!", time: "20:15" }
         ];
 
-        // Data Artikel / Berita Utama (Hanya bisa diposting oleh Core Katar)
+        // Data Artikel / Berita Informasi Terkini
         let articlesList = [
+            {
+                id: 1,
+                title: "Rapat Koordinasi Pembentukan Remaja RT 01 Selesai Digelar",
+                category: "Program Kerja",
+                content: "Remaja RT 01 resmi menyepakati pembentukan kepengurusan sub-katar baru. Pertemuan dihadiri oleh Ketua Karang Taruna dan Koordinator RT 01. Fokus utama program kerja RT 01 ke depan adalah aktivasi bank sampah ramah lingkungan.",
+                image: "https://placehold.co/600x400/1e1b4b/ffffff?text=Rapat+RT+01",
+                date: "24 Juni 2026",
+                author: "Doni Setiawan",
+                role: "Koordinator RT 01"
+            },
             {
                 id: 2,
                 title: "Penggalangan Dana Bazar UMKM Mandiri Pemuda RW 15",
@@ -1106,53 +1154,7 @@
             }
         ];
 
-        // Data Artikel Khusus RT (Bisa ditambah/edit oleh masing-masing Koordinator RT)
-        let rtArticlesList = [
-            {
-                id: 1,
-                rtKey: "RT-01",
-                title: "Rapat Koordinasi Pembentukan Remaja RT 01 Selesai Digelar",
-                content: "Remaja RT 01 resmi menyepakati pembentukan kepengurusan sub-katar baru. Pertemuan dihadiri oleh Ketua Karang Taruna dan Koordinator RT 01. Fokus utama program kerja RT 01 ke depan adalah aktivasi bank sampah ramah lingkungan.",
-                image: "https://placehold.co/600x400/1e1b4b/ffffff?text=Rapat+RT+01",
-                date: "24 Juni 2026",
-                author: "Doni Setiawan",
-                role: "Koordinator RT 01"
-            }
-        ];
-
-        // Helper untuk Mengambil & Merender Avatar secara dinamis
-        function renderUserAvatar(userName, customClasses = "w-8 h-8 rounded-full") {
-            if (userAvatars[userName]) {
-                return `<img src="${userAvatars[userName]}" class="${customClasses} object-cover border border-indigo-500/30">`;
-            }
-            const firstLetter = userName ? userName[0].toUpperCase() : 'U';
-            return `<div class="${customClasses} bg-indigo-500/20 text-indigo-300 flex items-center justify-center font-bold text-xs uppercase">${firstLetter}</div>`;
-        }
-
-        // Profile Upload trigger
-        function triggerProfileUpload() {
-            document.getElementById('user-avatar-upload-input').click();
-        }
-
-        // Handle Profile Upload & refresh dynamic renders
-        function handleProfileUpload(event) {
-            const file = event.target.files[0];
-            if (file && currentUser) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    userAvatars[currentUser.name] = e.target.result;
-                    showToast("Foto profil berhasil diperbarui!");
-                    
-                    // Refresh UI
-                    toggleUIBasedOnLogin();
-                    renderDiskusi();
-                    renderLivechat();
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // Routing System: Single Page Application (SPA) switcher ketika login
+        // Routing System: Single Page Application (SPA) switcher when logged in
         function handleNavigation() {
             const hash = window.location.hash || '#beranda';
             const targetId = hash.substring(1);
@@ -1160,7 +1162,7 @@
             const sections = ['beranda', 'sub-rt', 'pengurus', 'transparansi', 'forum-diskusi', 'live-chat', 'daftar'];
 
             if (currentUser) {
-                // If logged in, sembunyikan section yang tidak dipilih
+                // If logged in, hide all non-selected sections completely
                 sections.forEach(id => {
                     const el = document.getElementById(id);
                     if (el) {
@@ -1173,7 +1175,7 @@
                 });
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
-                // If NOT logged in, tunjukkan semua halaman untuk landing-page scrolling
+                // If NOT logged in, show all sections for standard landing-page scrolling
                 sections.forEach(id => {
                     const el = document.getElementById(id);
                     if (el) {
@@ -1186,7 +1188,7 @@
                 }
             }
 
-            // Highlight Menu Aktif
+            // Highlight Active Menu Link
             const navLinks = document.querySelectorAll('header nav a, #mobile-menu a');
             navLinks.forEach(link => {
                 const href = link.getAttribute('href');
@@ -1204,7 +1206,6 @@
 
         // Inisialisasi awal saat halaman di-load
         window.onload = function() {
-            renderAppBranding();
             switchRtTab('RT-01');
             renderPengurus();
             renderMembers();
@@ -1212,44 +1213,51 @@
             renderDiskusi();
             renderArticles();
             renderLivechat();
+            applyBranding();
             toggleUIBasedOnLogin();
             handleNavigation();
         };
 
         // Role-Based Access Control Checks
-        function canManageGeneralArticles() {
+        function canManageArticles() {
             if (!currentUser) return false;
-            // Hanya Ketua, Wakil, Sekretaris, Bendahara, & Admin yang bisa memposting warta/artikel umum
-            return ['admin', 'ketua', 'wakil_ketua', 'sekretaris', 'bendahara'].includes(currentUser.role);
+            // Admin, Ketua, Wakil, Sekretaris, Bendahara, Koordinator RT
+            return ['admin', 'ketua', 'wakil_ketua', 'sekretaris', 'bendahara', 'koordinator_rt'].includes(currentUser.role);
         }
 
         function canVerifyMembers() {
             if (!currentUser) return false;
+            // Admin, Ketua, Wakil, Sekretaris, Bendahara
             return ['admin', 'ketua', 'wakil_ketua', 'sekretaris', 'bendahara'].includes(currentUser.role);
         }
 
         function canManageFinances() {
             if (!currentUser) return false;
+            // Admin & Bendahara
             return ['admin', 'bendahara'].includes(currentUser.role);
         }
 
         function canManageCoordinators() {
             if (!currentUser) return false;
-            // Hanya Admin Utama yang dapat memodifikasi Koordinator Remaja RT utama
+            // HANYA Admin Utama yang dapat menambahkan/mengedit Koordinator Remaja RT (Ketua & Wakil dilarang)
             return ['admin'].includes(currentUser.role);
-        }
-
-        function canEditRtInfo(rtKey) {
-            if (!currentUser) return false;
-            if (currentUser.role === 'admin') return true;
-            // Ijinkan Koordinator RT yang sesuai dengan wilayahnya untuk mengedit info RT-nya sendiri
-            if (currentUser.role === 'koordinator_rt' && currentUser.assignedRt === rtKey) return true;
-            return false;
         }
 
         function canManageCorePengurus() {
             if (!currentUser) return false;
+            // Admin mendapatkan hak penuh mengedit struktur katar
             return currentUser.role === 'admin';
+        }
+
+        function canManageRtInfo(rtKey) {
+            if (!currentUser) return false;
+            // Diijinkan masing-masing koordinator RT dan Admin Utama untuk mengedit informasi RT
+            if (currentUser.role === 'admin') return true;
+            if (currentUser.role === 'koordinator_rt') {
+                // Untuk simulasi demo koordinator RT 01
+                return true;
+            }
+            return false;
         }
 
         // Custom Notification Utility
@@ -1297,7 +1305,7 @@
             }
         }
 
-        // Preview local image dan konversi ke Base64 (Untuk Artikel)
+        // Preview local image and convert to Base64
         function previewImageLocal(event) {
             const file = event.target.files[0];
             const previewContainer = document.getElementById('article-image-preview-container');
@@ -1317,53 +1325,13 @@
             }
         }
 
-        // Preview local image (Untuk Bukti Kas Bendahara)
-        function previewFinImageLocal(event) {
-            const file = event.target.files[0];
-            const previewContainer = document.getElementById('fin-image-preview-container');
-            const previewImg = document.getElementById('fin-image-preview');
-
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    uploadedFinBase64Image = e.target.result;
-                    previewImg.src = uploadedFinBase64Image;
-                    previewContainer.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            } else {
-                uploadedFinBase64Image = "";
-                previewContainer.classList.add('hidden');
-            }
-        }
-
-        // Preview local image (Untuk RT Remaja)
-        function previewRtImageLocal(event) {
-            const file = event.target.files[0];
-            const previewContainer = document.getElementById('rt-image-preview-container');
-            const previewImg = document.getElementById('rt-image-preview');
-
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    uploadedRtBase64Image = e.target.result;
-                    previewImg.src = uploadedRtBase64Image;
-                    previewContainer.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            } else {
-                uploadedRtBase64Image = "";
-                previewContainer.classList.add('hidden');
-            }
-        }
-
-        // Render Artikel Umum di Beranda (Foto Utuh Terlihat Semua)
+        // Render Artikel / Informasi Section
         function renderArticles() {
             const grid = document.getElementById('articles-grid');
             grid.innerHTML = '';
 
             articlesList.forEach(art => {
-                const hasPermissions = canManageGeneralArticles();
+                const hasPermissions = canManageArticles();
                 const actionButtons = hasPermissions ? `
                     <div class="flex items-center space-x-2 pt-2">
                         <button onclick="editArticle(${art.id})" class="px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500 hover:text-white rounded-lg text-[11px] font-bold text-indigo-300 transition">
@@ -1375,12 +1343,12 @@
                     </div>
                 ` : '';
 
+                // Menggunakan `object-contain` dan pembatas latar belakang `bg-[#0B0F19]/50` agar foto utuh
                 grid.innerHTML += `
                     <div class="glass rounded-2xl overflow-hidden flex flex-col justify-between border border-white/5 group hover:border-indigo-500/20 transition-all duration-300">
                         <div>
-                            <!-- Foto terlihat utuh tanpa crop (object-contain di dalam bg) -->
-                            <div class="h-48 w-full bg-[#111827]/60 overflow-hidden relative flex items-center justify-center border-b border-white/5">
-                                <img src="${art.image}" alt="${art.title}" class="max-w-full max-h-full object-contain group-hover:scale-105 transition-all duration-500">
+                            <div class="h-48 w-full bg-[#111827] overflow-hidden relative flex items-center justify-center">
+                                <img src="${art.image}" alt="${art.title}" class="w-full h-full object-contain transition-all duration-500">
                                 <span class="absolute top-3 left-3 px-2 py-1 bg-indigo-600 text-white rounded text-[10px] font-bold uppercase tracking-wider">${art.category}</span>
                             </div>
                             <div class="p-5 space-y-3">
@@ -1388,13 +1356,13 @@
                                     <i class="fa-solid fa-calendar"></i> ${art.date}
                                 </p>
                                 <h3 class="font-bold text-base text-white leading-snug hover:text-indigo-300 transition">${art.title}</h3>
-                                <p class="text-xs text-gray-400 line-clamp-3 leading-relaxed">${art.content}</p>
+                                <p class="text-xs text-gray-400 leading-relaxed">${art.content}</p>
                             </div>
                         </div>
                         <div class="p-5 pt-0 border-t border-white/5 flex flex-col gap-2">
                             <div class="flex items-center justify-between pt-3">
                                 <div class="flex items-center space-x-2">
-                                    ${renderUserAvatar(art.author, "w-6 h-6 rounded-full")}
+                                    <div class="w-6 h-6 rounded-full bg-indigo-500/10 text-indigo-300 flex items-center justify-center text-[10px] font-bold">${art.author ? art.author[0] : 'U'}</div>
                                     <div class="text-[10px]">
                                         <p class="font-bold text-white leading-none">${art.author}</p>
                                         <p class="text-[9px] text-gray-500">${art.role}</p>
@@ -1407,9 +1375,9 @@
                 `;
             });
 
-            // Sembunyikan atau tampilkan tombol tambah artikel umum di Beranda sesuai hak akses
+            // Sembunyikan atau tampilkan tombol tambah artikel global sesuai role
             const addBtn = document.getElementById('btn-add-article');
-            if (canManageGeneralArticles()) {
+            if (canManageArticles()) {
                 addBtn.classList.remove('hidden');
             } else {
                 addBtn.classList.add('hidden');
@@ -1417,29 +1385,16 @@
         }
 
         // Article Modal Actions
-        function openArticleModal(rtKey = null) {
-            activeArticleRtKey = rtKey;
-            
+        function openArticleModal() {
             document.getElementById('article-modal').classList.remove('hidden');
+            document.getElementById('article-modal-title').innerText = "Publish Informasi Baru";
             document.getElementById('article-id').value = "";
             document.getElementById('article-title').value = "";
+            document.getElementById('article-category').value = "Program Kerja";
             document.getElementById('article-content').value = "";
             document.getElementById('article-image-file').value = "";
             document.getElementById('article-image-preview-container').classList.add('hidden');
             uploadedBase64Image = "";
-
-            if (rtKey) {
-                // Pengisian artikel khusus RT
-                document.getElementById('article-modal-title').innerText = `Publish Warta & Kegiatan ${rtKey}`;
-                document.getElementById('article-modal-desc').innerText = `Bagikan kegiatan, dokumentasi, atau pengumuman lokal pemuda di lingkungan wilayah ${rtKey}.`;
-                document.getElementById('article-category-container').classList.add('hidden');
-            } else {
-                // Pengisian artikel Umum (Beranda)
-                document.getElementById('article-modal-title').innerText = "Publish Informasi Baru Karang Taruna";
-                document.getElementById('article-modal-desc').innerText = "Bagikan update berita, sosialisasi, atau rencana program kerja utama Karang Taruna RW 15.";
-                document.getElementById('article-category-container').classList.remove('hidden');
-                document.getElementById('article-category').value = "Program Kerja";
-            }
         }
 
         function closeArticleModal() {
@@ -1448,112 +1403,61 @@
 
         function handleSaveArticle(event) {
             event.preventDefault();
-            
-            const id = document.getElementById('article-id').value;
-            const title = document.getElementById('article-title').value;
-            const content = document.getElementById('article-content').value;
-
-            if (activeArticleRtKey) {
-                // Simpan atau Edit artikel spesifik wilayah RT
-                const rtKey = activeArticleRtKey;
-                const defaultImg = `https://placehold.co/600x400/1e1b4b/ffffff?text=Kegiatan+${encodeURIComponent(rtKey)}`;
-                const imageUrl = uploadedBase64Image || defaultImg;
-
-                if (id) {
-                    const rtArt = rtArticlesList.find(a => a.id == id);
-                    if (rtArt) {
-                        rtArt.title = title;
-                        rtArt.content = content;
-                        if (uploadedBase64Image) {
-                            rtArt.image = uploadedBase64Image;
-                        }
-                        showToast(`Laporan kegiatan ${rtKey} berhasil diperbarui!`);
-                    }
-                } else {
-                    const newRtArt = {
-                        id: Date.now(),
-                        rtKey: rtKey,
-                        title: title,
-                        content: content,
-                        image: imageUrl,
-                        date: "Hari ini",
-                        author: currentUser.name,
-                        role: getUserFriendlyRole(currentUser.role)
-                    };
-                    rtArticlesList.unshift(newRtArt);
-                    showToast(`Warta kegiatan ${rtKey} baru berhasil diterbitkan!`);
-                }
-                switchRtTab(rtKey); // Refresh tab RT aktif
-            } else {
-                // Simpan atau Edit Artikel Umum Beranda
-                if (!canManageGeneralArticles()) {
-                    showToast("Anda tidak memiliki otorisasi untuk melakukan aksi ini!", true);
-                    return;
-                }
-
-                const category = document.getElementById('article-category').value;
-                const defaultImg = `https://placehold.co/600x400/1e1b4b/ffffff?text=${encodeURIComponent(category)}`;
-                const imageUrl = uploadedBase64Image || defaultImg;
-
-                if (id) {
-                    const article = articlesList.find(a => a.id == id);
-                    if (article) {
-                        article.title = title;
-                        article.category = category;
-                        article.content = content;
-                        if (uploadedBase64Image) {
-                            article.image = uploadedBase64Image;
-                        }
-                        showToast("Informasi umum berhasil diperbarui!");
-                    }
-                } else {
-                    const newArticle = {
-                        id: Date.now(),
-                        title: title,
-                        category: category,
-                        content: content,
-                        image: imageUrl,
-                        date: "Hari ini",
-                        author: currentUser.name,
-                        role: getUserFriendlyRole(currentUser.role)
-                    };
-                    articlesList.unshift(newArticle);
-                    showToast("Informasi baru berhasil diterbitkan!");
-                }
-                renderArticles();
+            if (!canManageArticles()) {
+                showToast("Anda tidak memiliki otorisasi untuk melakukan aksi ini!", true);
+                return;
             }
 
+            const id = document.getElementById('article-id').value;
+            const title = document.getElementById('article-title').value;
+            const category = document.getElementById('article-category').value;
+            const content = document.getElementById('article-content').value;
+
+            // default fallback image placeholder jika tidak upload
+            const defaultImg = `https://placehold.co/600x400/1e1b4b/ffffff?text=${encodeURIComponent(category)}`;
+            const imageUrl = uploadedBase64Image || defaultImg;
+
+            if (id) {
+                // Edit mode
+                const article = articlesList.find(a => a.id == id);
+                if (article) {
+                    article.title = title;
+                    article.category = category;
+                    article.content = content;
+                    if (uploadedBase64Image) {
+                        article.image = uploadedBase64Image;
+                    }
+                    showToast("Informasi berhasil diperbarui!");
+                }
+            } else {
+                // Create mode
+                const newArticle = {
+                    id: Date.now(),
+                    title: title,
+                    category: category,
+                    content: content,
+                    image: imageUrl,
+                    date: "Hari ini",
+                    author: currentUser.name,
+                    role: getUserFriendlyRole(currentUser.role)
+                };
+                articlesList.unshift(newArticle);
+                showToast("Informasi baru berhasil diterbitkan!");
+            }
+
+            renderArticles();
             closeArticleModal();
         }
 
         function editArticle(id) {
-            // Edit Artikel Umum (Beranda)
             const art = articlesList.find(a => a.id == id);
             if (!art) return;
 
-            openArticleModal(null);
-            document.getElementById('article-modal-title').innerText = "Edit Informasi / Artikel Umum";
+            openArticleModal();
+            document.getElementById('article-modal-title').innerText = "Edit Informasi / Artikel";
             document.getElementById('article-id').value = art.id;
             document.getElementById('article-title').value = art.title;
             document.getElementById('article-category').value = art.category;
-            document.getElementById('article-content').value = art.content;
-            
-            // Preview image yang ada
-            const previewContainer = document.getElementById('article-image-preview-container');
-            const previewImg = document.getElementById('article-image-preview');
-            previewImg.src = art.image;
-            previewContainer.classList.remove('hidden');
-            uploadedBase64Image = art.image.startsWith("data:") ? art.image : "";
-        }
-
-        function editRtArticle(id) {
-            // Edit Artikel Khusus RT
-            const art = rtArticlesList.find(a => a.id == id);
-            if (!art) return;
-
-            openArticleModal(art.rtKey);
-            document.getElementById('article-id').value = art.id;
-            document.getElementById('article-title').value = art.title;
             document.getElementById('article-content').value = art.content;
             
             // Preview image yang ada
@@ -1569,25 +1473,28 @@
                 if (isConfirmed) {
                     articlesList = articlesList.filter(a => a.id !== id);
                     renderArticles();
-                    showToast("Informasi umum berhasil dihapus.");
+                    showToast("Informasi berhasil dihapus.");
                 }
             });
         }
 
-        function deleteRtArticle(id, rtKey) {
-            showConfirm(`Apakah Anda yakin ingin menghapus warta kegiatan di ${rtKey} ini?`, (isConfirmed) => {
-                if (isConfirmed) {
-                    rtArticlesList = rtArticlesList.filter(a => a.id !== id);
-                    switchRtTab(rtKey);
-                    showToast(`Warta kegiatan ${rtKey} berhasil dihapus.`);
-                }
-            });
+        function getUserFriendlyRole(roleCode) {
+            const mapping = {
+                'admin': 'Admin Utama',
+                'ketua': 'Ketua Katar',
+                'wakil_ketua': 'Wakil Ketua',
+                'sekretaris': 'Sekretaris',
+                'bendahara': 'Bendahara',
+                'koordinator_rt': 'Koordinator RT',
+                'warga': 'Warga Samawa'
+            };
+            return mapping[roleCode] || 'Anggota';
         }
 
         // RT Coordinator Actions
         function openRtCoordinatorModal(rtKey) {
-            if (!canEditRtInfo(rtKey)) {
-                showToast("Anda tidak memiliki akses mengedit wilayah RT ini!", true);
+            if (!canManageCoordinators()) {
+                showToast("Hanya Admin Utama yang dapat mengedit Koordinator RT!", true);
                 return;
             }
 
@@ -1597,18 +1504,6 @@
             document.getElementById('rt-slogan').value = rt.slogan;
             document.getElementById('rt-member-count').value = rt.anggota;
             document.getElementById('rt-proker').value = rt.proker;
-
-            // Preview image yang sudah ada
-            const previewContainer = document.getElementById('rt-image-preview-container');
-            const previewImg = document.getElementById('rt-image-preview');
-            if (rt.image) {
-                previewImg.src = rt.image;
-                previewContainer.classList.remove('hidden');
-                uploadedRtBase64Image = rt.image;
-            } else {
-                previewContainer.classList.add('hidden');
-                uploadedRtBase64Image = "";
-            }
 
             document.getElementById('rt-coord-modal').classList.remove('hidden');
         }
@@ -1627,9 +1522,6 @@
                 rt.slogan = document.getElementById('rt-slogan').value;
                 rt.anggota = parseInt(document.getElementById('rt-member-count').value);
                 rt.proker = document.getElementById('rt-proker').value;
-                if (uploadedRtBase64Image) {
-                    rt.image = uploadedRtBase64Image;
-                }
 
                 showToast(`Data Koordinator ${rtKey} berhasil diperbarui!`);
                 switchRtTab(rtKey);
@@ -1637,7 +1529,81 @@
             }
         }
 
-        // Switch Sub-RT Tabs & Render local RT specific articles inside
+        // RT Information Actions (New)
+        function openAddRtInfoModal(rtKey) {
+            if (!canManageRtInfo(rtKey)) {
+                showToast("Anda tidak memiliki otorisasi mengedit informasi untuk RT ini!", true);
+                return;
+            }
+            document.getElementById('rt-info-modal').classList.remove('hidden');
+            document.getElementById('rt-info-key').value = rtKey;
+            document.getElementById('rt-info-id').value = "";
+            document.getElementById('rt-info-title').value = "";
+            document.getElementById('rt-info-content').value = "";
+            document.getElementById('rt-info-image-file').value = "";
+            uploadedBase64Image = "";
+        }
+
+        function closeRtInfoModal() {
+            document.getElementById('rt-info-modal').classList.add('hidden');
+        }
+
+        function handleSaveRtInfo(event) {
+            event.preventDefault();
+            const rtKey = document.getElementById('rt-info-key').value;
+            const id = document.getElementById('rt-info-id').value;
+            const title = document.getElementById('rt-info-title').value;
+            const content = document.getElementById('rt-info-content').value;
+            const fileInput = document.getElementById('rt-info-image-file');
+
+            const saveProcess = (base64Img) => {
+                const rt = subRtData[rtKey];
+                if (!rt.informasi) rt.informasi = [];
+
+                if (id) {
+                    const info = rt.informasi.find(i => i.id == id);
+                    if (info) {
+                        info.title = title;
+                        info.content = content;
+                        if (base64Img) info.image = base64Img;
+                    }
+                } else {
+                    rt.informasi.push({
+                        id: Date.now(),
+                        title: title,
+                        content: content,
+                        date: "Hari ini",
+                        image: base64Img || ""
+                    });
+                }
+                showToast("Informasi RT berhasil disimpan!");
+                switchRtTab(rtKey);
+                closeRtInfoModal();
+            };
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    saveProcess(e.target.result);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                saveProcess("");
+            }
+        }
+
+        function deleteRtInfo(rtKey, infoId) {
+            showConfirm("Hapus informasi RT ini?", (isConfirmed) => {
+                if (isConfirmed) {
+                    const rt = subRtData[rtKey];
+                    rt.informasi = rt.informasi.filter(i => i.id !== infoId);
+                    switchRtTab(rtKey);
+                    showToast("Informasi RT terhapus.");
+                }
+            });
+        }
+
+        // Switch Sub-RT Tabs & Content Render
         function switchRtTab(rtKey) {
             document.querySelectorAll('.rt-tab-btn').forEach(btn => {
                 btn.className = "rt-tab-btn px-4 py-2.5 rounded-xl bg-white/5 text-gray-400 text-sm font-semibold hover:bg-white/10 transition";
@@ -1647,124 +1613,86 @@
             const rt = subRtData[rtKey];
             const container = document.getElementById('rt-content-area');
 
-            // Render tombol edit struktur jika berwenang
-            const editRtHeaderBtn = canEditRtInfo(rtKey) ? `
+            // Render edit button if eligible for Admin
+            const editBtn = canManageCoordinators() ? `
                 <button onclick="openRtCoordinatorModal('${rtKey}')" class="px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500 text-amber-300 hover:text-gray-950 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-user-pen"></i> Edit Profil RT
+                    <i class="fa-solid fa-user-pen"></i> Edit Koordinator RT
                 </button>
             ` : '';
 
-            // Render tombol Tambah Artikel khusus untuk RT ini
-            const addRtArticleBtn = canEditRtInfo(rtKey) ? `
-                <button onclick="openArticleModal('${rtKey}')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-plus"></i> Tambah Kegiatan ${rtKey}
-                </button>
-            ` : '';
+            // Render Informasi RT List (Foto diatur agar tampil utuh)
+            let infoRtHtml = '';
+            if (rt.informasi && rt.informasi.length > 0) {
+                rt.informasi.forEach(info => {
+                    const deleteBtn = canManageRtInfo(rtKey) ? `
+                        <button onclick="deleteRtInfo('${rtKey}', ${info.id})" class="px-2.5 py-1 bg-red-500/15 hover:bg-red-500 text-red-400 hover:text-white rounded text-[10px] font-bold transition mt-2">
+                            <i class="fa-solid fa-trash mr-1"></i> Hapus Info
+                        </button>
+                    ` : '';
 
-            // Filter artikel khusus RT ini
-            const localRtArticles = rtArticlesList.filter(a => a.rtKey === rtKey);
-            let rtArticlesHtml = '';
-
-            if (localRtArticles.length > 0) {
-                localRtArticles.forEach(art => {
-                    const canManage = canEditRtInfo(rtKey);
-                    const rtActionButtons = canManage ? `
-                        <div class="flex items-center space-x-2 pt-2 border-t border-white/5 mt-3">
-                            <button onclick="editRtArticle(${art.id})" class="px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500 hover:text-white rounded-lg text-[10px] font-bold text-indigo-300 transition">
-                                <i class="fa-solid fa-pen mr-1"></i> Edit
-                            </button>
-                            <button onclick="deleteRtArticle(${art.id}, '${rtKey}')" class="px-3 py-1.5 bg-red-500/10 hover:bg-red-500 hover:text-white rounded-lg text-[10px] font-bold text-red-300 transition">
-                                <i class="fa-solid fa-trash mr-1"></i> Hapus
-                            </button>
+                    const imgTag = info.image ? `
+                        <div class="h-40 w-full bg-[#0B0F19] rounded-xl overflow-hidden mb-2 flex items-center justify-center border border-white/5">
+                            <img src="${info.image}" class="w-full h-full object-contain">
                         </div>
                     ` : '';
 
-                    rtArticlesHtml += `
-                        <div class="glass rounded-xl overflow-hidden flex flex-col justify-between border border-white/5 p-4 space-y-3">
+                    infoRtHtml += `
+                        <div class="bg-white/5 p-4 rounded-xl border border-white/5 flex flex-col justify-between">
                             <div>
-                                <div class="h-40 w-full bg-[#111827]/60 overflow-hidden relative flex items-center justify-center rounded-lg border border-white/5">
-                                    <img src="${art.image}" class="max-w-full max-h-full object-contain">
-                                    <span class="absolute top-2 left-2 px-2 py-0.5 bg-purple-600 text-white rounded text-[9px] font-bold uppercase tracking-wider">Kegiatan ${rtKey}</span>
-                                </div>
-                                <div class="space-y-2 pt-3">
-                                    <p class="text-[9px] text-gray-500 flex items-center gap-1">
-                                        <i class="fa-solid fa-calendar"></i> ${art.date}
-                                    </p>
-                                    <h4 class="font-bold text-sm text-white leading-snug">${art.title}</h4>
-                                    <p class="text-xs text-gray-400 line-clamp-3 leading-relaxed">${art.content}</p>
-                                </div>
+                                ${imgTag}
+                                <span class="text-[9px] text-indigo-400 font-bold block mb-1">${info.date}</span>
+                                <h5 class="font-bold text-white text-sm mb-1">${info.title}</h5>
+                                <p class="text-xs text-gray-400 leading-relaxed">${info.content}</p>
                             </div>
-                            <div>
-                                <div class="flex items-center space-x-2 pt-2">
-                                    ${renderUserAvatar(art.author, "w-6 h-6 rounded-full")}
-                                    <div class="text-[9px]">
-                                        <p class="font-bold text-white leading-none">${art.author}</p>
-                                        <p class="text-gray-500 leading-none mt-1">${art.role}</p>
-                                    </div>
-                                </div>
-                                ${rtActionButtons}
-                            </div>
+                            ${deleteBtn}
                         </div>
                     `;
                 });
             } else {
-                rtArticlesHtml = `
-                    <div class="col-span-full py-8 text-center bg-white/[0.02] border border-white/5 rounded-xl">
-                        <i class="fa-solid fa-folder-open text-gray-600 text-2xl mb-2"></i>
-                        <p class="text-xs text-gray-500">Belum ada artikel kegiatan atau warta yang diterbitkan oleh Koordinator ${rtKey}.</p>
-                    </div>
-                `;
+                infoRtHtml = `<p class="text-xs text-gray-500 italic col-span-2">Belum ada pengumuman atau kabar khusus di RT ini.</p>`;
             }
 
-            // Tampilan RT Remaja: Profil atas & list warta RT bawah
+            // Tombol tambah informasi khusus koordinator RT terpilih atau admin
+            const addInfoBtn = canManageRtInfo(rtKey) ? `
+                <button onclick="openAddRtInfoModal('${rtKey}')" class="px-3 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus"></i> Tambah Informasi RT
+                </button>
+            ` : '';
+
             container.innerHTML = `
-                <div class="space-y-8">
-                    <!-- Bagian Profil & Kegiatan Utama RT -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-                        <div class="space-y-4 flex flex-col justify-between">
-                            <div class="space-y-4">
-                                <div class="flex justify-between items-center">
-                                    <span class="px-3 py-1 rounded bg-indigo-500/10 text-indigo-300 text-xs font-bold uppercase tracking-wide">Ikatan Remaja ${rtKey}</span>
-                                    ${editRtHeaderBtn}
-                                </div>
-                                <h3 class="text-2xl font-bold text-white">Slogan: "${rt.slogan}"</h3>
-                                <p class="text-sm text-gray-400 leading-relaxed">Sub-katar RT ini bertugas menghimpun kegiatan kepemudaan yang spesifik di lingkungan RT setempat demi meminimalkan kesenjangan antar wilayah.</p>
-                                
-                                <div class="space-y-2 pt-2 text-sm text-gray-300">
-                                    <p class="flex items-center gap-2"><i class="fa-solid fa-user-tie text-indigo-400 w-5"></i> <span><strong>Koordinator Remaja:</strong> ${rt.ketua}</span></p>
-                                    <p class="flex items-center gap-2"><i class="fa-solid fa-users text-purple-400 w-5"></i> <span><strong>Jumlah Anggota RT Aktif:</strong> ${rt.anggota} Remaja</span></p>
-                                </div>
-                            </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="px-3 py-1 rounded bg-indigo-500/10 text-indigo-300 text-xs font-bold uppercase tracking-wide">Ikatan Remaja ${rtKey}</span>
+                            ${editBtn}
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">Slogan: "${rt.slogan}"</h3>
+                        <p class="text-sm text-gray-400 leading-relaxed">Sub-katar RT ini bertugas menghimpun kegiatan kepemudaan yang spesifik di lingkungan RT setempat demi meminimalkan kesenjangan antar wilayah.</p>
+                        
+                        <div class="space-y-2 pt-2 text-sm text-gray-300">
+                            <p class="flex items-center gap-2"><i class="fa-solid fa-user-tie text-indigo-400 w-5"></i> <span><strong>Koordinator Remaja:</strong> ${rt.ketua}</span></p>
+                            <p class="flex items-center gap-2"><i class="fa-solid fa-users text-purple-400 w-5"></i> <span><strong>Jumlah Anggota RT Aktif:</strong> ${rt.anggota} Remaja</span></p>
                         </div>
 
-                        <div class="bg-white/5 p-6 rounded-2xl border border-white/5 flex flex-col justify-between space-y-4">
-                            <div class="space-y-4">
-                                <h4 class="font-bold text-sm text-white uppercase tracking-wider flex items-center gap-2">
-                                    <i class="fa-solid fa-lightbulb text-amber-400"></i> Fokus Kegiatan Terdekat RT:
-                                </h4>
-                                <div class="p-4 rounded-xl bg-[#0B0F19] text-xs sm:text-sm text-gray-300 italic border-l-4 border-indigo-500">
-                                    "${rt.proker}"
-                                </div>
-                            </div>
-
-                            <!-- Foto Kegiatan Terlihat Utuh Secara Menyeluruh -->
-                            <div class="h-48 w-full bg-[#111827]/60 rounded-xl overflow-hidden relative flex items-center justify-center border border-white/5">
-                                <img src="${rt.image || 'https://placehold.co/600x400/1e1b4b/ffffff?text=Remaja+RT'}" alt="Foto RT" class="max-w-full max-h-full object-contain">
+                        <div class="p-4 rounded-xl bg-white/5 border border-white/5 space-y-2">
+                            <h4 class="font-bold text-xs text-white uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-lightbulb text-amber-400"></i> Fokus Kegiatan RT:
+                            </h4>
+                            <div class="text-xs text-gray-300 italic">
+                                "${rt.proker}"
                             </div>
                         </div>
                     </div>
 
-                    <!-- Pemisah & Grid Dokumentasi/Warta Kegiatan Khusus RT ini -->
-                    <div class="pt-6 border-t border-white/5">
-                        <div class="flex justify-between items-center mb-6">
-                            <div>
-                                <h4 class="text-lg font-bold text-white">Informasi & Kegiatan Lokal ${rtKey}</h4>
-                                <p class="text-xs text-gray-500">Kumpulan laporan, dokumentasi, dan aksi sosial kepemudaan yang dikelola oleh Koordinator ${rtKey}.</p>
-                            </div>
-                            ${addRtArticleBtn}
+                    <div class="bg-white/5 p-6 rounded-2xl border border-white/5 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h4 class="font-bold text-sm text-white uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-bullhorn text-indigo-400"></i> Informasi & Pengumuman RT:
+                            </h4>
+                            ${addInfoBtn}
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            ${rtArticlesHtml}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${infoRtHtml}
                         </div>
                     </div>
                 </div>
@@ -1850,9 +1778,9 @@
 
                 const minatBadges = member.minat.map(m => `<span class="px-2 py-0.5 rounded bg-white/5 text-[10px] text-gray-400 mr-1">${m}</span>`).join('');
 
-                // Admin & Ketua & Wakil can edit roles
+                // Hanya Admin Utama yang dapat mengubah jabatan koordinator Remaja RT (Sesuai Permintaan Utama)
                 let jabatanSelectorHtml = "";
-                if (currentUser && ['admin', 'ketua', 'wakil_ketua'].includes(currentUser.role)) {
+                if (currentUser && currentUser.role === 'admin') {
                     jabatanSelectorHtml = `
                         <select onchange="updateMemberJabatan(${member.id}, this.value)" class="bg-[#111827] border border-white/10 rounded-lg px-2 py-1 text-xs text-indigo-300 font-bold focus:outline-none">
                             <option value="Anggota" ${member.jabatan === 'Anggota' ? 'selected' : ''}>Anggota</option>
@@ -1869,10 +1797,7 @@
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-white/[0.02] transition">
-                        <td class="px-4 py-3 font-semibold text-white flex items-center gap-2">
-                            ${renderUserAvatar(member.name, "w-6 h-6 rounded-full")}
-                            <span>${member.name}</span>
-                        </td>
+                        <td class="px-4 py-3 font-semibold text-white">${member.name}</td>
                         <td class="px-4 py-3 text-xs text-gray-400">${member.rt} • No. Unit: ${member.unit}</td>
                         <td class="px-4 py-3">${minatBadges}</td>
                         <td class="px-4 py-3">${jabatanSelectorHtml}</td>
@@ -1901,7 +1826,7 @@
             }
         }
 
-        // Render Keuangan (Dengan Bukti Kas yang bisa dilihat semua)
+        // Render Keuangan (Dengan Dukungan Gambar Bukti dari Bendahara)
         function renderFinance() {
             document.getElementById('fin-kas-aktif').innerText = `Rp ${keuangan.totalKas.toLocaleString('id-ID')}`;
             document.getElementById('fin-pemasukan').innerText = `Rp ${keuangan.pemasukan.toLocaleString('id-ID')}`;
@@ -1910,45 +1835,36 @@
             const container = document.getElementById('fin-logs-container');
             container.innerHTML = '';
 
-            keuangan.logs.forEach((log, idx) => {
+            keuangan.logs.forEach(log => {
                 const color = log.type === 'pemasukan' ? 'text-green-400' : 'text-red-400';
                 const sign = log.type === 'pemasukan' ? '+' : '-';
                 const icon = log.type === 'pemasukan' ? 'fa-circle-arrow-up text-green-400/20' : 'fa-circle-arrow-down text-red-400/20';
 
-                // Tampilkan tombol "Lihat Bukti" jika gambar base64 bukti kas diunggah
-                const proofButton = log.image ? `
-                    <button onclick="viewProof('${log.image}')" class="px-2 py-1 bg-indigo-500/10 hover:bg-indigo-500 text-indigo-300 hover:text-white rounded text-[10px] font-bold transition flex items-center gap-1 mt-1.5 w-max">
-                        <i class="fa-solid fa-receipt"></i> Lihat Bukti
-                    </button>
-                ` : '<span class="text-[9px] text-gray-600 italic block mt-1">Bukti fisik belum dilampirkan</span>';
+                // Tampilkan foto bukti transaksi jika ada
+                const proofImgHtml = log.proofImage ? `
+                    <div class="mt-3">
+                        <p class="text-[10px] text-gray-500 mb-1"><i class="fa-solid fa-image mr-1"></i>Bukti Transaksi:</p>
+                        <img src="${log.proofImage}" class="max-w-xs h-32 rounded-lg border border-white/10 object-contain bg-[#111827] cursor-zoom-in" onclick="window.open('${log.proofImage}', '_blank')" title="Klik untuk perbesar">
+                    </div>
+                ` : '';
 
                 container.innerHTML += `
-                    <div class="bg-white/5 p-4 rounded-xl border border-white/5 flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <i class="fa-solid ${icon} text-2xl"></i>
+                    <div class="bg-white/5 p-4 rounded-xl border border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div class="flex items-start space-x-3">
+                            <i class="fa-solid ${icon} text-2xl mt-1"></i>
                             <div>
                                 <h4 class="font-bold text-white text-sm">${log.desc}</h4>
                                 <p class="text-[10px] text-gray-500">${log.date} • Melalui Bendahara Katar</p>
-                                ${proofButton}
+                                ${proofImgHtml}
                             </div>
                         </div>
-                        <span class="font-bold text-sm ${color}">${sign} Rp ${log.amount.toLocaleString('id-ID')}</span>
+                        <span class="font-bold text-sm ${color} self-end md:self-center">${sign} Rp ${log.amount.toLocaleString('id-ID')}</span>
                     </div>
                 `;
             });
         }
 
-        // Lihat bukti kas dalam modal pop-up (Dapat dilihat semua)
-        function viewProof(base64) {
-            document.getElementById('proof-modal-img').src = base64;
-            document.getElementById('view-proof-modal').classList.remove('hidden');
-        }
-
-        function closeProofModal() {
-            document.getElementById('view-proof-modal').classList.add('hidden');
-        }
-
-        // Render Forum Diskusi Beserta Balasan Real-Time (Avatar Custom Dinamis)
+        // Render Forum Diskusi Beserta Balasan Real-Time
         function renderDiskusi() {
             const container = document.getElementById('diskusi-list-container');
             container.innerHTML = '';
@@ -1964,7 +1880,7 @@
                                 <div class="bg-white/[0.02] p-3 rounded-xl border border-white/5 space-y-1">
                                     <div class="flex justify-between items-center">
                                         <div class="flex items-center space-x-2">
-                                            ${renderUserAvatar(rep.user, "w-6 h-6 rounded-full")}
+                                            <div class="w-6 h-6 rounded-full bg-indigo-500/10 flex items-center justify-center text-[10px] font-bold text-indigo-300">${rep.user ? rep.user[0] : 'U'}</div>
                                             <span class="font-bold text-xs text-white">${rep.user}</span>
                                             <span class="px-1 py-0.5 rounded bg-white/10 text-[8px] text-gray-400 uppercase tracking-wide font-semibold">${rep.role}</span>
                                         </div>
@@ -2008,7 +1924,9 @@
                     <div class="glass p-5 rounded-2xl border border-white/5 space-y-4">
                         <div class="flex justify-between items-start">
                             <div class="flex items-center space-x-3">
-                                ${renderUserAvatar(item.user, "w-8 h-8 rounded-full")}
+                                <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold text-xs">
+                                    ${item.user ? item.user[0] : 'U'}
+                                </div>
                                 <div>
                                     <h4 class="font-bold text-sm text-white">${item.user}</h4>
                                     <p class="text-[10px] text-gray-500">${item.role} • ${item.tanggal}</p>
@@ -2065,7 +1983,7 @@
             }
         }
 
-        // Render Live Chat messages list (Dengan Avatar Custom Dinamis)
+        // Render Live Chat messages list
         function renderLivechat() {
             const container = document.getElementById('livechat-messages-container');
             container.innerHTML = '';
@@ -2078,7 +1996,9 @@
 
                 container.innerHTML += `
                     <div class="flex items-start gap-3 ${layoutDirection} ${alignmentClass}">
-                        ${renderUserAvatar(msg.user, "w-8 h-8 rounded-full shrink-0")}
+                        <div class="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center text-xs font-bold text-indigo-300 overflow-hidden">
+                            ${msg.user ? msg.user[0] : 'U'}
+                        </div>
                         <div class="space-y-1 max-w-[80%]">
                             <div class="flex items-center gap-1.5 text-[10px] text-gray-500 ${isCurrentUser ? 'justify-end' : 'justify-start'}">
                                 <span class="font-bold text-white">${msg.user}</span>
@@ -2096,7 +2016,7 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // Send a Live Chat message (Fix Submit Button Bug!)
+        // Send a Live Chat message (FIXED: Menggunakan currentUser.name secara konsisten)
         function postLiveChatMessage(event) {
             event.preventDefault();
             if (!currentUser) {
@@ -2124,7 +2044,7 @@
             renderLivechat();
             input.value = '';
 
-            // Simulasi komentar balasan humoris
+            // Simulate humor mock responses from fellow members after user sends a chat!
             setTimeout(() => {
                 const humorResponses = [
                     { user: "Alif Ramadhan", role: "Ketua Katar", msg: "Awoakwoak bener banget kata lu bro! Jangan lupa besok hadir ya!" },
@@ -2209,22 +2129,27 @@
 
         function performDemoLogin(role) {
             const mappings = {
-                'admin': { name: "Iwan (Super-Admin)", role: "admin", assignedRt: "" },
-                'ketua': { name: "Alif Ramadhan", role: "ketua", assignedRt: "" },
-                'wakil_ketua': { name: "Fuji Astuti", role: "wakil_ketua", assignedRt: "" },
-                'sekretaris': { name: "Rian Pratama", role: "sekretaris", assignedRt: "" },
-                'bendahara': { name: "Zahra Amalia", role: "bendahara", assignedRt: "" },
-                // Doni koordinator RT 01
-                'koordinator_rt': { name: "Doni Setiawan", role: "koordinator_rt", assignedRt: "RT-01" },
-                'warga': { name: "Rendra Prasetyo", role: "warga", assignedRt: "" }
+                'admin': { name: "Iwan (Super-Admin)", role: "admin", profileImage: "" },
+                'ketua': { name: "Alif Ramadhan", role: "ketua", profileImage: "" },
+                'wakil_ketua': { name: "Fuji Astuti", role: "wakil_ketua", profileImage: "" },
+                'sekretaris': { name: "Rian Pratama", role: "sekretaris", profileImage: "" },
+                'bendahara': { name: "Zahra Amalia", role: "bendahara", profileImage: "" },
+                'koordinator_rt': { name: "Doni Setiawan", role: "koordinator_rt", profileImage: "" },
+                'warga': { name: "Rendra Prasetyo", role: "warga", profileImage: "" }
             };
 
-            currentUser = mappings[role] || { name: "Guest Warga", role: "warga", assignedRt: "" };
+            currentUser = mappings[role] || { name: "Guest Warga", role: "warga", profileImage: "" };
+
+            // Set default profile image if empty
+            if (!currentUser.profileImage) {
+                currentUser.profileImage = `https://placehold.co/150x150/1e1b4b/ffffff?text=${encodeURIComponent(currentUser.name[0])}`;
+            }
 
             // Update UI status
             document.getElementById('user-status').classList.remove('hidden');
             document.getElementById('user-display-name').innerText = currentUser.name;
             document.getElementById('user-display-role').innerText = getUserFriendlyRole(currentUser.role);
+            document.getElementById('user-avatar-img').src = currentUser.profileImage;
             document.getElementById('btn-login-modal').classList.add('hidden');
             document.getElementById('btn-logout').classList.remove('hidden');
 
@@ -2232,6 +2157,7 @@
             document.getElementById('forum-unauthenticated').classList.add('hidden');
             document.getElementById('forum-authenticated').classList.remove('hidden');
             document.getElementById('auth-username').innerText = currentUser.name;
+            updateAuthAvatarUI();
 
             // Hide Livechat Lock screen
             document.getElementById('livechat-lock-overlay').classList.add('hidden');
@@ -2240,7 +2166,7 @@
             toggleUIBasedOnLogin();
             toggleAdminFeatures();
             
-            // Re-render modules to refresh the buttons & permissions
+            // Re-render modules to refresh the buttons
             renderArticles();
             const currentRtTabActive = document.querySelector('.rt-tab-btn.bg-indigo-600')?.id?.replace('tab-', '') || 'RT-01';
             switchRtTab(currentRtTabActive);
@@ -2267,9 +2193,10 @@
                     document.getElementById('forum-unauthenticated').classList.remove('hidden');
                     document.getElementById('forum-authenticated').classList.add('hidden');
 
-                    // Show Livechat Lock screen kembali
+                    // Show Livechat Lock screen again
                     document.getElementById('livechat-lock-overlay').classList.remove('hidden');
 
+                    // Reset hash to home default
                     window.location.hash = "#beranda";
 
                     toggleUIBasedOnLogin();
@@ -2283,11 +2210,93 @@
                     renderMembers();
                     renderLivechat();
 
+                    // Restore scrolling view
                     handleNavigation();
 
                     showToast("Anda telah keluar dari akun.");
                 }
             });
+        }
+
+        // PROFILE PICTURE CROPPING (New)
+        function openProfileModal() {
+            if (!currentUser) return;
+            document.getElementById('profile-detail-name').innerText = currentUser.name;
+            document.getElementById('profile-detail-role').innerText = getUserFriendlyRole(currentUser.role);
+            document.getElementById('profile-preview-img').src = currentUser.profileImage;
+            document.getElementById('profile-upload-file').value = "";
+            document.getElementById('profile-modal').classList.remove('hidden');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profile-modal').classList.add('hidden');
+        }
+
+        function handleProfileFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const cropperImg = document.getElementById('cropper-image');
+                    cropperImg.src = e.target.result;
+                    
+                    // Sembunyikan modal profil sementara
+                    document.getElementById('profile-modal').classList.add('hidden');
+                    // Tampilkan workspace cropper
+                    document.getElementById('cropper-modal').classList.remove('hidden');
+
+                    // Inisialisasi CropperInstance
+                    if (cropperInstance) cropperInstance.destroy();
+                    setTimeout(() => {
+                        cropperInstance = new Cropper(cropperImg, {
+                            aspectRatio: 1,
+                            viewMode: 1,
+                            dragMode: 'move',
+                            autoCropArea: 0.8
+                        });
+                    }, 200);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function closeCropperModal() {
+            document.getElementById('cropper-modal').classList.add('hidden');
+            document.getElementById('profile-modal').classList.remove('hidden');
+            if (cropperInstance) cropperInstance.destroy();
+        }
+
+        function saveCroppedProfile() {
+            if (cropperInstance) {
+                const canvas = cropperInstance.getCroppedCanvas({
+                    width: 150,
+                    height: 150
+                });
+                const base64Img = canvas.toDataURL();
+                
+                // Update User State
+                currentUser.profileImage = base64Img;
+                
+                // Update UIs
+                document.getElementById('user-avatar-img').src = base64Img;
+                document.getElementById('profile-preview-img').src = base64Img;
+                updateAuthAvatarUI();
+                
+                // Tutup cropper & buka kembali profil
+                document.getElementById('cropper-modal').classList.add('hidden');
+                document.getElementById('profile-modal').classList.remove('hidden');
+                
+                showToast("Foto profil berhasil dipotong & disimpan!");
+            }
+        }
+
+        function updateAuthAvatarUI() {
+            const container = document.getElementById('auth-avatar-container');
+            if (currentUser && currentUser.profileImage) {
+                container.innerHTML = `<img src="${currentUser.profileImage}" class="w-full h-full object-cover">`;
+            } else if (currentUser) {
+                container.innerHTML = `<span id="auth-avatar">${currentUser.name[0]}</span>`;
+            }
         }
 
         // TAMPILKAN/SEMBUNYIKAN PENDAFTARAN & CTA BERDASARKAN STATUS LOGIN
@@ -2300,46 +2309,19 @@
             const mobileJoinContainer = document.getElementById('mobile-join-container');
 
             if (currentUser) {
-                // Sembunyikan pendaftaran & tombol daftar
                 if (registerSection) registerSection.classList.add('hidden');
                 heroCtaGuest.classList.add('hidden');
                 navBtnJoin.classList.add('hidden');
                 if (mobileJoinContainer) mobileJoinContainer.classList.add('hidden');
 
-                // Tampilkan menu khusus member
                 heroCtaMember.classList.remove('hidden');
                 heroSecondaryCta.classList.add('hidden');
-
-                // Render User Avatar in Navbar Status
-                if (userAvatars[currentUser.name]) {
-                    document.getElementById('user-avatar-fallback').classList.add('hidden');
-                    document.getElementById('user-avatar-img').src = userAvatars[currentUser.name];
-                    document.getElementById('user-avatar-img').classList.remove('hidden');
-                } else {
-                    document.getElementById('user-avatar-fallback').innerText = currentUser.name[0].toUpperCase();
-                    document.getElementById('user-avatar-fallback').classList.remove('hidden');
-                    document.getElementById('user-avatar-img').classList.add('hidden');
-                }
-
-                // Render User Avatar in Forum Box
-                if (userAvatars[currentUser.name]) {
-                    document.getElementById('auth-avatar-fallback').classList.add('hidden');
-                    document.getElementById('auth-avatar-img').src = userAvatars[currentUser.name];
-                    document.getElementById('auth-avatar-img').classList.remove('hidden');
-                } else {
-                    document.getElementById('auth-avatar-fallback').innerText = currentUser.name[0].toUpperCase();
-                    document.getElementById('auth-avatar-fallback').classList.remove('hidden');
-                    document.getElementById('auth-avatar-img').classList.add('hidden');
-                }
-
             } else {
-                // Tampilkan kembali bagian pendaftaran & tombol pendaftaran jika log out
                 if (registerSection) registerSection.classList.remove('hidden');
                 heroCtaGuest.classList.remove('hidden');
                 navBtnJoin.classList.remove('hidden');
                 if (mobileJoinContainer) mobileJoinContainer.classList.remove('hidden');
 
-                // Sembunyikan tombol member
                 heroCtaMember.classList.add('hidden');
                 heroSecondaryCta.classList.remove('hidden');
             }
@@ -2347,16 +2329,24 @@
 
         // CONTROL VIEW UTILITY FOR ADMIN PRIVILEGES
         function toggleAdminFeatures() {
-            const isAuthorizedUser = currentUser && ['admin', 'ketua', 'wakil_ketua', 'sekretaris', 'bendahara'].includes(currentUser.role);
             const isSuperAdminOnly = currentUser && currentUser.role === 'admin';
 
             const adminBanner = document.getElementById('admin-banner');
             const bannerRoleName = document.getElementById('banner-role-name');
+            const btnAppSettings = document.getElementById('btn-app-settings');
+
             if (currentUser && currentUser.role !== 'warga') {
                 adminBanner.classList.remove('hidden');
                 bannerRoleName.innerText = getUserFriendlyRole(currentUser.role);
             } else {
                 adminBanner.classList.add('hidden');
+            }
+
+            // Setelan aplikasi hanya terlihat oleh Admin
+            if (isSuperAdminOnly) {
+                btnAppSettings.classList.remove('hidden');
+            } else {
+                btnAppSettings.classList.add('hidden');
             }
 
             // Pengurusan struktur inti pengurus katar hanya bisa dikelola oleh ADMIN UTAMA
@@ -2516,123 +2506,151 @@
                 return;
             }
             document.getElementById('fin-update-modal').classList.remove('hidden');
-            uploadedFinBase64Image = "";
-            document.getElementById('fin-image-file').value = "";
-            document.getElementById('fin-image-preview-container').classList.add('hidden');
+            document.getElementById('fin-proof-file').value = "";
         }
 
         function closeFinUpdateModal() {
             document.getElementById('fin-update-modal').classList.add('hidden');
         }
 
-        // Save Finance (With optional transaction proof image)
+        // Save Finance (Ditambahkan penanganan pengunggahan bukti foto transaksi)
         function handleSaveFinance(event) {
             event.preventDefault();
             const type = document.getElementById('fin-type').value;
             const amount = parseInt(document.getElementById('fin-amount').value);
             const desc = document.getElementById('fin-desc').value;
+            const fileInput = document.getElementById('fin-proof-file');
 
-            const newLog = {
-                type: type,
-                desc: desc,
-                amount: amount,
-                date: "Hari ini",
-                image: uploadedFinBase64Image // Dilampirkan base64 lokal bukti transaksi
+            const saveAction = (base64Img) => {
+                const newLog = {
+                    type: type,
+                    desc: desc,
+                    amount: amount,
+                    date: "Hari ini",
+                    proofImage: base64Img || ""
+                };
+
+                keuangan.logs.unshift(newLog);
+                if (type === 'pemasukan') {
+                    keuangan.pemasukan += amount;
+                    keuangan.totalKas += amount;
+                } else {
+                    keuangan.pengeluaran += amount;
+                    keuangan.totalKas -= amount;
+                }
+
+                renderFinance();
+                closeFinUpdateModal();
+                showToast("Laporan Keuangan berhasil diperbarui!");
             };
 
-            keuangan.logs.unshift(newLog);
-            if (type === 'pemasukan') {
-                keuangan.pemasukan += amount;
-                keuangan.totalKas += amount;
-            } else {
-                keuangan.pengeluaran += amount;
-                keuangan.totalKas -= amount;
-            }
-
-            renderFinance();
-            closeFinUpdateModal();
-            showToast("Laporan Keuangan berhasil diperbarui!");
-        }
-
-        // APP BRANDING ACTIONS (Hanya Admin)
-        function openAppBrandingModal() {
-            if (currentUser && currentUser.role === 'admin') {
-                document.getElementById('brand-name').value = appBranding.name;
-                document.getElementById('brand-badge').value = appBranding.badge;
-                document.getElementById('brand-slogan').value = appBranding.slogan;
-                document.getElementById('brand-banner-gradient').value = appBranding.bannerGradient;
-
-                const previewContainer = document.getElementById('brand-logo-preview-container');
-                const previewImg = document.getElementById('brand-logo-preview');
-                if (appBranding.logoImg) {
-                    previewImg.src = appBranding.logoImg;
-                    previewContainer.classList.remove('hidden');
-                } else {
-                    previewContainer.classList.add('hidden');
-                }
-                uploadedBrandLogoBase64 = appBranding.logoImg || "";
-
-                document.getElementById('app-branding-modal').classList.remove('hidden');
-            } else {
-                showToast("Hanya Admin Utama yang dapat merubah branding aplikasi!", true);
-            }
-        }
-
-        function closeAppBrandingModal() {
-            document.getElementById('app-branding-modal').classList.add('hidden');
-        }
-
-        function previewBrandLogoLocal(event) {
-            const file = event.target.files[0];
-            const previewContainer = document.getElementById('brand-logo-preview-container');
-            const previewImg = document.getElementById('brand-logo-preview');
-
-            if (file) {
+            if (fileInput.files && fileInput.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    uploadedBrandLogoBase64 = e.target.result;
-                    previewImg.src = uploadedBrandLogoBase64;
-                    previewContainer.classList.remove('hidden');
+                    saveAction(e.target.result);
                 };
-                reader.readAsDataURL(file);
+                reader.readAsDataURL(fileInput.files[0]);
             } else {
-                uploadedBrandLogoBase64 = "";
-                previewContainer.classList.add('hidden');
+                saveAction("");
             }
         }
 
-        // Save App Branding config
-        function handleSaveAppBranding(event) {
+        // APP SETTINGS CONTROLLER (New)
+        function openAppSettingsModal() {
+            if (currentUser && currentUser.role === 'admin') {
+                document.getElementById('set-app-title').value = appBranding.title;
+                document.getElementById('set-app-subtitle').value = appBranding.subtitle;
+                document.getElementById('set-logo-text').value = appBranding.logoText;
+                document.getElementById('set-logo-file').value = "";
+                document.getElementById('set-banner-file').value = "";
+                document.getElementById('app-settings-modal').classList.remove('hidden');
+            }
+        }
+
+        function closeAppSettingsModal() {
+            document.getElementById('app-settings-modal').classList.add('hidden');
+        }
+
+        function handleSaveAppSettings(event) {
             event.preventDefault();
-            appBranding.name = document.getElementById('brand-name').value;
-            appBranding.badge = document.getElementById('brand-badge').value;
-            appBranding.slogan = document.getElementById('brand-slogan').value;
-            appBranding.bannerGradient = document.getElementById('brand-banner-gradient').value;
-            appBranding.logoImg = uploadedBrandLogoBase64;
+            const title = document.getElementById('set-app-title').value;
+            const subtitle = document.getElementById('set-app-subtitle').value;
+            const logoText = document.getElementById('set-logo-text').value;
+            const logoFile = document.getElementById('set-logo-file').files[0];
+            const bannerFile = document.getElementById('set-banner-file').files[0];
 
-            renderAppBranding();
-            closeAppBrandingModal();
-            showToast("Branding aplikasi berhasil diperbarui secara instan!");
+            appBranding.title = title;
+            appBranding.subtitle = subtitle;
+            appBranding.logoText = logoText;
+
+            const updateRemaining = () => {
+                applyBranding();
+                closeAppSettingsModal();
+                showToast("Pengaturan identitas aplikasi berhasil diperbarui!");
+            };
+
+            const readBanner = () => {
+                if (bannerFile) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        appBranding.bannerImg = e.target.result;
+                        updateRemaining();
+                    };
+                    reader.readAsDataURL(bannerFile);
+                } else {
+                    updateRemaining();
+                }
+            };
+
+            if (logoFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    appBranding.logoImg = e.target.result;
+                    readBanner();
+                };
+                reader.readAsDataURL(logoFile);
+            } else {
+                readBanner();
+            }
         }
 
-        function renderAppBranding() {
-            document.getElementById('app-title-display').innerText = appBranding.name;
-            document.getElementById('app-subtitle-display').innerText = appBranding.slogan;
-
+        function applyBranding() {
+            // Apply logo
+            const logoContainer = document.getElementById('app-logo-container');
             if (appBranding.logoImg) {
-                document.getElementById('app-logo-text').classList.add('hidden');
-                document.getElementById('app-logo-image').src = appBranding.logoImg;
-                document.getElementById('app-logo-image').classList.remove('hidden');
+                logoContainer.innerHTML = `<img src="${appBranding.logoImg}" class="w-full h-full object-cover">`;
             } else {
-                document.getElementById('app-logo-text').innerText = appBranding.badge;
-                document.getElementById('app-logo-text').classList.remove('hidden');
-                document.getElementById('app-logo-image').classList.add('hidden');
+                logoContainer.innerHTML = `<span id="app-logo-text" class="font-extrabold text-white text-lg">${appBranding.logoText}</span>`;
             }
 
-            // Ganti warna gradasi button utama sesuai konfigurasi
-            const ctaBtn = document.getElementById('hero-cta-guest');
-            if (ctaBtn) {
-                ctaBtn.className = `w-full sm:w-auto text-center px-8 py-4 rounded-xl bg-gradient-to-r ${appBranding.bannerGradient} hover:opacity-90 font-bold text-white transition-all duration-300 shadow-xl shadow-indigo-500/25 flex items-center justify-center space-x-2`;
+            // Apply titles
+            document.getElementById('app-title-text').innerText = appBranding.title;
+            document.getElementById('app-subtitle-text').innerText = appBranding.subtitle;
+            document.getElementById('page-title').innerText = `${appBranding.title} - ${appBranding.subtitle}`;
+            document.getElementById('hero-app-title').innerText = appBranding.title;
+            
+            // Apply Hero Banner Image
+            const heroContainer = document.getElementById('hero-banner-container');
+            if (appBranding.bannerImg) {
+                heroContainer.style.backgroundImage = `linear-gradient(rgba(11, 15, 25, 0.8), rgba(11, 15, 25, 0.95)), url('${appBranding.bannerImg}')`;
+                heroContainer.style.backgroundSize = 'cover';
+                heroContainer.style.backgroundPosition = 'center';
+            } else {
+                heroContainer.style.backgroundImage = 'none';
+                heroContainer.className = "grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-20 rounded-3xl p-6 md:p-12 transition-all duration-300";
+            }
+        }
+
+        // Mobile Navigation Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('menu-icon');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                icon.className = "fa-solid fa-xmark text-xl";
+            } else {
+                menu.classList.add('hidden');
+                icon.className = "fa-solid fa-bars text-xl";
             }
         }
     </script>
