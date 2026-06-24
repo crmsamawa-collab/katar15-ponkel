@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,16 +25,16 @@
             color: #F3F4F6;
         }
         .glass {
-            background: rgba(13, 18, 30, 0.75);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(13, 18, 30, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .glass-premium {
-            background: linear-gradient(135deg, rgba(20, 27, 45, 0.7) 0%, rgba(10, 14, 26, 0.9) 100%);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border: 1px solid rgba(99, 102, 241, 0.18);
+            background: linear-gradient(135deg, rgba(20, 27, 45, 0.8) 0%, rgba(10, 14, 26, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(99, 102, 241, 0.22);
         }
         .text-glow {
             text-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
@@ -126,13 +126,13 @@
         </div>
     </div>
 
-    <!-- Navigation Header -->
-    <header class="sticky top-0 z-50 glass border-b border-white/5 shadow-lg shadow-black/20">
+    <!-- Navigation Header (Sticky & Selalu Tampil Teratas saat Di-scroll) -->
+    <header class="sticky top-0 z-50 glass border-b border-white/5 shadow-lg shadow-black/40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
             
-            <!-- Brand Logo Left -->
+            <!-- Brand Logo Left (Dapat dikustomisasi oleh Admin) -->
             <div class="flex items-center space-x-2 sm:space-x-3 cursor-pointer" onclick="window.location.hash='#beranda'">
-                <div id="brand-logo-container" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                <div id="brand-logo-container" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 overflow-hidden text-white">
                     <span id="brand-logo-text" class="font-extrabold text-white text-sm sm:text-lg">15</span>
                 </div>
                 <div>
@@ -163,28 +163,28 @@
                         <span class="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-green-500 border border-[#080C14]"></span>
                     </div>
                     <div class="text-left select-none cursor-pointer" onclick="openProfileModal()">
-                        <p id="user-display-name" class="text-gray-300 font-semibold hover:text-indigo-300 transition text-[11px] leading-tight">Guest</p>
+                        <p id="user-display-name" class="text-gray-300 font-semibold hover:text-indigo-300 transition text-[11px] leading-tight font-bold">Guest</p>
                         <p id="user-display-role" class="text-[8px] text-indigo-400 font-extrabold uppercase tracking-wide">Anggota</p>
                     </div>
                 </div>
 
-                <button id="btn-login-modal" onclick="openLoginModal()" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-indigo-500/20 bg-indigo-500/5 hover:bg-indigo-500/10 font-bold text-xs text-indigo-300 transition duration-200">
-                    <i class="fa-solid fa-right-to-bracket mr-1"></i> Login
+                <button id="btn-login-modal" onclick="openLoginModal()" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/20 font-bold text-xs text-indigo-300 transition duration-200 shadow-md shadow-indigo-500/10">
+                    <i class="fa-solid fa-right-to-bracket mr-1"></i> Masuk / Login
                 </button>
 
                 <button id="btn-logout" onclick="logout()" class="hidden px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-300 border border-red-500/20 font-bold text-xs transition duration-200">
-                    <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i> Keluar
                 </button>
 
-                <!-- Dynamic Join CTA - Diubah ke md:inline-block agar tidak overflow di HP -->
-                <a href="#daftar" id="nav-btn-join" class="hidden md:inline-block px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 font-bold text-xs transition-all duration-300 transform hover:-translate-y-0.5 shadow-md shadow-indigo-500/20">
+                <!-- Dynamic Join CTA -->
+                <a href="#daftar" id="nav-btn-join" class="hidden md:inline-block px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 font-bold text-xs transition-all duration-300 transform hover:-translate-y-0.5 shadow-md shadow-indigo-500/25">
                     Gabung Squad
                 </a>
             </div>
         </div>
     </header>
 
-    <!-- Mobile Bottom Navigation -->
+    <!-- Mobile Bottom Navigation (Selalu Tetap Tampil Terkunci di Bawah) -->
     <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-[#0d121e]/95 backdrop-blur-md border-t border-white/5 z-40 px-2 py-2.5 flex justify-around items-center shadow-[0_-8px_30px_rgba(0,0,0,0.6)]">
         <a href="#beranda" class="nav-link-mobile flex flex-col items-center justify-center text-center gap-1 flex-1 py-1">
             <i class="fa-solid fa-house text-sm"></i>
@@ -257,7 +257,7 @@
 
                         <!-- Button Brand Settings (Hanya Admin) -->
                         <button id="admin-brand-btn" onclick="openBrandingModal()" class="hidden w-full sm:w-auto text-center px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-gray-950 font-bold transition duration-300 flex items-center justify-center gap-2 text-xs sm:text-sm">
-                            <i class="fa-solid fa-palette"></i> Atur Branding
+                            <i class="fa-solid fa-palette"></i> Atur Branding & Logo
                         </button>
                     </div>
                 </div>
@@ -314,7 +314,7 @@
 
             </div>
 
-            <!-- Artikel & Warta RW 15 (Tingkat RW) -->
+            <!-- Artikel & Warta RW 15 -->
             <div class="py-12 bg-white/[0.01] border-t border-white/5 mt-12 sm:mt-16">
                 <div class="flex flex-col md:flex-row md:items-end justify-between mb-8">
                     <div>
@@ -364,7 +364,7 @@
             </div>
         </section>
 
-        <!-- Meet the Squad (Struktur Inti & Manajemen Anggota) -->
+        <!-- Meet the Squad -->
         <section id="pengurus" class="py-16 bg-white/[0.02] border-t border-white/5">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
@@ -374,10 +374,17 @@
                             Para pengurus inti Karang Taruna RW 15 serta pendaftar yang telah diverifikasi sebagai Anggota.
                         </p>
                     </div>
-                    <div id="admin-actions-katar" class="hidden mt-4 md:mt-0">
-                        <button onclick="openAddStaffModal()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-gray-950 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-amber-500/20">
-                            <i class="fa-solid fa-plus text-xs"></i> Tambah / Edit Pengurus
+                    <div class="flex flex-wrap gap-2 mt-4 md:mt-0">
+                        <!-- Tombol Panel Reset Sandi (Khusus Admin, Ketua, Wakil) -->
+                        <button id="admin-reset-pw-btn" onclick="openResetPasswordManagerModal()" class="hidden px-4 py-2 bg-red-500/20 border border-red-500/40 hover:bg-red-500 hover:text-white text-red-300 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-red-500/10">
+                            <i class="fa-solid fa-key text-xs"></i> Kelola & Reset Sandi 🔑
                         </button>
+                        
+                        <div id="admin-actions-katar" class="hidden">
+                            <button onclick="openAddStaffModal()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-gray-950 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-amber-500/20">
+                                <i class="fa-solid fa-plus text-xs"></i> Tambah / Edit Pengurus
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -400,7 +407,8 @@
                         <table class="w-full text-left text-xs sm:text-sm text-gray-300 min-w-[600px]">
                             <thead class="text-xs text-gray-400 uppercase bg-white/5">
                                 <tr>
-                                    <th class="px-4 py-3 rounded-l-lg">Nama</th>
+                                    <th class="px-4 py-3 rounded-l-lg">Nama Lengkap</th>
+                                    <th class="px-4 py-3">Nama Panggilan / Username</th>
                                     <th class="px-4 py-3">RT & No. Unit</th>
                                     <th class="px-4 py-3">Minat / Hobi</th>
                                     <th class="px-4 py-3">Jabatan</th>
@@ -483,9 +491,9 @@
                     <div id="forum-unauthenticated" class="glass rounded-2xl p-6 text-center space-y-4 border border-indigo-500/20">
                         <i class="fa-solid fa-lock text-3xl text-indigo-400 animate-pulse"></i>
                         <h3 class="text-base font-bold text-white">Ingin ikut berdiskusi atau membalas aspirasi?</h3>
-                        <p class="text-xs text-gray-400 max-w-md mx-auto">Silakan masuk menggunakan salah satu akun demo kami untuk memposting ide Anda atau memberikan komentar.</p>
+                        <p class="text-xs text-gray-400 max-w-md mx-auto">Silakan masuk menggunakan kredensial akun Anda atau gunakan salah satu akun demo cepat kami.</p>
                         <button onclick="openLoginModal()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition">
-                            <i class="fa-solid fa-right-to-bracket mr-1"></i> Login Instan ⚡
+                            <i class="fa-solid fa-right-to-bracket mr-1"></i> Login Sekarang ⚡
                         </button>
                     </div>
 
@@ -523,7 +531,7 @@
             </div>
         </section>
 
-        <!-- Live Chat Section (Silaturahim & Candaan Pemuda) -->
+        <!-- Live Chat Section -->
         <section id="live-chat" class="py-16 bg-white/[0.01] border-t border-white/5">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center max-w-3xl mx-auto mb-10">
@@ -541,7 +549,7 @@
                         <h3 class="text-lg font-bold text-white">Ingin Ikut Mengirim Pesan?</h3>
                         <p class="text-xs text-gray-400 max-w-sm">Mohon masuk ke sistem katar terlebih dahulu untuk dapat berpartisipasi dalam obrolan.</p>
                         <button onclick="openLoginModal()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition">
-                            Login Instan ⚡
+                            Login Sekarang ⚡
                         </button>
                     </div>
 
@@ -591,7 +599,7 @@
                             <h4 class="font-bold">Pendaftaranmu Berhasil Dikirim!</h4>
                         </div>
                         <p class="text-xs text-gray-300">
-                            Terima kasih sudah mendaftar. Pengurus katar akan segera meninjau dan memverifikasi pendaftaranmu.
+                            Terima kasih sudah mendaftar. Pengurus katar akan segera meninjau dan memverifikasi pendaftaranmu. Setelah disetujui, Anda dapat login menggunakan nama panggilan Anda dalam huruf kecil dan kata sandi yang Anda buat.
                         </p>
                     </div>
 
@@ -604,8 +612,8 @@
                             </div>
 
                             <div>
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Nama Panggilan</label>
-                                <input type="text" required id="panggilan" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-xs sm:text-sm focus:outline-none focus:border-indigo-500" placeholder="Contoh: Budi">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Nama Panggilan (Gunakan 1 Kata tanpa spasi untuk ID Login Anda)</label>
+                                <input type="text" required id="panggilan" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-xs sm:text-sm focus:outline-none focus:border-indigo-500" placeholder="Contoh: budi">
                             </div>
                         </div>
 
@@ -623,6 +631,16 @@
                             <div>
                                 <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Nomor WhatsApp</label>
                                 <input type="tel" required id="wa" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-xs sm:text-sm focus:outline-none focus:border-indigo-500" placeholder="Contoh: 081234567xxx">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Kata Sandi Akun Baru</label>
+                                <input type="password" required id="reg-password" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-xs sm:text-sm focus:outline-none focus:border-indigo-500" placeholder="Tentukan kata sandi untuk login...">
+                            </div>
+                            <div class="flex items-end pb-3 text-[11px] text-gray-400 italic leading-relaxed">
+                                <p><i class="fa-solid fa-info-circle text-indigo-400 mr-1"></i> Setelah disetujui pengurus, masuklah menggunakan Nama Panggilan & Sandi ini.</p>
                             </div>
                         </div>
 
@@ -672,21 +690,50 @@
 
     </main>
 
-    <!-- AUTHENTICATION / LOGIN MODAL -->
+    <!-- AUTHENTICATION / LOGIN MODAL (Kredensial + Pilihan Demo Cepat) -->
     <div id="login-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
-        <div class="relative glass-premium max-w-xl w-full p-5 sm:p-8 rounded-3xl border border-indigo-500/30 max-h-[90vh] overflow-y-auto">
+        <div class="relative glass-premium max-w-2xl w-full p-5 sm:p-8 rounded-3xl border border-indigo-500/30 max-h-[90vh] overflow-y-auto">
             <button onclick="closeLoginModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
             
             <div class="text-center space-y-2 mb-6">
                 <h3 class="text-xl sm:text-2xl font-extrabold text-white">Login Katar15</h3>
-                <p class="text-xs text-gray-400">Pilih salah satu peran demo untuk menguji kapabilitas hak akses sistem!</p>
+                <p class="text-xs text-gray-400">Gunakan akun kredensial Anda atau pilih peran demo untuk pengujian cepat.</p>
             </div>
 
-            <!-- Predefined Demo Accounts -->
-            <div class="space-y-3 mb-6">
-                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Pilih Peran Demo:</h4>
+            <!-- Form Login Kredensial Manual -->
+            <div class="bg-white/5 p-4 rounded-2xl border border-white/5 mb-6 space-y-4">
+                <h4 class="text-xs font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fa-solid fa-key"></i> Login Kredensial Manual
+                </h4>
+                <form onsubmit="handleManualLogin(event)" class="space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Nama Panggilan / Username</label>
+                            <input type="text" id="login-username" required class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-xs focus:outline-none focus:border-indigo-500" placeholder="Ketik nama panggilan...">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Kata Sandi (Password)</label>
+                            <input type="password" id="login-password" required class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-xs focus:outline-none focus:border-indigo-500" placeholder="Ketik kata sandi Anda...">
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-2 pt-1">
+                        <button type="button" onclick="handleForgotPassword()" class="text-[10px] text-indigo-400 hover:underline font-semibold">
+                            Lupa Kata Sandi? Hubungi Pengurus ❓
+                        </button>
+                        <button type="submit" class="w-full sm:w-auto px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-extrabold transition shadow-md shadow-indigo-600/20">
+                            Masuk Sistem <i class="fa-solid fa-arrow-right-to-bracket ml-1"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Predefined Demo Accounts (DIPERTAHANKAN) -->
+            <div class="space-y-3">
+                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1">
+                    <i class="fa-solid fa-user-shield"></i> Pilihan Demo Cepat (Klik untuk masuk instan):
+                </h4>
                 
                 <!-- Demo Admin (Super-Admin) -->
                 <button onclick="performDemoLogin('admin')" class="w-full p-3 rounded-xl bg-[#2d1b10] hover:bg-[#3d2714] border border-[#a66a12]/30 text-left flex items-center justify-between transition group">
@@ -695,8 +742,8 @@
                             <i class="fa-solid fa-user-gear"></i>
                         </div>
                         <div>
-                            <p class="font-bold text-xs sm:text-sm text-amber-300">ADMIN UTAMA (Pembuat)</p>
-                            <p class="text-[10px] text-gray-400">Hak Akses Modifikasi Penuh (Super-Admin)</p>
+                            <p class="font-bold text-xs sm:text-sm text-amber-300">ADMIN UTAMA (Pembuat - Iwan)</p>
+                            <p class="text-[10px] text-gray-400">Kata Sandi default: <strong>123</strong> (Kredensial ID: <span class="text-white">iwan</span>)</p>
                         </div>
                     </div>
                     <i class="fa-solid fa-chevron-right text-amber-500"></i>
@@ -710,7 +757,7 @@
                             <div class="w-8 h-8 rounded bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs"><i class="fa-solid fa-crown"></i></div>
                             <div>
                                 <p class="font-bold text-xs text-white">Ketua (Alif)</p>
-                                <p class="text-[9px] text-gray-400">Warta RW, Verif, Koord RT</p>
+                                <p class="text-[9px] text-gray-400">ID: <strong>alif</strong> | Sandi: <strong>123</strong></p>
                             </div>
                         </div>
                         <i class="fa-solid fa-chevron-right text-indigo-500 text-xs"></i>
@@ -722,7 +769,7 @@
                             <div class="w-8 h-8 rounded bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs"><i class="fa-solid fa-user-astronaut"></i></div>
                             <div>
                                 <p class="font-bold text-xs text-white">Wakil (Fuji)</p>
-                                <p class="text-[9px] text-gray-400">Warta RW & Verifikasi Anggota</p>
+                                <p class="text-[9px] text-gray-400">ID: <strong>fuji</strong> | Sandi: <strong>123</strong></p>
                             </div>
                         </div>
                         <i class="fa-solid fa-chevron-right text-purple-500 text-xs"></i>
@@ -734,7 +781,7 @@
                             <div class="w-8 h-8 rounded bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs"><i class="fa-solid fa-pen-nib"></i></div>
                             <div>
                                 <p class="font-bold text-xs text-white">Sekretaris (Rian)</p>
-                                <p class="text-[9px] text-gray-400">Tulis Warta RW & Verifikasi</p>
+                                <p class="text-[9px] text-gray-400">ID: <strong>rian</strong> | Sandi: <strong>123</strong></p>
                             </div>
                         </div>
                         <i class="fa-solid fa-chevron-right text-blue-500 text-xs"></i>
@@ -746,7 +793,7 @@
                             <div class="w-8 h-8 rounded bg-pink-500/20 text-pink-400 flex items-center justify-center text-xs"><i class="fa-solid fa-wallet"></i></div>
                             <div>
                                 <p class="font-bold text-xs text-white">Bendahara (Zahra)</p>
-                                <p class="text-[9px] text-gray-400">Keuangan & Unggah Bukti</p>
+                                <p class="text-[9px] text-gray-400">ID: <strong>zahra</strong> | Sandi: <strong>123</strong></p>
                             </div>
                         </div>
                         <i class="fa-solid fa-chevron-right text-pink-500 text-xs"></i>
@@ -758,7 +805,7 @@
                             <div class="w-8 h-8 rounded bg-teal-500/20 text-teal-400 flex items-center justify-center text-xs"><i class="fa-solid fa-map-pin"></i></div>
                             <div>
                                 <p class="font-bold text-xs text-white">Koor. RT 01 (Doni)</p>
-                                <p class="text-[9px] text-gray-400">Tulis Informasi Khusus RT 01</p>
+                                <p class="text-[9px] text-gray-400">ID: <strong>doni</strong> | Sandi: <strong>123</strong></p>
                             </div>
                         </div>
                         <i class="fa-solid fa-chevron-right text-teal-500 text-xs"></i>
@@ -770,7 +817,7 @@
                             <div class="w-8 h-8 rounded bg-gray-500/20 text-gray-400 flex items-center justify-center text-xs"><i class="fa-solid fa-users"></i></div>
                             <div>
                                 <p class="font-bold text-xs text-white">Anggota (Rendra)</p>
-                                <p class="text-[9px] text-gray-400">Nongkrong & Diskusi Forum</p>
+                                <p class="text-[9px] text-gray-400">ID: <strong>rendra</strong> | Sandi: <strong>123</strong></p>
                             </div>
                         </div>
                         <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
@@ -778,8 +825,87 @@
                 </div>
             </div>
 
-            <div class="text-center">
-                <span class="text-[10px] text-gray-500">Gunakan akun di atas untuk menyimulasikan pembatasan fitur secara interaktif.</span>
+            <div class="text-center mt-5">
+                <span class="text-[10px] text-gray-500">Katar15 Management System. Semua data disimpan secara lokal pada memori aplikasi.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: MANAJEMEN RESET PASSWORD (Optimized: hidden password fields, Search input added) -->
+    <div id="reset-password-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
+        <div class="relative glass-premium max-w-2xl w-full p-5 sm:p-8 rounded-3xl border border-red-500/30 max-h-[85vh] overflow-y-auto">
+            <button onclick="closeResetPasswordManagerModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            
+            <div class="text-center space-y-2 mb-4">
+                <h3 class="text-xl sm:text-2xl font-extrabold text-red-400">🔑 Reset Sandi Pemuda</h3>
+                <p class="text-xs text-gray-400">Pengurus berwenang melakukan reset instan menjadi sandi default <span class="text-amber-400 font-bold">Katar15</span>.</p>
+            </div>
+
+            <!-- Bilah Pencarian Nama/Username -->
+            <div class="mb-4">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                    </span>
+                    <input type="text" id="pw-search-input" oninput="filterCredentialTable()" class="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-white text-xs placeholder-gray-500 focus:outline-none focus:border-red-500" placeholder="Ketik nama atau nama panggilan untuk mencari...">
+                </div>
+            </div>
+
+            <!-- Tabel Daftar Akun & Reset -->
+            <div class="overflow-x-auto bg-[#080c14]/60 p-4 rounded-xl border border-white/5 space-y-4">
+                <div class="flex justify-between items-center pb-2 border-b border-white/5">
+                    <span class="text-xs font-bold text-white uppercase tracking-wider">Database Kredensial Pengguna</span>
+                    <span class="text-[10px] text-amber-400 font-bold"><i class="fa-solid fa-shield-halved mr-1"></i>Akses Terlindungi</span>
+                </div>
+                <table class="w-full text-left text-xs text-gray-300 min-w-[500px]">
+                    <thead class="bg-white/5 font-bold uppercase text-[10px] text-gray-400">
+                        <tr>
+                            <th class="p-3">Nama Lengkap</th>
+                            <th class="p-3">Nama Panggilan / Username</th>
+                            <th class="p-3">Jabatan</th>
+                            <th class="p-3 text-center">Aksi Pemulihan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="credential-table-body" class="divide-y divide-white/5">
+                        <!-- Diisi secara dinamis oleh javascript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-center mt-5 pt-3 border-t border-white/5">
+                <button onclick="closeResetPasswordManagerModal()" class="px-5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-bold text-gray-300">
+                    Tutup Panel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: NOTIFIKASI RESET SANDI BERHASIL DENGAN DRAFT PESAN WA (Copy friendly) -->
+    <div id="reset-success-popup" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
+        <div class="glass-premium max-w-md w-full p-6 rounded-2xl border border-green-500/30 space-y-4">
+            <h4 class="font-extrabold text-white text-base flex items-center gap-2">
+                <i class="fa-solid fa-circle-check text-green-400"></i> Kata Sandi Telah Direset!
+            </h4>
+            <p class="text-xs text-gray-300">
+                Sandi akun pemuda <strong id="reset-popup-user" class="text-indigo-300">Nama</strong> telah berhasil dikembalikan ke sandi aman <span class="text-green-400 font-bold font-mono">Katar15</span>.
+            </p>
+            
+            <div class="space-y-1 bg-[#080c14] p-3.5 rounded-xl border border-white/5">
+                <span class="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">Draft Pesan WhatsApp untuk Dikirim</span>
+                <textarea id="reset-popup-wa-text" readonly class="w-full bg-transparent border-0 rounded-lg p-1 text-xs text-gray-300 font-mono focus:outline-none h-32 leading-relaxed resize-none"></textarea>
+            </div>
+
+            <p class="text-[10px] text-amber-400/90 leading-normal">
+                <i class="fa-solid fa-triangle-exclamation mr-1"></i> Imbau pengguna untuk segera mengubah kata sandi baru mereka di menu edit profil setelah login demi keamanan data.
+            </p>
+
+            <div class="flex justify-between items-center pt-2">
+                <button onclick="copyResetText()" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-green-600 hover:bg-green-700 text-white flex items-center gap-1.5 shadow-lg shadow-green-600/20 transition-all">
+                    <i class="fa-solid fa-copy"></i> Salin Pesan WA 📋
+                </button>
+                <button onclick="closeResetSuccessPopup()" class="px-4 py-2.5 rounded-xl text-xs font-semibold bg-white/5 hover:bg-white/10 text-gray-300 transition">Tutup</button>
             </div>
         </div>
     </div>
@@ -835,7 +961,7 @@
         </div>
     </div>
 
-    <!-- ADMIN MODAL: BRANDING SETTINGS -->
+    <!-- ADMIN MODAL: BRANDING SETTINGS (Logo Image & Icon Customization added) -->
     <div id="branding-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="relative glass-premium max-w-md w-full p-5 sm:p-8 rounded-3xl border border-amber-500/30">
             <button onclick="closeBrandingModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
@@ -843,8 +969,8 @@
             </button>
             
             <div class="text-center space-y-2 mb-6">
-                <h3 class="text-lg sm:text-xl font-extrabold text-amber-400">Branding Aplikasi</h3>
-                <p class="text-xs text-gray-400">Sesuaikan identitas nama, slogan, logo, dan estetika utama website katar secara dinamis.</p>
+                <h3 class="text-lg sm:text-xl font-extrabold text-amber-400">Branding & Logo Aplikasi</h3>
+                <p class="text-xs text-gray-400">Kustomisasi identitas nama, slogan, logo teks, icon FontAwesome, atau berkas logo gambar website secara dinamis.</p>
             </div>
 
             <form onsubmit="handleSaveBranding(event)" class="space-y-4">
@@ -856,9 +982,30 @@
                     <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Slogan / Subtitle Organisasi</label>
                     <input type="text" id="brand-input-subtitle" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-xs sm:text-sm focus:outline-none focus:border-amber-500">
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Teks Singkat Logo (Maks 3 Karakter)</label>
-                    <input type="text" id="brand-input-logo" maxlength="3" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-xs sm:text-sm focus:outline-none focus:border-amber-500">
+                
+                <!-- Opsi Kustomisasi Logo Terbuka -->
+                <div class="border-t border-white/10 pt-4 space-y-3">
+                    <h4 class="text-xs font-bold text-amber-300 uppercase tracking-wide">Pengaturan Desain Logo Kiri Atas</h4>
+                    
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Teks Singkat Logo (Maks 3 Karakter)</label>
+                        <input type="text" id="brand-input-logo" maxlength="3" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-xs focus:outline-none focus:border-amber-500" placeholder="Misal: 15">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Kode Icon FontAwesome (Gantikan Teks Logo)</label>
+                        <input type="text" id="brand-input-logo-icon" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-xs focus:outline-none focus:border-amber-500" placeholder="Contoh: fa-solid fa-users, fa-solid fa-rocket">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Atau Unggah Gambar Logo Kustom (PNG/JPG)</label>
+                        <input type="file" id="brand-input-logo-file" accept="image/*" onchange="previewLogoFileLocal(event)" class="w-full text-xs text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[11px] file:font-semibold file:bg-amber-500/10 file:text-amber-300 hover:file:bg-amber-500/20">
+                    </div>
+
+                    <!-- Tombol Reset Logo -->
+                    <div class="flex justify-end">
+                        <button type="button" onclick="resetLogoToDefault()" class="text-[10px] text-red-400 hover:underline"><i class="fa-solid fa-rotate-left mr-1"></i>Reset Desain Logo ke Default</button>
+                    </div>
                 </div>
                 
                 <button type="submit" class="w-full py-3 bg-amber-500 hover:bg-amber-600 font-bold text-gray-950 text-xs sm:text-sm rounded-xl transition shadow-lg shadow-amber-500/20">
@@ -909,7 +1056,7 @@
                     <input type="text" id="staff-quote" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-xs sm:text-sm focus:outline-none focus:border-amber-500" placeholder="Contoh: Jalani saja dengan santai.">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Topik Minat / Tag</label>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Topik Mintat / Tag</label>
                     <input type="text" id="staff-tags" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-xs sm:text-sm focus:outline-none focus:border-amber-500" placeholder="Contoh: Desain & K-Pop">
                 </div>
 
@@ -998,7 +1145,7 @@
         </div>
     </div>
 
-    <!-- MODAL: ADD / EDIT RW ARTICLE (Beranda Only) -->
+    <!-- MODAL: ADD / EDIT RW ARTICLE -->
     <div id="article-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="relative glass-premium max-w-lg w-full p-5 sm:p-8 rounded-3xl border border-indigo-500/30 max-h-[90vh] overflow-y-auto">
             <button onclick="closeArticleModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
@@ -1046,7 +1193,7 @@
         </div>
     </div>
 
-    <!-- MODAL: ADD / EDIT RT INFO (Remaja RT Menu Tab Only) -->
+    <!-- MODAL: ADD / EDIT RT INFO -->
     <div id="rt-info-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="relative glass-premium max-w-lg w-full p-5 sm:p-8 rounded-3xl border border-indigo-500/30 max-h-[90vh] overflow-y-auto">
             <button onclick="closeRtInfoModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
@@ -1086,7 +1233,7 @@
         </div>
     </div>
 
-    <!-- MODAL: EDIT COORDINATOR RT (Admin Only) -->
+    <!-- MODAL: EDIT COORDINATOR RT -->
     <div id="rt-coord-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="relative glass-premium max-w-md w-full p-5 sm:p-8 rounded-3xl border border-indigo-500/30">
             <button onclick="closeRtCoordModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
@@ -1144,21 +1291,23 @@
 
     <script>
         // State management internal aplikasi
-        let currentUser = null; // { name: "...", role: "admin|ketua|...", profileImage: "..." }
-        let currentConfirmCallback = null; // Custom confirm handler
-        let uploadedBase64Image = ""; // Tampung image lokal hasil FileReader
-        let rtInfoUploadedBase64 = ""; // Tampung image lokal pengumuman RT
-        let cropperInstance = null; // Instance cropper.js
+        let currentUser = null; 
+        let currentConfirmCallback = null; 
+        let uploadedBase64Image = ""; 
+        let rtInfoUploadedBase64 = ""; 
+        let cropperInstance = null; 
 
-        // Konfigurasi Branding Aplikasi Terintegrasi
+        // Konfigurasi Branding Aplikasi Terintegrasi (Mendukung icon dan gambar kustom)
         let appBranding = {
             title: "KATAR RW 15",
             subtitle: "SAMAWA BERDAYA",
             logoText: "15",
+            logoIcon: "",       // Kode FontAwesome class
+            logoImage: ""       // Base64 file gambar logo kustom
         };
 
-        // Data Remaja RT (Struktur informasi mandiri per RT)
-        const subRtData = {
+        // Data Remaja RT
+        let subRtData = {
             "RT-01": {
                 ketua: "Doni Setiawan",
                 slogan: "Aksi Sosial & Gotong Royong Estetik",
@@ -1203,20 +1352,22 @@
 
         // Data Pengurus Inti
         let staffData = [
-            { id: 1, name: "Alif Ramadhan", role: "Ketua", detail: "Warga RT 02 • Mahasiswa Sistem Informasi", quote: "Gak perlu formal-formal amat, yang penting aksi nyata buat Samawa.", tags: "Mobile Legends & Ngopi" },
-            { id: 2, name: "Fuji Astuti", role: "Wakil", detail: "Warga RT 04 • Designer Grafis", quote: "Ada ide acara seru? Yuk langsung kita gaskan, gak pake birokrasi berbelit!", tags: "Seni & K-Pop" },
-            { id: 3, name: "Rian Pratama", role: "Sekretaris", detail: "Warga RT 01 • Freelancer", quote: "Data katar rapi dan bisa dipantau siapa aja lewat drive bersama.", tags: "Futsal & Videografi" },
-            { id: 4, name: "Zahra Amalia", role: "Bendahara", detail: "Warga RT 03 • Pengusaha Kuliner", quote: "Setiap rupiah uang kas dicatat detail dan dipublish tiap bulan.", tags: "Memasak & Akuntansi" }
+            { id: 1, name: "Alif Ramadhan", username: "alif", role: "Ketua", password: "123", detail: "Warga RT 02 • Mahasiswa Sistem Informasi", quote: "Gak perlu formal-formal amat, yang penting aksi nyata buat Samawa.", tags: "Mobile Legends & Ngopi" },
+            { id: 2, name: "Fuji Astuti", username: "fuji", role: "Wakil", password: "123", detail: "Warga RT 04 • Designer Grafis", quote: "Ada ide acara seru? Yuk langsung kita gaskan, gak pake birokrasi berbelit!", tags: "Seni & K-Pop" },
+            { id: 3, name: "Rian Pratama", username: "rian", role: "Sekretaris", password: "123", detail: "Warga RT 01 • Freelancer", quote: "Data katar rapi dan bisa dipantau siapa aja lewat drive bersama.", tags: "Futsal & Videografi" },
+            { id: 4, name: "Zahra Amalia", username: "zahra", role: "Bendahara", password: "123", detail: "Warga RT 03 • Pengusaha Kuliner", quote: "Setiap rupiah uang kas dicatat detail dan dipublish tiap bulan.", tags: "Memasak & Akuntansi" }
         ];
 
-        // Data Anggota (Squad) Terdaftar
+        // Data Anggota (Squad) Terdaftar beserta Kredensial password dan username
         let membersData = [
-            { id: 1, name: "Rendra Prasetyo", rt: "RT 02", unit: "0619", minat: ["E-Sports", "Olahraga"], status: "Aktif", wa: "081211112222", jabatan: "Anggota" },
-            { id: 2, name: "Siti Rahmawati", rt: "RT 05", unit: "1808", minat: ["Sosial/Relawan", "Seni/Musik"], status: "Aktif", wa: "081233334444", jabatan: "Anggota" },
-            { id: 3, name: "Taufik Hidayat", rt: "RT 01", unit: "0412", minat: ["Olahraga"], status: "Pending Verifikasi", wa: "081255556666", jabatan: "Anggota" }
+            { id: 11, name: "Iwan (Super-Admin)", username: "iwan", rt: "RT 05", unit: "0001", minat: ["Sosial/Relawan"], status: "Aktif", wa: "081299999999", password: "123", jabatan: "Admin" },
+            { id: 12, name: "Doni Setiawan", username: "doni", rt: "RT 01", unit: "0311", minat: ["Olahraga"], status: "Aktif", wa: "081211223344", password: "123", jabatan: "Koor. Remaja RT 1" },
+            { id: 13, name: "Rendra Prasetyo", username: "rendra", rt: "RT 02", unit: "0619", minat: ["E-Sports", "Olahraga"], status: "Aktif", wa: "081211112222", password: "123", jabatan: "Anggota" },
+            { id: 14, name: "Siti Rahmawati", username: "siti", rt: "RT 05", unit: "1808", minat: ["Sosial/Relawan", "Seni/Musik"], status: "Aktif", wa: "081233334444", password: "123", jabatan: "Anggota" },
+            { id: 15, name: "Taufik Hidayat", username: "taufik", rt: "RT 01", unit: "0412", minat: ["Olahraga"], status: "Pending Verifikasi", wa: "081255556666", password: "123", jabatan: "Anggota" }
         ];
 
-        // Data Keuangan (Ditambahkan atribut bukti transaksi gambar lokal)
+        // Data Keuangan
         let keuangan = {
             totalKas: 2450000,
             pemasukan: 850000,
@@ -1255,7 +1406,7 @@
             }
         ];
 
-        // Data Live Chat (Silaturahim) Pre-loaded jokes & chats
+        // Data Live Chat
         let livechatMessages = [
             { id: 1, user: "Alif Ramadhan", role: "Ketua", msg: "Woii malam minggu besok jadinya nobar sepak bola di mana kita?", time: "20:05" },
             { id: 2, user: "Fuji Astuti", role: "Wakil", msg: "Di lapangan utama aja Lif, nanti aku buatin flyernya biar rame yang join wkwk", time: "20:07" },
@@ -1264,7 +1415,7 @@
             { id: 5, user: "Rian Pratama", role: "Sekretaris", msg: "Jangan lupa bawa cup kopi masing-masing ya rekan-rekan, ramah lingkungan!", time: "20:15" }
         ];
 
-        // Data Artikel / Berita Informasi Terkini (Hanya berita RW oleh pengurus inti)
+        // Data Artikel / Berita Informasi Terkini RW
         let articlesList = [
             {
                 id: 1,
@@ -1288,7 +1439,46 @@
             }
         ];
 
-        // Routing System: Single Page Application (SPA) switcher when logged in
+        // --- SISTEM PERSISTENCE (Refresh Guard menggunakan sessionStorage) ---
+        function saveStateToSession() {
+            sessionStorage.setItem('katar15_currentUser', JSON.stringify(currentUser));
+            sessionStorage.setItem('katar15_staffData', JSON.stringify(staffData));
+            sessionStorage.setItem('katar15_membersData', JSON.stringify(membersData));
+            sessionStorage.setItem('katar15_keuangan', JSON.stringify(keuangan));
+            sessionStorage.setItem('katar15_diskusiList', JSON.stringify(diskusiList));
+            sessionStorage.setItem('katar15_livechatMessages', JSON.stringify(livechatMessages));
+            sessionStorage.setItem('katar15_subRtData', JSON.stringify(subRtData));
+            sessionStorage.setItem('katar15_appBranding', JSON.stringify(appBranding));
+        }
+
+        function loadStateFromSession() {
+            if (sessionStorage.getItem('katar15_currentUser')) {
+                currentUser = JSON.parse(sessionStorage.getItem('katar15_currentUser'));
+            }
+            if (sessionStorage.getItem('katar15_staffData')) {
+                staffData = JSON.parse(sessionStorage.getItem('katar15_staffData'));
+            }
+            if (sessionStorage.getItem('katar15_membersData')) {
+                membersData = JSON.parse(sessionStorage.getItem('katar15_membersData'));
+            }
+            if (sessionStorage.getItem('katar15_keuangan')) {
+                keuangan = JSON.parse(sessionStorage.getItem('katar15_keuangan'));
+            }
+            if (sessionStorage.getItem('katar15_diskusiList')) {
+                diskusiList = JSON.parse(sessionStorage.getItem('katar15_diskusiList'));
+            }
+            if (sessionStorage.getItem('katar15_livechatMessages')) {
+                livechatMessages = JSON.parse(sessionStorage.getItem('katar15_livechatMessages'));
+            }
+            if (sessionStorage.getItem('katar15_subRtData')) {
+                subRtData = JSON.parse(sessionStorage.getItem('katar15_subRtData'));
+            }
+            if (sessionStorage.getItem('katar15_appBranding')) {
+                appBranding = JSON.parse(sessionStorage.getItem('katar15_appBranding'));
+            }
+        }
+
+        // Routing System (Single Page Application Switcher - Selalu mulai dari paling atas)
         function handleNavigation() {
             const hash = window.location.hash || '#beranda';
             const targetId = hash.substring(1);
@@ -1307,7 +1497,8 @@
                         }
                     }
                 });
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                // Sesuai permintaan: selalu gulir halaman ke paling atas setiap pindah halaman
+                window.scrollTo(0, 0);
             } else {
                 // Tampilkan semua secara bergulir untuk tamu (standard landing-page scrolling)
                 sections.forEach(id => {
@@ -1317,12 +1508,14 @@
                     }
                 });
                 const targetEl = document.getElementById(targetId);
-                if (targetEl) {
+                if (targetEl && targetId !== 'beranda') {
                     targetEl.scrollIntoView({ behavior: 'smooth' });
+                    return; // Lewati scroll 0,0 agar mengarah langsung ke bagian target
                 }
+                window.scrollTo(0, 0);
             }
 
-            // Highlight Menu Aktif dengan style modern baru (mendukung bottom mobile nav)
+            // Highlight Menu Aktif
             const navLinks = document.querySelectorAll('header nav a, .nav-link-mobile');
             navLinks.forEach(link => {
                 const href = link.getAttribute('href');
@@ -1343,6 +1536,30 @@
         window.addEventListener('hashchange', handleNavigation);
 
         window.onload = function() {
+            loadStateFromSession(); // Ambil data session agar refresh tidak logout
+
+            // Jika pengguna memang sudah login sebelumnya, pasang state visual UI-nya
+            if (currentUser) {
+                document.getElementById('user-status').classList.remove('hidden');
+                document.getElementById('user-display-name').innerText = currentUser.name;
+                document.getElementById('user-display-role').innerText = getUserFriendlyRole(currentUser.role);
+                document.getElementById('user-avatar-img').src = currentUser.profileImage;
+                document.getElementById('btn-login-modal').classList.add('hidden');
+                document.getElementById('btn-logout').classList.remove('hidden');
+
+                const forumUnauth = document.getElementById('forum-unauthenticated');
+                const forumAuth = document.getElementById('forum-authenticated');
+                if (forumUnauth) forumUnauth.classList.add('hidden');
+                if (forumAuth) {
+                    forumAuth.classList.remove('hidden');
+                    document.getElementById('auth-username').innerText = currentUser.name;
+                }
+                updateAuthAvatarUI();
+
+                const chatOverlay = document.getElementById('livechat-lock-overlay');
+                if (chatOverlay) chatOverlay.classList.add('hidden');
+            }
+
             switchRtTab('RT-01');
             renderPengurus();
             renderMembers();
@@ -1358,25 +1575,21 @@
         // Role-Based Access Control Checks
         function canManageArticles() {
             if (!currentUser) return false;
-            // Hanya Ketua, Wakil, Sekretaris, Bendahara, dan Admin Utama yang boleh mengelola Beranda RW
             return ['admin', 'ketua', 'wakil', 'sekretaris', 'bendahara'].includes(currentUser.role);
         }
 
         function canVerifyMembers() {
             if (!currentUser) return false;
-            // Admin, Ketua, Wakil, Sekretaris, Bendahara
             return ['admin', 'ketua', 'wakil', 'sekretaris', 'bendahara'].includes(currentUser.role);
         }
 
         function canManageFinances() {
             if (!currentUser) return false;
-            // Admin & Bendahara
             return ['admin', 'bendahara'].includes(currentUser.role);
         }
 
         function canManageCoordinators() {
             if (!currentUser) return false;
-            // HANYA Admin Utama yang boleh mengganti Koordinator Remaja RT (Ketua & Wakil dicabut izinnya)
             return currentUser.role === 'admin';
         }
 
@@ -1385,12 +1598,11 @@
             return currentUser.role === 'admin';
         }
 
-        // Mengecek apakah user adalah koordinator RT terkait untuk menambah informasi RT
+        // Mengecek apakah user adalah koordinator RT atau admin
         function canManageRtInfo(rtKey) {
             if (!currentUser) return false;
             if (currentUser.role === 'admin') return true;
             if (currentUser.role === 'koordinator_rt') {
-                // Cocokkan koordinator RT (Sebagai simulasi akun koordinator_rt dapet akses ke RT-01)
                 if (rtKey === "RT-01" && currentUser.name === "Doni Setiawan") return true;
                 if (rtKey === "RT-02" && currentUser.name === "Alif Ramadhan") return true;
                 if (rtKey === "RT-03" && currentUser.name === "Zahra Amalia") return true;
@@ -1400,7 +1612,13 @@
             return false;
         }
 
-        // Custom Notification Utility
+        // Mengecek apakah user berhak menggunakan Panel Reset Sandi (Admin, Ketua, Wakil)
+        function canResetPasswords() {
+            if (!currentUser) return false;
+            return ['admin', 'ketua', 'wakil'].includes(currentUser.role);
+        }
+
+        // Custom Notification Toast Utility
         function showToast(message, isError = false) {
             const toast = document.getElementById('toast');
             const icon = document.getElementById('toast-icon');
@@ -1427,7 +1645,7 @@
                 setTimeout(() => {
                     toast.classList.add('hidden');
                 }, 300);
-            }, 4000);
+            }, 5000); // Tahan lebih lama agar sandi di toast sempat dibaca
         }
 
         // Custom Confirm Dialog Utility
@@ -1485,6 +1703,31 @@
             }
         }
 
+        // Preview berkas logo kustom lokal oleh Admin
+        function previewLogoFileLocal(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    appBranding.logoImage = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Reset Logo ke Desain Default "15"
+        function resetLogoToDefault() {
+            appBranding.logoImage = "";
+            appBranding.logoIcon = "";
+            appBranding.logoText = "15";
+            document.getElementById('brand-input-logo').value = "15";
+            document.getElementById('brand-input-logo-icon').value = "";
+            document.getElementById('brand-input-logo-file').value = "";
+            applySavedBranding();
+            saveStateToSession(); // Persist ke session storage
+            showToast("Desain logo dikembalikan ke default teks.");
+        }
+
         // Render Artikel / Informasi Beranda RW
         function renderArticles() {
             const grid = document.getElementById('articles-grid');
@@ -1503,7 +1746,6 @@
                     </div>
                 ` : '';
 
-                // Penyesuaian agar foto artikel tampil utuh (object-contain dengan background gelap)
                 grid.innerHTML += `
                     <div class="glass rounded-2xl overflow-hidden flex flex-col justify-between border border-white/5 group hover:border-indigo-500/20 transition-all duration-300">
                         <div>
@@ -1535,7 +1777,6 @@
                 `;
             });
 
-            // Visibilitas tombol artikel
             const addBtn = document.getElementById('btn-add-article');
             if (canManageArticles()) {
                 addBtn.classList.remove('hidden');
@@ -1577,7 +1818,6 @@
             const imageUrl = uploadedBase64Image || defaultImg;
 
             if (id) {
-                // Edit
                 const article = articlesList.find(a => a.id == id);
                 if (article) {
                     article.title = title;
@@ -1589,7 +1829,6 @@
                     showToast("Warta RW berhasil diperbarui!");
                 }
             } else {
-                // Tambah Baru
                 const newArticle = {
                     id: Date.now(),
                     title: title,
@@ -1604,6 +1843,7 @@
                 showToast("Warta RW berhasil diterbitkan!");
             }
 
+            saveStateToSession(); // Simpan perubahan
             renderArticles();
             closeArticleModal();
         }
@@ -1630,6 +1870,7 @@
             showConfirm("Apakah Anda yakin ingin menghapus warta RW ini?", (isConfirmed) => {
                 if (isConfirmed) {
                     articlesList = articlesList.filter(a => a.id !== id);
+                    saveStateToSession();
                     renderArticles();
                     showToast("Warta RW berhasil dihapus.");
                 }
@@ -1646,14 +1887,12 @@
             const rt = subRtData[rtKey];
             const container = document.getElementById('rt-content-area');
 
-            // Render edit button jika berhak (Hanya Admin Utama)
             const editBtn = canManageCoordinators() ? `
                 <button onclick="openRtCoordinatorModal('${rtKey}')" class="px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500 text-amber-300 hover:text-gray-950 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
                     <i class="fa-solid fa-user-pen"></i> Edit Koordinator RT
                 </button>
             ` : '';
 
-            // Render Informasi RT List (Foto diatur agar tampil utuh)
             let infoRtHtml = '';
             if (rt.informasi && rt.informasi.length > 0) {
                 rt.informasi.forEach(info => {
@@ -1685,7 +1924,6 @@
                 infoRtHtml = `<p class="text-xs text-gray-500 italic col-span-2">Belum ada pengumuman atau kabar khusus di RT ini.</p>`;
             }
 
-            // Tombol tambah informasi khusus koordinator RT terpilih atau admin
             const addInfoBtn = canManageRtInfo(rtKey) ? `
                 <button onclick="openAddRtInfoModal('${rtKey}')" class="px-3 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5">
                     <i class="fa-solid fa-plus"></i> Tambah Informasi RT
@@ -1777,7 +2015,7 @@
             rtInput.value = detectedRT;
         }
 
-        // RT Coordinator Actions (Hanya Admin)
+        // RT Coordinator Actions
         function openRtCoordinatorModal(rtKey) {
             if (!canManageCoordinators()) {
                 showToast("Hanya Admin Utama yang dapat mengedit Koordinator RT!", true);
@@ -1810,6 +2048,7 @@
                 rt.proker = document.getElementById('rt-proker').value;
 
                 showToast(`Data Koordinator ${rtKey} berhasil diperbarui!`);
+                saveStateToSession();
                 switchRtTab(rtKey);
                 closeRtCoordModal();
             }
@@ -1857,11 +2096,11 @@
 
             subRtData[rtKey].informasi.unshift(newInfo);
             showToast(`Informasi baru berhasil diterbitkan untuk ${rtKey}!`);
+            saveStateToSession();
             switchRtTab(rtKey);
             closeRtInfoModal();
         }
 
-        // Memperbaiki Typo HTML pembuka ganda <<div> -> <div> pada fungsi render
         function deleteRtInfo(rtKey, infoId) {
             if (!canManageRtInfo(rtKey)) {
                 showToast("Anda tidak berhak menghapus informasi di RT ini!", true);
@@ -1870,6 +2109,7 @@
             showConfirm("Hapus pengumuman RT ini?", (isConfirmed) => {
                 if (isConfirmed) {
                     subRtData[rtKey].informasi = subRtData[rtKey].informasi.filter(inf => inf.id !== infoId);
+                    saveStateToSession();
                     switchRtTab(rtKey);
                     showToast("Informasi RT berhasil dihapus.");
                 }
@@ -1881,7 +2121,6 @@
             const grid = document.getElementById('pengurus-grid');
             grid.innerHTML = '';
             staffData.forEach(staff => {
-                // Check if current user can edit this specific staff card
                 const canEditThisCard = currentUser && (
                     currentUser.role === 'admin' || 
                     (currentUser.name && currentUser.name.toLowerCase().includes(staff.name.toLowerCase())) ||
@@ -1950,10 +2189,183 @@
                 staff.quote = document.getElementById('edit-own-staff-quote').value;
                 staff.tags = document.getElementById('edit-own-staff-tags').value;
 
+                saveStateToSession();
                 renderPengurus();
                 closeEditOwnStaffModal();
                 showToast("Profil pengurus berhasil diperbarui!");
             }
+        }
+
+        // --- SISTEM RESET PASSWORD MANAGER (Kredensial disembunyikan, Reset Sandi interaktif, Filter Aktif) ---
+        function openResetPasswordManagerModal() {
+            if (!canResetPasswords()) {
+                showToast("Anda tidak memiliki izin mengelola sandi!", true);
+                return;
+            }
+
+            // Atur ulang filter pencarian
+            const searchInput = document.getElementById('pw-search-input');
+            if (searchInput) searchInput.value = "";
+
+            const tbody = document.getElementById('credential-table-body');
+            tbody.innerHTML = '';
+
+            // Kombinasikan data Staff dan Anggota
+            const allUsers = [];
+            staffData.forEach(s => {
+                allUsers.push({ id: s.id, type: 'staff', name: s.name, username: s.username || s.name.split(' ')[0].toLowerCase(), role: s.role });
+            });
+            membersData.forEach(m => {
+                allUsers.push({ id: m.id, type: 'member', name: m.name, username: m.username || m.panggilan || m.name.split(' ')[0].toLowerCase(), role: m.jabatan || 'Anggota' });
+            });
+
+            allUsers.forEach(u => {
+                // Bersihkan kutipan tunggal untuk mencegah error sintaks JS pada atribut onclick
+                const escName = u.name.replace(/'/g, "\\'");
+                const escUsername = u.username.replace(/'/g, "\\'");
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-white/5 border-b border-white/5 transition duration-150">
+                        <td class="p-3 font-semibold text-white">${u.name}</td>
+                        <td class="p-3 text-indigo-300 font-mono">${u.username}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded bg-white/10 text-gray-400 text-[10px] uppercase font-bold">${u.role}</span></td>
+                        <td class="p-3 text-center">
+                            <button onclick="performPasswordReset('${u.type}', ${u.id}, '${escName}', '${escUsername}')" class="px-3 py-1.5 bg-red-500/20 border border-red-500/40 hover:bg-red-500 text-red-300 hover:text-white rounded-xl text-[11px] font-bold transition flex items-center justify-center gap-1 mx-auto shadow-md">
+                                <i class="fa-solid fa-rotate-left"></i> Reset Sandi
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('reset-password-modal').classList.remove('hidden');
+        }
+
+        function closeResetPasswordManagerModal() {
+            document.getElementById('reset-password-modal').classList.add('hidden');
+        }
+
+        // Menyaring data pengguna di tabel Kredensial secara real-time
+        function filterCredentialTable() {
+            const query = document.getElementById('pw-search-input').value.toLowerCase().trim();
+            const rows = document.querySelectorAll('#credential-table-body tr');
+            
+            rows.forEach(row => {
+                const name = row.children[0].innerText.toLowerCase();
+                const username = row.children[1].innerText.toLowerCase();
+                if (name.includes(query) || username.includes(query)) {
+                    row.classList.remove('hidden');
+                } else {
+                    row.classList.add('hidden');
+                }
+            });
+        }
+
+        // Menjalankan reset sandi instan menjadi Katar15
+        function performPasswordReset(type, id, name, username) {
+            const defaultNewPw = "Katar15";
+            if (type === 'staff') {
+                const staff = staffData.find(s => s.id === id);
+                if (staff) {
+                    staff.password = defaultNewPw;
+                }
+            } else {
+                const member = membersData.find(m => m.id === id);
+                if (member) {
+                    member.password = defaultNewPw;
+                }
+            }
+            saveStateToSession(); // Simpan perubahan kata sandi baru secara instan
+            openResetPasswordManagerModal(); // Render ulang tabel kredensial
+
+            // Susun draf pesan WhatsApp yang siap dikirim/disalin
+            const waMessage = `Halo ${name},\n\nKata sandi akun Katar15 Anda telah berhasil di-reset oleh pengurus.\n\nUsername Login: *${username}*\nKata Sandi Baru: *${defaultNewPw}*\n\nSilakan segera masuk sistem dan ubah kata sandi baru Anda di menu "Edit Profil" demi keamanan agar akun tetap terlindungi. Terima kasih!`;
+            
+            // Munculkan popup notifikasi salin pesan
+            showResetSuccessPopup(name, waMessage);
+        }
+
+        function showResetSuccessPopup(name, message) {
+            document.getElementById('reset-popup-user').innerText = name;
+            document.getElementById('reset-popup-wa-text').value = message;
+            document.getElementById('reset-success-popup').classList.remove('hidden');
+        }
+
+        function closeResetSuccessPopup() {
+            document.getElementById('reset-success-popup').classList.add('hidden');
+        }
+
+        // Fungsi menyalin teks ke clipboard (Aman dari pembatasan iFrame)
+        function copyResetText() {
+            const textarea = document.getElementById('reset-popup-wa-text');
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // Untuk HP / Mobile
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast("Pesan draf WhatsApp berhasil disalin! Silakan kirimkan ke peminta.");
+                } else {
+                    showToast("Gagal menyalin. Silakan seleksi dan salin secara manual.", true);
+                }
+            } catch (err) {
+                showToast("Gagal menyalin. Silakan seleksi dan salin secara manual.", true);
+            }
+        }
+
+        // Lupa Sandi Info Helper
+        function handleForgotPassword() {
+            showToast("Silakan hubungi Admin (Iwan), Ketua (Alif), atau Wakil (Fuji) untuk melakukan reset sandi akun Anda menjadi 'Katar15'.", false);
+        }
+
+        // Manual Login Form Handler (NAMA PANGGILAN & PASSWORD)
+        function handleManualLogin(event) {
+            event.preventDefault();
+            const usernameInput = document.getElementById('login-username').value.trim().toLowerCase();
+            const passwordInput = document.getElementById('login-password').value;
+
+            // Cari di staffData terlebih dahulu
+            let foundUser = staffData.find(s => (s.username && s.username.toLowerCase() === usernameInput) || s.name.split(' ')[0].toLowerCase() === usernameInput);
+            let roleMap = 'warga';
+
+            if (foundUser) {
+                // Verifikasi password
+                const userPassword = foundUser.password || '123';
+                if (userPassword === passwordInput) {
+                    roleMap = foundUser.role.toLowerCase().replace('.', '').replace(' ', '_');
+                    performDemoLoginWithData(foundUser.name, roleMap, foundUser.profileImage || "");
+                    document.getElementById('login-username').value = "";
+                    document.getElementById('login-password').value = "";
+                    return;
+                } else {
+                    showToast("Kata sandi salah! Coba lagi.", true);
+                    return;
+                }
+            }
+
+            // Cari di membersData
+            foundUser = membersData.find(m => (m.username && m.username.toLowerCase() === usernameInput) || m.name.split(' ')[0].toLowerCase() === usernameInput);
+            if (foundUser) {
+                if (foundUser.status !== 'Aktif') {
+                    showToast("Akun Anda belum disetujui / diverifikasi oleh pengurus!", true);
+                    return;
+                }
+                const userPassword = foundUser.password || '123';
+                if (userPassword === passwordInput) {
+                    roleMap = foundUser.jabatan ? foundUser.jabatan.toLowerCase().replace('.', '').replace(' ', '_') : 'warga';
+                    if (roleMap === 'anggota') roleMap = 'warga';
+                    if (roleMap === 'admin') roleMap = 'admin';
+
+                    performDemoLoginWithData(foundUser.name, roleMap, foundUser.profileImage || "");
+                    document.getElementById('login-username').value = "";
+                    document.getElementById('login-password').value = "";
+                    return;
+                } else {
+                    showToast("Kata sandi salah! Coba lagi.", true);
+                    return;
+                }
+            }
+
+            showToast("Akun nama panggilan tidak ditemukan!", true);
         }
 
         // Render Anggota / Members Table
@@ -1983,20 +2395,18 @@
                     : 'bg-yellow-500/10 text-yellow-400 animate-pulse';
 
                 const minatBadges = member.minat.map(m => `<span class="px-2 py-0.5 rounded bg-white/5 text-[10px] text-gray-400 mr-1">${m}</span>`).join('');
+                const displayUsername = member.username || member.name.split(' ')[0].toLowerCase();
 
-                // Admin Utama & Ketua sekarang dapat mengubah jabatan
                 let jabatanSelectorHtml = "";
                 if (currentUser && ['admin', 'ketua'].includes(currentUser.role)) {
                     let optionsHtml = '';
                     daftarJabatan.forEach(jab => {
-                        // Ketua tidak diperbolehkan mengangkat orang lain menjadi Ketua baru demi keamanan
                         if (currentUser.role === 'ketua' && jab === 'Ketua') {
                             return; 
                         }
                         optionsHtml += `<option value="${jab}" ${member.jabatan === jab ? 'selected' : ''}>${jab}</option>`;
                     });
 
-                    // Jika akun yang dilihat jabatannya adalah Ketua, dan user aktif adalah Ketua, kunci agar tidak bisa didegradasi sendiri
                     if (member.jabatan === 'Ketua' && currentUser.role === 'ketua') {
                         jabatanSelectorHtml = `
                             <span class="px-2.5 py-1 rounded bg-white/5 text-xs text-amber-400 font-bold border border-amber-400/20">
@@ -2019,8 +2429,9 @@
                 }
 
                 tbody.innerHTML += `
-                    <tr class="hover:bg-white/[0.02] transition">
+                    <tr class="hover:bg-white/[0.02] transition border-b border-white/5">
                         <td class="px-4 py-3 font-semibold text-white">${member.name}</td>
+                        <td class="px-4 py-3 font-mono text-indigo-300 text-xs">${displayUsername}</td>
                         <td class="px-4 py-3 text-xs text-gray-400">${member.rt} • No. Unit: ${member.unit}</td>
                         <td class="px-4 py-3">${minatBadges}</td>
                         <td class="px-4 py-3">${jabatanSelectorHtml}</td>
@@ -2047,13 +2458,13 @@
             }
             const member = membersData.find(m => m.id === memberId);
             if (member) {
-                // Batasan keamanan tambahan untuk akun demo Ketua
                 if (currentUser.role === 'ketua' && (member.jabatan === 'Ketua' || newJabatan === 'Ketua')) {
                     showToast("Ketua tidak diperkenankan mengubah atau menetapkan jabatan Ketua!", true);
                     return;
                 }
                 member.jabatan = newJabatan;
                 showToast(`Jabatan ${member.name} diperbarui menjadi ${newJabatan}!`);
+                saveStateToSession();
                 renderMembers();
             }
         }
@@ -2072,7 +2483,6 @@
                 const sign = log.type === 'pemasukan' ? '+' : '-';
                 const icon = log.type === 'pemasukan' ? 'fa-circle-arrow-up text-green-400/20' : 'fa-circle-arrow-down text-red-400/20';
 
-                // Render tombol lihat bukti jika bukti gambar diunggah Bendahara
                 const viewProofBtn = log.proofImage ? `
                     <button onclick="viewProofImage('${log.proofImage}')" class="px-2.5 py-1.5 bg-indigo-500/10 hover:bg-indigo-500 text-indigo-300 hover:text-white rounded-lg text-[10px] font-bold transition flex items-center gap-1">
                         <i class="fa-solid fa-receipt"></i> Lihat Bukti
@@ -2220,13 +2630,14 @@
                     tanggal: "Hari ini"
                 });
 
+                saveStateToSession();
                 renderDiskusi();
                 showToast("Masukan Anda berhasil diterbitkan!");
                 input.value = '';
             }
         }
 
-        // Render Live Chat messages list
+        // Render Live Chat
         function renderLivechat() {
             const container = document.getElementById('livechat-messages-container');
             container.innerHTML = '';
@@ -2258,7 +2669,7 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // Send Live Chat Message (Tombol Kirim Berfungsi Penuh)
+        // Send Live Chat Message
         function postLiveChatMessage(event) {
             event.preventDefault();
             if (!currentUser) {
@@ -2283,10 +2694,10 @@
             };
 
             livechatMessages.push(newMsg);
+            saveStateToSession();
             renderLivechat();
             input.value = '';
 
-            // Simulasi interaktif mock-responses dari pemuda lain
             setTimeout(() => {
                 const jokes = [
                     { user: "Alif Ramadhan", role: "Ketua", msg: "Siap meluncur kawan! Terima kasih koordinasinya." },
@@ -2299,20 +2710,22 @@
                 rMock.time = formatTime;
 
                 livechatMessages.push(rMock);
+                saveStateToSession();
                 renderLivechat();
             }, 1000);
         }
 
-        // Handle Pendaftaran Form Submit
+        // Handle Pendaftaran Form Submit (Kini Mendukung Input Password)
         function handlePendaftaran(event) {
             event.preventDefault();
             
             const nama = document.getElementById('nama').value;
-            const panggilan = document.getElementById('panggilan').value;
+            const panggilan = document.getElementById('panggilan').value.trim().toLowerCase().replace(/\s+/g, '');
             const rt = document.getElementById('rt-auto').value;
             const noUnit = document.getElementById('no-unit').value;
             const wa = document.getElementById('wa').value;
             const pesan = document.getElementById('pesan').value;
+            const password = document.getElementById('reg-password').value;
             
             if (noUnit.length !== 4 || isNaN(noUnit)) {
                 showToast("Nomor Unit harus terdiri dari 4 digit angka!", true);
@@ -2324,6 +2737,11 @@
                 return;
             }
 
+            if (!panggilan) {
+                showToast("Harap tentukan nama panggilan untuk ID Login Anda!", true);
+                return;
+            }
+
             // Get checked interests
             const checkboxes = document.querySelectorAll('input[name="minat"]:checked');
             let minatList = [];
@@ -2331,29 +2749,29 @@
                 minatList.push(checkbox.value);
             });
 
-            // Ambil minat dari input Lainnya jika dicentang dan diisi
             const lainnyaCheckbox = document.getElementById('minat-lainnya-checkbox');
             const lainnyaText = document.getElementById('minat-lainnya-text').value.trim();
             if (lainnyaCheckbox && lainnyaCheckbox.checked && lainnyaText !== '') {
                 minatList.push(lainnyaText);
             }
 
-            // Tambahkan pendaftar ke data sebagai "Pending"
             const newMember = {
                 id: Date.now(),
                 name: nama,
+                username: panggilan,
                 rt: rt,
                 unit: noUnit,
                 minat: minatList.length > 0 ? minatList : ["Sosial"],
                 status: "Pending Verifikasi",
                 wa: wa,
+                password: password,
                 jabatan: "Anggota"
             };
 
             membersData.push(newMember);
+            saveStateToSession(); // Simpan pendaftaran baru ke session storage
             renderMembers();
 
-            // Sembunyikan form pendaftaran dan tampilkan alert sukses
             document.getElementById('alert-sukses').classList.remove('hidden');
             document.getElementById('form-daftar').reset();
             document.getElementById('rt-auto').value = '';
@@ -2361,7 +2779,6 @@
 
             showToast("Pendaftaran Anda telah direkam!");
 
-            // Hilangkan alert setelah 8 detik
             setTimeout(() => {
                 document.getElementById('alert-sukses').classList.add('hidden');
             }, 8000);
@@ -2374,6 +2791,16 @@
 
         function closeLoginModal() {
             document.getElementById('login-modal').classList.add('hidden');
+        }
+
+        // Fungsi pembantu untuk login dengan profile image kustom
+        function performDemoLoginWithData(name, roleCode, imgUrl) {
+            currentUser = {
+                name: name,
+                role: roleCode,
+                profileImage: imgUrl || `https://placehold.co/150x150/1e1b4b/ffffff?text=${encodeURIComponent(name[0])}`
+            };
+            completeLoginWorkflow();
         }
 
         function performDemoLogin(role) {
@@ -2389,12 +2816,14 @@
 
             currentUser = mappings[role] || { name: "Guest Warga", role: "warga", profileImage: "" };
 
-            // Set default profile image if empty
             if (!currentUser.profileImage) {
                 currentUser.profileImage = `https://placehold.co/150x150/1e1b4b/ffffff?text=${encodeURIComponent(currentUser.name[0])}`;
             }
 
-            // Update UI status
+            completeLoginWorkflow();
+        }
+
+        function completeLoginWorkflow() {
             document.getElementById('user-status').classList.remove('hidden');
             document.getElementById('user-display-name').innerText = currentUser.name;
             document.getElementById('user-display-role').innerText = getUserFriendlyRole(currentUser.role);
@@ -2402,20 +2831,18 @@
             document.getElementById('btn-login-modal').classList.add('hidden');
             document.getElementById('btn-logout').classList.remove('hidden');
 
-            // Toggle forum authenticated state
             document.getElementById('forum-unauthenticated').classList.add('hidden');
             document.getElementById('forum-authenticated').classList.remove('hidden');
             document.getElementById('auth-username').innerText = currentUser.name;
             updateAuthAvatarUI();
 
-            // Hide Livechat Lock screen
             document.getElementById('livechat-lock-overlay').classList.add('hidden');
 
             closeLoginModal();
             toggleUIBasedOnLogin();
             toggleAdminFeatures();
             
-            // Re-render modules to refresh the buttons
+            saveStateToSession(); // Simpan status masuk di session
             renderArticles();
             const currentRtTabActive = document.querySelector('.rt-tab-btn.bg-indigo-600')?.id?.replace('tab-', '') || 'RT-01';
             switchRtTab(currentRtTabActive);
@@ -2424,7 +2851,6 @@
             renderLivechat();
             renderPengurus();
 
-            // Set Hash and Trigger SPA layout automatically upon login
             window.location.hash = "#beranda";
             handleNavigation();
 
@@ -2439,20 +2865,17 @@
                     document.getElementById('btn-login-modal').classList.remove('hidden');
                     document.getElementById('btn-logout').classList.add('hidden');
 
-                    // Reset forum state
                     document.getElementById('forum-unauthenticated').classList.remove('hidden');
                     document.getElementById('forum-authenticated').classList.add('hidden');
 
-                    // Show Livechat Lock screen again
                     document.getElementById('livechat-lock-overlay').classList.remove('hidden');
 
-                    // Reset hash to home default
                     window.location.hash = "#beranda";
 
                     toggleUIBasedOnLogin();
                     toggleAdminFeatures();
-                    
-                    // Re-render modules
+                    saveStateToSession(); // Hapus status login di session
+
                     renderArticles();
                     const currentRtTabActive = document.querySelector('.rt-tab-btn.bg-indigo-600')?.id?.replace('tab-', '') || 'RT-01';
                     switchRtTab(currentRtTabActive);
@@ -2461,7 +2884,6 @@
                     renderLivechat();
                     renderPengurus();
 
-                    // Restore scrolling view
                     handleNavigation();
 
                     showToast("Anda telah keluar dari akun.");
@@ -2487,17 +2909,13 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    // Sembunyikan modal detail profil sementara
                     closeProfileModal();
                     
-                    // Siapkan Workspace Cropper
                     const workspaceImg = document.getElementById('cropper-workspace-image');
                     workspaceImg.src = e.target.result;
                     
-                    // Tampilkan modal Cropper
                     document.getElementById('cropper-modal').classList.remove('hidden');
                     
-                    // Inisialisasi Cropper.js dengan aspek rasio 1:1
                     if (cropperInstance) {
                         cropperInstance.destroy();
                     }
@@ -2523,26 +2941,22 @@
             openProfileModal();
         }
 
-        // Simpan Hasil Potong Profil
         function applyCroppedImage() {
             if (!cropperInstance) return;
             
-            // Ambil data gambar cropped berformat Base64
             const canvas = cropperInstance.getCroppedCanvas({
                 width: 150,
                 height: 150
             });
             const base64Img = canvas.toDataURL();
             
-            // Terapkan ke Akun Pengguna Aktif
             currentUser.profileImage = base64Img;
-            
-            // Perbarui Elemen UI
+            saveStateToSession(); // Simpan foto profil baru
+
             document.getElementById('user-avatar-img').src = base64Img;
             document.getElementById('profile-preview-img').src = base64Img;
             updateAuthAvatarUI();
 
-            // Tutup Cropper & buka kembali profil
             cropperInstance.destroy();
             cropperInstance = null;
             document.getElementById('cropper-modal').classList.add('hidden');
@@ -2601,6 +3015,7 @@
             document.getElementById('brand-input-title').value = appBranding.title;
             document.getElementById('brand-input-subtitle').value = appBranding.subtitle;
             document.getElementById('brand-input-logo').value = appBranding.logoText;
+            document.getElementById('brand-input-logo-icon').value = appBranding.logoIcon;
             document.getElementById('branding-modal').classList.remove('hidden');
         }
 
@@ -2613,21 +3028,35 @@
             appBranding.title = document.getElementById('brand-input-title').value;
             appBranding.subtitle = document.getElementById('brand-input-subtitle').value;
             appBranding.logoText = document.getElementById('brand-input-logo').value;
+            appBranding.logoIcon = document.getElementById('brand-input-logo-icon').value;
 
             applySavedBranding();
+            saveStateToSession(); // Simpan branding
             closeBrandingModal();
             showToast("Branding aplikasi berhasil diterapkan!");
         }
 
         function applySavedBranding() {
-            // Terapkan ke Header & Logo
             document.getElementById('brand-title').innerText = appBranding.title;
             document.getElementById('brand-subtitle').innerText = appBranding.subtitle;
-            document.getElementById('brand-logo-text').innerText = appBranding.logoText;
             
-            // Terapkan ke Banner Hero
-            document.getElementById('hero-display-title').innerText = appBranding.title;
-            document.getElementById('hero-display-subtitle').innerText = `Merangkul seluruh pemuda dan pemudi di RW 15 dalam bingkai ${appBranding.subtitle}. Dikelola dengan transparansi penuh.`;
+            // Kustomisasi Logo Kiri Atas secara dinamis (GAMBAR / ICON / TEKS)
+            const logoContainer = document.getElementById('brand-logo-container');
+            if (logoContainer) {
+                if (appBranding.logoImage) {
+                    logoContainer.innerHTML = `<img src="${appBranding.logoImage}" class="w-full h-full object-cover rounded-xl" alt="Logo">`;
+                } else if (appBranding.logoIcon) {
+                    logoContainer.innerHTML = `<i class="${appBranding.logoIcon} text-white text-sm sm:text-base"></i>`;
+                } else {
+                    logoContainer.innerHTML = `<span id="brand-logo-text" class="font-extrabold text-white text-sm sm:text-lg">${appBranding.logoText}</span>`;
+                }
+            }
+            
+            const heroTitle = document.getElementById('hero-display-title');
+            if (heroTitle) heroTitle.innerText = appBranding.title;
+            
+            const heroSubtitle = document.getElementById('hero-display-subtitle');
+            if (heroSubtitle) heroSubtitle.innerText = `Merangkul seluruh pemuda dan pemudi di RW 15 dalam bingkai ${appBranding.subtitle}. Dikelola dengan transparansi penuh.`;
         }
 
         // CONTROL VIEW UTILITY FOR ADMIN PRIVILEGES
@@ -2644,7 +3073,6 @@
                 adminBanner.classList.add('hidden');
             }
 
-            // Tampilkan tombol setting branding jika Admin Utama
             const brandBtn = document.getElementById('admin-brand-btn');
             if (isSuperAdminOnly) {
                 brandBtn.classList.remove('hidden');
@@ -2652,7 +3080,14 @@
                 brandBtn.classList.add('hidden');
             }
 
-            // Pengurusan struktur pengurus katar hanya bisa dikelola oleh ADMIN UTAMA
+            // Atur tombol Reset Kata Sandi Anggota (Hanya untuk Admin, Ketua, & Wakil)
+            const resetPwBtn = document.getElementById('admin-reset-pw-btn');
+            if (canResetPasswords()) {
+                resetPwBtn.classList.remove('hidden');
+            } else {
+                resetPwBtn.classList.add('hidden');
+            }
+
             const staffAction = document.getElementById('admin-actions-katar');
             if (isSuperAdminOnly) {
                 staffAction.classList.remove('hidden');
@@ -2662,7 +3097,6 @@
                 document.querySelectorAll('.staff-delete-btn').forEach(btn => btn.classList.add('hidden'));
             }
 
-            // Verifikasi Anggota
             const thActions = document.getElementById('th-admin-actions');
             const actionCells = document.querySelectorAll('.member-actions-cell');
             if (canVerifyMembers()) {
@@ -2673,7 +3107,6 @@
                 actionCells.forEach(cell => cell.classList.add('hidden'));
             }
 
-            // Update Keuangan hanya diperbolehkan bagi Admin Utama & Bendahara
             const finUpdateBtn = document.getElementById('admin-update-fin-btn');
             if (canManageFinances()) {
                 finUpdateBtn.classList.remove('hidden');
@@ -2704,6 +3137,7 @@
             };
 
             diskusiList.unshift(newPost);
+            saveStateToSession();
             renderDiskusi();
             showToast("Aspirasi Anda berhasil diterbitkan!");
 
@@ -2715,6 +3149,7 @@
             showConfirm("Apakah Anda yakin ingin menghapus aspirasi ini?", (isConfirmed) => {
                 if (isConfirmed) {
                     diskusiList = diskusiList.filter(item => item.id !== id);
+                    saveStateToSession();
                     renderDiskusi();
                     showToast("Topik diskusi berhasil dihapus.");
                 }
@@ -2730,6 +3165,7 @@
             const member = membersData.find(m => m.id === id);
             if (member) {
                 member.status = 'Aktif';
+                saveStateToSession();
                 renderMembers();
                 showToast(`${member.name} berhasil disetujui bergabung!`);
             }
@@ -2744,6 +3180,7 @@
             showConfirm("Apakah Anda yakin ingin menghapus anggota ini?", (isConfirmed) => {
                 if (isConfirmed) {
                     membersData = membersData.filter(m => m.id !== id);
+                    saveStateToSession();
                     renderMembers();
                     showToast("Anggota berhasil dihapus.");
                 }
@@ -2774,13 +3211,16 @@
             const newStaff = {
                 id: Date.now(),
                 name: name,
+                username: name.split(' ')[0].toLowerCase(),
                 role: role,
+                password: "123",
                 detail: detail,
                 quote: quote,
                 tags: tags
             };
 
             staffData.push(newStaff);
+            saveStateToSession();
             renderPengurus();
             closeAddStaffModal();
             showToast("Struktur pengurus berhasil diperbarui!");
@@ -2794,6 +3234,7 @@
             showConfirm("Hapus pengurus ini dari struktur katar?", (isConfirmed) => {
                 if (isConfirmed) {
                     staffData = staffData.filter(staff => staff.id !== id);
+                    saveStateToSession();
                     renderPengurus();
                     showToast("Pengurus dihapus.");
                 }
@@ -2842,6 +3283,7 @@
                     keuangan.totalKas -= amount;
                 }
 
+                saveStateToSession();
                 renderFinance();
                 closeFinUpdateModal();
                 showToast("Transaksi Kas berhasil dicatat!");
