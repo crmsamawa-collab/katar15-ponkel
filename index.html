@@ -1966,19 +1966,32 @@
 
                 const minatBadges = member.minat.map(m => `<span class="px-2 py-0.5 rounded bg-white/5 text-[10px] text-gray-400 mr-1">${m}</span>`).join('');
 
-                // Hanya Admin Utama yang dapat mengubah jabatan
+                // Admin Utama & Ketua sekarang dapat mengubah jabatan
                 let jabatanSelectorHtml = "";
-                if (currentUser && currentUser.role === 'admin') {
+                if (currentUser && ['admin', 'ketua'].includes(currentUser.role)) {
                     let optionsHtml = '';
                     daftarJabatan.forEach(jab => {
+                        // Ketua tidak diperbolehkan mengangkat orang lain menjadi Ketua baru demi keamanan
+                        if (currentUser.role === 'ketua' && jab === 'Ketua') {
+                            return; 
+                        }
                         optionsHtml += `<option value="${jab}" ${member.jabatan === jab ? 'selected' : ''}>${jab}</option>`;
                     });
 
-                    jabatanSelectorHtml = `
-                        <select onchange="updateMemberJabatan(${member.id}, this.value)" class="bg-[#0d121e] border border-white/10 rounded-lg px-2 py-1 text-xs text-indigo-300 font-bold focus:outline-none">
-                            ${optionsHtml}
-                        </select>
-                    `;
+                    // Jika akun yang dilihat jabatannya adalah Ketua, dan user aktif adalah Ketua, kunci agar tidak bisa didegradasi sendiri
+                    if (member.jabatan === 'Ketua' && currentUser.role === 'ketua') {
+                        jabatanSelectorHtml = `
+                            <span class="px-2.5 py-1 rounded bg-white/5 text-xs text-amber-400 font-bold border border-amber-400/20">
+                                ${member.jabatan}
+                            </span>
+                        `;
+                    } else {
+                        jabatanSelectorHtml = `
+                            <select onchange="updateMemberJabatan(${member.id}, this.value)" class="bg-[#0d121e] border border-white/10 rounded-lg px-2 py-1 text-xs text-indigo-300 font-bold focus:outline-none">
+                                ${optionsHtml}
+                            </select>
+                        `;
+                    }
                 } else {
                     jabatanSelectorHtml = `
                         <span class="px-2.5 py-1 rounded bg-white/5 text-xs ${member.jabatan !== 'Anggota' ? 'text-amber-400 font-bold border border-amber-400/20' : 'text-gray-300'}">
@@ -2010,8 +2023,17 @@
 
         // Set Jabatan Member
         function updateMemberJabatan(memberId, newJabatan) {
+            if (!currentUser || !['admin', 'ketua'].includes(currentUser.role)) {
+                showToast("Anda tidak memiliki otorisasi untuk mengubah jabatan!", true);
+                return;
+            }
             const member = membersData.find(m => m.id === memberId);
             if (member) {
+                // Batasan keamanan tambahan untuk akun demo Ketua
+                if (currentUser.role === 'ketua' && (member.jabatan === 'Ketua' || newJabatan === 'Ketua')) {
+                    showToast("Ketua tidak diperkenankan mengubah atau menetapkan jabatan Ketua!", true);
+                    return;
+                }
                 member.jabatan = newJabatan;
                 showToast(`Jabatan ${member.name} diperbarui menjadi ${newJabatan}!`);
                 renderMembers();
