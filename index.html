@@ -412,10 +412,11 @@
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs sm:text-sm text-gray-300 min-w-[500px]">
+                        <table class="w-full text-left text-xs sm:text-sm text-gray-300 min-w-[600px]">
                             <thead class="text-xs text-gray-400 uppercase bg-white/5">
                                 <tr>
-                                    <th class="px-4 py-3 rounded-l-lg">Nama</th>
+                                    <th class="px-4 py-3 rounded-l-lg">Nama Lengkap</th>
+                                    <th class="px-4 py-3">Nama Panggilan / Username</th>
                                     <th class="px-4 py-3">RT & No. Unit</th>
                                     <th class="px-4 py-3">Minat / Hobi</th>
                                     <th class="px-4 py-3">Jabatan</th>
@@ -1409,35 +1410,33 @@
             {
                 id: 1,
                 user: "Rendra Prasetyo",
-                username: "rendra",
                 role: "Anggota",
                 judul: "Usul Pengadaan turnamen PS5 / Mobile Legends se-RW",
                 isi: "Halo kawan-kawan pengurus baru! Karena kepengurusan sekarang santai dan asyik, yuk kita adain turnamen game online di balai RW. Sambil ngopi santai.",
                 tanggal: "24 Juni 2026",
                 replies: [
-                    { user: "Alif Ramadhan", username: "alif", role: "Ketua", isi: "Wah usulan bagus! Nanti koordinasi sama Koordinator Remaja RT 02 ya.", tanggal: "24 Juni 2026" },
-                    { user: "Fuji Astuti", username: "fuji", role: "Wakil", isi: "Aku siap bantu buatin pamflet digitalnya kalau jadi digas!", tanggal: "24 Juni 2026" }
+                    { user: "Alif Ramadhan", role: "Ketua", isi: "Wah usulan bagus! Nanti koordinasi sama Koordinator Remaja RT 02 ya.", tanggal: "24 Juni 2026" },
+                    { user: "Fuji Astuti", role: "Wakil", isi: "Aku siap bantu buatin pamflet digitalnya kalau jadi digas!", tanggal: "24 Juni 2026" }
                 ]
             },
             {
                 id: 2,
                 user: "Alif Ramadhan",
-                username: "alif",
                 role: "Ketua",
                 judul: "Transparansi Dana Renovasi Lapangan Bulutangkis",
                 isi: "Rekan-rekan remaja sekalian, anggaran sebesar Rp 300.000 sudah dialokasikan untuk perbaikan jaring net bulutangkis.",
                 tanggal: "23 Juni 2026",
                 replies: [
-                    { user: "Siti Rahmawati", username: "siti", role: "Anggota", isi: "Keren kak, infonya transparan banget.", tanggal: "23 Juni 2026" }
+                    { user: "Siti Rahmawati", role: "Anggota", isi: "Keren kak, infonya transparan banget.", tanggal: "23 Juni 2026" }
                 ]
             }
         ];
 
         // Data Live Chat
         let livechatMessages = [
-            { id: 1, user: "Alif Ramadhan", username: "alif", role: "Ketua", msg: "Woii malam minggu besok jadinya nobar sepak bola di mana kita?", time: "20:05" },
-            { id: 2, user: "Fuji Astuti", username: "fuji", role: "Wakil", msg: "Di lapangan utama aja Lif, nanti aku buatin flyernya.", time: "20:07" },
-            { id: 3, user: "Zahra Amalia", username: "zahra", role: "Bendahara", msg: "Aku siapin gorengan yaa! Tenang, kas katar aman.", time: "20:10" }
+            { id: 1, user: "Alif Ramadhan", role: "Ketua", msg: "Woii malam minggu besok jadinya nobar sepak bola di mana kita?", time: "20:05" },
+            { id: 2, user: "Fuji Astuti", role: "Wakil", msg: "Di lapangan utama aja Lif, nanti aku buatin flyernya.", time: "20:07" },
+            { id: 3, user: "Zahra Amalia", role: "Bendahara", msg: "Aku siapin gorengan yaa! Tenang, kas katar aman.", time: "20:10" }
         ];
 
         // Data Artikel / Berita Informasi Terkini RW
@@ -1450,7 +1449,6 @@
                 image: "https://placehold.co/600x400/1e1b4b/ffffff?text=Proker+Utama",
                 date: "24 Juni 2026",
                 author: "Alif Ramadhan",
-                username: "alif",
                 role: "Ketua"
             },
             {
@@ -1461,7 +1459,6 @@
                 image: "https://placehold.co/600x400/1e1b4b/ffffff?text=Bazar+Pemuda",
                 date: "23 Juni 2026",
                 author: "Zahra Amalia",
-                username: "zahra",
                 role: "Bendahara"
             }
         ];
@@ -1670,7 +1667,6 @@
                     diskusiList.forEach(d => {
                         db.doc(`artifacts/${appId}/public/data/diskusi/${d.id}`).set({
                             user: d.user,
-                            username: d.username || d.user.toLowerCase().split(' ')[0],
                             role: d.role,
                             judul: d.judul,
                             isi: d.isi,
@@ -1723,7 +1719,6 @@
                             image: art.image,
                             date: art.date,
                             author: art.author,
-                            username: art.username || art.author.toLowerCase().split(' ')[0],
                             role: art.role
                         });
                     });
@@ -1842,12 +1837,12 @@
                 // Tampilkan user status & logout
                 if (userStatus) {
                     userStatus.classList.remove('hidden');
-                    document.getElementById('user-display-name').innerText = currentUser.username || currentUser.name;
+                    document.getElementById('user-display-name').innerText = currentUser.name;
                     document.getElementById('user-display-role').innerText = getUserFriendlyRole(currentUser.role);
                     
                     // Gunakan foto ter-update
                     const photo = findUserPhoto(currentUser.username) || currentUser.profileImage;
-                    document.getElementById('user-avatar-img').src = photo || `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(currentUser.username[0])}`;
+                    document.getElementById('user-avatar-img').src = photo || `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(currentUser.name[0])}`;
                 }
                 if (btnLogin) btnLogin.classList.add('hidden');
                 if (btnLogout) btnLogout.classList.remove('hidden');
@@ -1857,7 +1852,7 @@
                 if (forumUnauth) forumUnauth.classList.add('hidden');
                 if (forumAuth) {
                     forumAuth.classList.remove('hidden');
-                    document.getElementById('auth-username').innerText = currentUser.username || currentUser.name;
+                    document.getElementById('auth-username').innerText = currentUser.name;
                 }
                 updateAuthAvatarUI();
 
@@ -1897,7 +1892,6 @@
             return ['admin', 'ketua', 'wakil', 'sekretaris', 'bendahara'].includes(currentUser.role);
         }
 
-        // Memeriksa apakah pengguna saat ini adalah Admin atau Bendahara
         function canManageFinances() {
             if (!currentUser) return false;
             return ['admin', 'bendahara'].includes(currentUser.role);
@@ -1908,7 +1902,6 @@
             return currentUser.role === 'admin';
         }
 
-        // Memeriksa otorisasi kelola staff inti
         function canManageCorePengurus() {
             if (!currentUser) return false;
             return currentUser.role === 'admin';
@@ -1918,11 +1911,11 @@
             if (!currentUser) return false;
             if (currentUser.role === 'admin') return true;
             if (currentUser.role === 'koordinator_rt') {
-                if (rtKey === "RT-01" && currentUser.username === "doni") return true;
-                if (rtKey === "RT-02" && currentUser.username === "alif") return true;
-                if (rtKey === "RT-03" && currentUser.username === "zahra") return true;
-                if (rtKey === "RT-04" && currentUser.username === "fuji") return true;
-                if (rtKey === "RT-05" && currentUser.username === "dimas") return true;
+                if (rtKey === "RT-01" && currentUser.name === "Doni Setiawan") return true;
+                if (rtKey === "RT-02" && currentUser.name === "Alif Ramadhan") return true;
+                if (rtKey === "RT-03" && currentUser.name === "Zahra Amalia") return true;
+                if (rtKey === "RT-04" && currentUser.name === "Fuji Astuti") return true;
+                if (rtKey === "RT-05" && currentUser.name === "Dimas Adit") return true;
             }
             return false;
         }
@@ -1986,7 +1979,6 @@
             modal.classList.remove('hidden');
         }
 
-        // Menutup zoom gambar utuh
         function closeProofViewer() {
             document.getElementById('proof-viewer-modal').classList.add('hidden');
         }
@@ -2094,12 +2086,11 @@
                     </div>
                 ` : '';
 
-                // Gunakan Username/Nama Panggilan untuk penayangan penulis artikel
-                const authorDisp = art.username || art.author;
-                const authorPhoto = findUserPhoto(authorDisp);
+                // Cari foto profil asli penulis artikel secara dinamis
+                const authorPhoto = findUserPhoto(art.author);
                 const avatarContent = authorPhoto 
                     ? `<img src="${authorPhoto}" class="w-6 h-6 rounded-full object-cover border border-white/10" alt="Avatar">`
-                    : `<div class="w-6 h-6 rounded-full bg-indigo-500/10 text-indigo-300 flex items-center justify-center text-[10px] font-bold uppercase">${authorDisp[0]}</div>`;
+                    : `<div class="w-6 h-6 rounded-full bg-indigo-500/10 text-indigo-300 flex items-center justify-center text-[10px] font-bold">${art.author[0]}</div>`;
 
                 grid.innerHTML += `
                     <div class="glass rounded-2xl overflow-hidden flex flex-col justify-between border border-white/5 group hover:border-indigo-500/20 transition-all duration-300">
@@ -2121,7 +2112,7 @@
                                 <div class="flex items-center space-x-2">
                                     ${avatarContent}
                                     <div class="text-[10px]">
-                                        <p class="font-bold text-white leading-none font-mono text-indigo-300">${authorDisp}</p>
+                                        <p class="font-bold text-white leading-none">${art.author}</p>
                                         <p class="text-[9px] text-gray-500">${art.role}</p>
                                     </div>
                                 </div>
@@ -2195,8 +2186,7 @@
                     content: content,
                     image: imageUrl,
                     date: "24 Juni 2026",
-                    author: currentUser.username || currentUser.name,
-                    username: currentUser.username,
+                    author: currentUser.name,
                     role: getUserFriendlyRole(currentUser.role)
                 };
                 if (isFirebaseEnabled()) {
@@ -2301,10 +2291,6 @@
                 </button>
             ` : '';
 
-            // Cari nama panggilan koordinator remaja
-            const coordRecord = membersData.find(m => m.name === rt.ketua) || staffData.find(s => s.name === rt.ketua);
-            const coordDisplay = coordRecord ? (coordRecord.username || rt.ketua) : rt.ketua;
-
             container.innerHTML = `
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                     <div class="space-y-4">
@@ -2316,10 +2302,7 @@
                         <p class="text-xs sm:text-sm text-gray-400 leading-relaxed">Sub-katar RT ini bertugas menghimpun kegiatan kepemudaan yang spesifik di lingkungan RT setempat.</p>
                         
                         <div class="space-y-2 pt-2 text-xs sm:text-sm text-gray-300">
-                            <p class="flex items-center gap-2">
-                                <i class="fa-solid fa-user-tie text-indigo-400 w-5"></i> 
-                                <span><strong>Koordinator Remaja:</strong> <span class="font-mono text-indigo-300">${coordDisplay}</span></span>
-                            </p>
+                            <p class="flex items-center gap-2"><i class="fa-solid fa-user-tie text-indigo-400 w-5"></i> <span><strong>Koordinator Remaja:</strong> ${rt.ketua}</span></p>
                             <p class="flex items-center gap-2"><i class="fa-solid fa-users text-purple-400 w-5"></i> <span><strong>Jumlah Anggota RT Aktif:</strong> ${rt.anggota} Remaja</span></p>
                         </div>
 
@@ -2461,7 +2444,6 @@
             document.getElementById('rt-info-modal').classList.add('hidden');
         }
 
-        // Menyimpan informasi RT baru
         function handleSaveRtInfo(event) {
             event.preventDefault();
             const rtKey = document.getElementById('rt-info-target-key').value;
@@ -2513,7 +2495,7 @@
             });
         }
 
-        // Render Pengurus Inti (Mendukung penayangan foto profil asli yang dinamis & menggunakan Nama Panggilan/Username)
+        // Render Pengurus Inti (Mendukung penayangan foto profil asli yang dinamis)
         function renderPengurus() {
             const grid = document.getElementById('pengurus-grid');
             if (!grid) return;
@@ -2521,7 +2503,6 @@
             staffData.forEach(staff => {
                 const canEditThisCard = currentUser && (
                     currentUser.role === 'admin' || 
-                    (currentUser.username && currentUser.username.toLowerCase() === staff.username.toLowerCase()) ||
                     (currentUser.name && currentUser.name.toLowerCase().includes(staff.name.toLowerCase())) ||
                     (staff.name && staff.name.toLowerCase().includes(currentUser.name.toLowerCase()))
                 );
@@ -2533,10 +2514,7 @@
                 ` : '';
 
                 // Ambil foto ter-update dari database
-                const avatarUrl = findUserPhoto(staff.username || staff.name) || staff.profileImage || `https://placehold.co/150x150/1e1b4b/ffffff?text=${encodeURIComponent(staff.username ? staff.username[0] : staff.name[0])}`;
-                
-                // Gunakan Username / Nama Panggilan pengurus pada kartu profil utama
-                const displayStaffName = staff.username || staff.name;
+                const avatarUrl = findUserPhoto(staff.username || staff.name) || staff.profileImage || `https://placehold.co/150x150/1e1b4b/ffffff?text=${encodeURIComponent(staff.name[0])}`;
 
                 grid.innerHTML += `
                     <div class="group relative rounded-2xl glass p-5 transition-all duration-300 hover:-translate-y-2 hover:border-indigo-500/40">
@@ -2545,12 +2523,12 @@
                             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
                             <div class="text-center z-10 absolute bottom-3 left-0 right-0 px-3">
                                 <span class="px-3 py-1 rounded-full bg-indigo-500 text-[10px] font-bold text-white uppercase tracking-wider">${staff.role}</span>
-                                <h4 class="font-bold text-base text-white mt-2 leading-tight font-mono text-indigo-300">${displayStaffName}</h4>
-                                <p class="text-[10px] text-indigo-200 mt-1">${staff.detail}</p>
+                                <h4 class="font-bold text-base text-white mt-2 leading-tight">${staff.name}</h4>
+                                <p class="text-[10px] text-indigo-300 mt-1">${staff.detail}</p>
                             </div>
                         </div>
                         <div class="space-y-2">
-                            <p class="text-xs text-gray-400 italic font-medium">"${staff.quote}"</p>
+                            <p class="text-xs text-gray-400 italic">"${staff.quote}"</p>
                             <div class="pt-3 border-t border-white/5 flex justify-between items-center">
                                 <span class="text-[10px] text-gray-500"><i class="fa-solid fa-hashtag mr-1"></i>${staff.tags}</span>
                                 <div class="flex items-center space-x-1.5">
@@ -2580,7 +2558,7 @@
             
             const previewImg = document.getElementById('edit-own-staff-preview');
             if (previewImg) {
-                previewImg.src = staff.profileImage || `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(staff.username || staff.name[0])}`;
+                previewImg.src = staff.profileImage || `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(staff.name[0])}`;
             }
             uploadedBase64Image = staff.profileImage || "";
 
@@ -2695,6 +2673,10 @@
             });
 
             document.getElementById('reset-password-modal').classList.remove('hidden');
+        }
+
+        function closeResetPasswordManagerModal() {
+            document.getElementById('reset-password-modal').classList.add('hidden');
         }
 
         function filterCredentialTable() {
@@ -2842,7 +2824,7 @@
             showToast("Akun nama panggilan tidak ditemukan!", true);
         }
 
-        // Render Anggota / Members Table (Mendukung penggabungan kolom Nama + Avatar dinamis & status)
+        // Render Anggota / Members Table (Pemuatan foto profil & status)
         function renderMembers() {
             const tbody = document.getElementById('member-table-body');
             const countDisplay = document.getElementById('member-count');
@@ -2919,14 +2901,15 @@
                 }
 
                 // Tampilkan avatar asli anggota secara dinamis di dalam baris tabel
-                const avatarImg = findUserPhoto(member.username) || member.profileImage || `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(displayUsername[0])}`;
+                const avatarImg = findUserPhoto(member.username) || member.profileImage || `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(member.name[0])}`;
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-white/[0.02] transition border-b border-white/5">
                         <td class="px-4 py-3 font-semibold text-white flex items-center space-x-2">
-                            <img src="${avatarImg}" class="w-7 h-7 rounded-full object-cover border border-white/10" alt="Avatar">
-                            <span class="font-mono text-indigo-300 text-xs">${displayUsername}</span>
+                            <img src="${avatarImg}" class="w-6 h-6 rounded-full object-cover border border-white/10" alt="Avatar">
+                            <span>${member.name}</span>
                         </td>
+                        <td class="px-4 py-3 font-mono text-indigo-300 text-xs">${displayUsername}</td>
                         <td class="px-4 py-3 text-xs text-gray-400">${member.rt} • No. Unit: ${member.unit}</td>
                         <td class="px-4 py-3">${minatBadges}</td>
                         <td class="px-4 py-3">${jabatanSelectorHtml}</td>
@@ -3005,7 +2988,7 @@
                 if (isFirebaseEnabled()) {
                     firebase.firestore().doc(`artifacts/${appId}/public/data/members/${memberId}`).update({ jabatan: newJabatan });
                 } else {
-                    showToast(`Jabatan ${member.username || member.name} diperbarui menjadi ${newJabatan}!`);
+                    showToast(`Jabatan ${member.name} diperbarui menjadi ${newJabatan}!`);
                 }
                 saveStateToSession();
                 renderMembers();
@@ -3118,19 +3101,18 @@
             });
         }
 
-        // Render Forum Diskusi Beserta Balasan Real-Time (Disesuaikan menggunakan Nama Panggilan/Username)
+        // Render Forum Diskusi Beserta Balasan Real-Time (Foto dinamis & utuh)
         function renderDiskusi() {
             const container = document.getElementById('diskusi-list-container');
             if (!container) return;
             container.innerHTML = '';
 
             diskusiList.forEach((item, index) => {
-                // Gunakan Username / Nama Panggilan untuk penayangan postingan forum
-                const postAuthor = item.username || item.user;
-                const userPhoto = findUserPhoto(postAuthor);
+                // Ambil foto profil dinamis dari database
+                const userPhoto = findUserPhoto(item.username || item.user);
                 const userAvatar = userPhoto 
                     ? userPhoto 
-                    : `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(postAuthor[0])}`;
+                    : `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(item.user[0])}`;
 
                 let repliesHtml = '';
                 if (item.replies && item.replies.length > 0) {
@@ -3138,18 +3120,17 @@
                         <div class="mt-4 pt-4 border-t border-white/5 space-y-3 pl-4 sm:pl-8 border-l-2 border-indigo-500/30">
                             <h5 class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">Balasan (${item.replies.length})</h5>
                             ${item.replies.map(rep => {
-                                const repAuthor = rep.username || rep.user;
-                                const repPhoto = findUserPhoto(repAuthor);
+                                const repPhoto = findUserPhoto(rep.username || rep.user);
                                 const repAvatar = repPhoto 
                                     ? repPhoto 
-                                    : `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(repAuthor[0])}`;
+                                    : `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(rep.user[0])}`;
 
                                 return `
                                     <div class="bg-white/[0.02] p-3 rounded-xl border border-white/5 space-y-1">
                                         <div class="flex justify-between items-center">
                                             <div class="flex items-center space-x-2">
                                                 <img src="${repAvatar}" class="w-6 h-6 rounded-full object-cover border border-white/10" alt="Avatar">
-                                                <span class="font-bold text-xs text-white font-mono text-indigo-300">${repAuthor}</span>
+                                                <span class="font-bold text-xs text-white">${rep.user}</span>
                                                 <span class="px-1 py-0.5 rounded bg-white/10 text-[8px] text-gray-400 uppercase tracking-wide font-semibold">${rep.role}</span>
                                             </div>
                                             <span class="text-[9px] text-gray-500">${rep.tanggal}</span>
@@ -3194,7 +3175,7 @@
                             <div class="flex items-center space-x-3">
                                 <img src="${userAvatar}" class="w-8 h-8 rounded-full object-cover border border-white/10" alt="Avatar">
                                 <div>
-                                    <h4 class="font-bold text-sm text-white font-mono text-indigo-300">${postAuthor}</h4>
+                                    <h4 class="font-bold text-sm text-white">${item.user}</h4>
                                     <p class="text-[10px] text-gray-500">${item.role} • ${item.tanggal}</p>
                                 </div>
                             </div>
@@ -3235,7 +3216,7 @@
             const diskusi = diskusiList.find(d => d.id === diskusiId);
             if (diskusi) {
                 diskusi.replies.push({
-                    user: currentUser.username || currentUser.name,
+                    user: currentUser.name,
                     username: currentUser.username,
                     role: getUserFriendlyRole(currentUser.role),
                     profileImage: currentUser.profileImage || "",
@@ -3255,35 +3236,29 @@
             }
         }
 
-        // Render Live Chat (Foto profil & Nama Panggilan/Username dinamis)
+        // Render Live Chat (Foto profil dinamis)
         function renderLivechat() {
             const container = document.getElementById('livechat-messages-container');
             if (!container) return;
             container.innerHTML = '';
 
             livechatMessages.forEach(msg => {
-                // Menghubungkan log login agar chat mendeteksi username atau real name secara adaptif
-                const isCurrentUser = currentUser && (
-                    currentUser.username === msg.username || 
-                    currentUser.name === msg.user || 
-                    currentUser.username === msg.user
-                );
+                const isCurrentUser = currentUser && currentUser.name === msg.user;
                 const alignmentClass = isCurrentUser ? "justify-end text-right" : "justify-start text-left";
                 const colorBubble = isCurrentUser ? "bg-indigo-600 text-white rounded-tr-none" : "bg-white/5 text-gray-300 rounded-tl-none";
                 const layoutDirection = isCurrentUser ? "flex-row-reverse space-x-reverse" : "flex-row";
 
-                const chatAuthor = msg.username || msg.user;
-                const chatPhoto = findUserPhoto(chatAuthor);
+                const chatPhoto = findUserPhoto(msg.username || msg.user);
                 const chatAvatar = chatPhoto 
                     ? chatPhoto 
-                    : `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(chatAuthor[0])}`;
+                    : `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(msg.user[0])}`;
 
                 container.innerHTML += `
                     <div class="flex items-start gap-3 ${layoutDirection} ${alignmentClass}">
                         <img src="${chatAvatar}" class="w-8 h-8 rounded-full object-cover border border-white/10" alt="Avatar">
                         <div class="space-y-1 max-w-[80%]">
                             <div class="flex items-center gap-1.5 text-[10px] text-gray-500 ${isCurrentUser ? 'justify-end' : 'justify-start'}">
-                                <span class="font-bold text-white font-mono text-indigo-300">${chatAuthor}</span>
+                                <span class="font-bold text-white">${msg.user}</span>
                                 <span class="px-1 py-0.2 rounded bg-white/10 text-[8px] tracking-wide font-semibold uppercase">${msg.role}</span>
                                 <span>• ${msg.time}</span>
                             </div>
@@ -3315,7 +3290,7 @@
 
             const newMsg = {
                 id: Date.now(),
-                user: currentUser.username || currentUser.name,
+                user: currentUser.name,
                 username: currentUser.username,
                 role: getUserFriendlyRole(currentUser.role),
                 profileImage: currentUser.profileImage || "",
@@ -3413,7 +3388,6 @@
             document.getElementById('login-modal').classList.remove('hidden');
         }
 
-        // Menutup Login Modal
         function closeLoginModal() {
             document.getElementById('login-modal').classList.add('hidden');
         }
@@ -3424,7 +3398,7 @@
                 name: name,
                 role: roleCode,
                 username: username,
-                profileImage: imgUrl || `https://placehold.co/150x150/1e1b4b/ffffff?text=${encodeURIComponent(username ? username[0] : name[0])}`
+                profileImage: imgUrl || `https://placehold.co/150x150/1e1b4b/ffffff?text=${encodeURIComponent(name[0])}`
             };
             completeLoginWorkflow();
         }
@@ -3445,7 +3419,7 @@
             window.location.hash = "#beranda";
             handleNavigation();
 
-            showToast(`Selamat datang kembali, ${currentUser.username || currentUser.name}!`);
+            showToast(`Selamat datang kembali, ${currentUser.name}!`);
         }
 
         function logout() {
@@ -3535,7 +3509,7 @@
             }
 
             const updatedPhoto = findUserPhoto(currentUser.username) || currentUser.profileImage;
-            document.getElementById('profile-preview-img').src = updatedPhoto || `https://placehold.co/150x150/1e1b4b/ffffff?text=${encodeURIComponent(currentUser.username[0])}`;
+            document.getElementById('profile-preview-img').src = updatedPhoto || `https://placehold.co/150x150/1e1b4b/ffffff?text=${encodeURIComponent(currentUser.name[0])}`;
             document.getElementById('profile-modal').classList.remove('hidden');
         }
 
@@ -3742,7 +3716,7 @@
             const authAvatar = document.getElementById('forum-user-avatar');
             if (authAvatar && currentUser) {
                 const photo = findUserPhoto(currentUser.username) || currentUser.profileImage;
-                authAvatar.src = photo || `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(currentUser.username[0])}`;
+                authAvatar.src = photo || `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(currentUser.name[0])}`;
             }
         }
 
@@ -3976,7 +3950,7 @@
 
             const newPost = {
                 id: Date.now(),
-                user: currentUser.username || currentUser.name,
+                user: currentUser.name,
                 username: currentUser.username,
                 role: getUserFriendlyRole(currentUser.role),
                 profileImage: currentUser.profileImage || "",
@@ -4030,7 +4004,7 @@
                 } else {
                     member.status = 'Aktif';
                     renderMembers();
-                    showToast(`${member.username || member.name} berhasil disetujui bergabung!`);
+                    showToast(`${member.name} berhasil disetujui bergabung!`);
                 }
                 saveStateToSession();
             }
