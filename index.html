@@ -823,33 +823,94 @@
         </div>
     </div>
 
-    <!-- MODAL: CHANGE PROFILE PICTURE & DETAILS -->
+    <!-- MODAL: CHANGE PROFILE PICTURE & DETAILS (UPGRADED FORM) -->
     <div id="profile-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="relative glass-premium max-w-md w-full p-6 rounded-3xl border border-indigo-500/30">
+        <div class="relative glass-premium max-w-md w-full p-6 rounded-3xl border border-indigo-500/30 max-h-[90vh] overflow-y-auto">
             <button onclick="closeProfileModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
             
             <div class="text-center space-y-2 mb-6">
                 <h3 class="text-lg sm:text-xl font-extrabold text-white">Profil Pengguna</h3>
-                <p class="text-xs text-gray-400">Kelola foto profil Anda dari penyimpanan lokal.</p>
+                <p class="text-xs text-gray-400">Kelola informasi pribadi dan pengaturan akun Anda.</p>
             </div>
 
-            <div class="space-y-6 text-center">
-                <div class="relative inline-block mx-auto">
-                    <img id="profile-preview-img" src="https://placehold.co/150x150/1e1b4b/ffffff?text=U" class="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-2 border-indigo-500 mx-auto" alt="Foto Profil">
+            <!-- Profile Form -->
+            <form onsubmit="handleSaveProfile(event)" class="space-y-4 text-left">
+                <!-- Avatar Preview & Upload -->
+                <div class="text-center space-y-3">
+                    <div class="relative inline-block mx-auto">
+                        <img id="profile-preview-img" src="https://placehold.co/150x150/1e1b4b/ffffff?text=U" class="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-2 border-indigo-500 mx-auto" alt="Foto Profil">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2">Ganti Foto Profil</label>
+                        <input type="file" id="profile-upload-file" accept="image/*" onchange="handleProfileFileSelect(event)" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-500/10 file:text-indigo-300 hover:file:bg-indigo-500/20">
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Pilih Foto Baru dari Perangkat</label>
-                    <input type="file" id="profile-upload-file" accept="image/*" onchange="handleProfileFileSelect(event)" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-500/10 file:text-indigo-300 hover:file:bg-indigo-500/20">
+                <div class="border-t border-white/5 pt-4 space-y-3">
+                    <!-- Read-only Info -->
+                    <div class="grid grid-cols-2 gap-2 text-xs text-gray-400 bg-white/5 p-3 rounded-xl border border-white/5">
+                        <p><strong>Nama Lengkap:</strong><br><span id="profile-detail-name" class="text-white font-bold">Guest</span></p>
+                        <p><strong>Jabatan:</strong><br><span id="profile-detail-role" class="text-indigo-400 font-extrabold">Anggota</span></p>
+                    </div>
+
+                    <!-- Nama Panggilan / Username -->
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Nama Panggilan (ID Login & Tag)</label>
+                        <input type="text" id="profile-edit-username" required class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-xs focus:outline-none focus:border-indigo-500" placeholder="Ketik nama panggilan...">
+                    </div>
+
+                    <!-- No Whatsapp -->
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Nomor WhatsApp</label>
+                        <input type="tel" id="profile-edit-wa" required class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-xs focus:outline-none focus:border-indigo-500" placeholder="Ketik No WhatsApp...">
+                    </div>
+
+                    <!-- Kata Sandi -->
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Kata Sandi Baru</label>
+                        <input type="password" id="profile-edit-password" required class="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-xs focus:outline-none focus:border-indigo-500" placeholder="Masukkan kata sandi baru...">
+                    </div>
+
+                    <!-- Minat / Hobi Checkboxes -->
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2">Minat / Hobi</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="flex items-center space-x-2 bg-white/5 p-2 rounded-lg border border-white/10 cursor-pointer hover:border-indigo-500/50 transition">
+                                <input type="checkbox" name="profile-minat" value="Olahraga" class="rounded text-indigo-600 focus:ring-indigo-500 bg-white/10 border-none">
+                                <span class="text-xs text-gray-300">Olahraga</span>
+                            </label>
+                            <label class="flex items-center space-x-2 bg-white/5 p-2 rounded-lg border border-white/10 cursor-pointer hover:border-indigo-500/50 transition">
+                                <input type="checkbox" name="profile-minat" value="E-Sports" class="rounded text-indigo-600 focus:ring-indigo-500 bg-white/10 border-none">
+                                <span class="text-xs text-gray-300">E-Sports</span>
+                            </label>
+                            <label class="flex items-center space-x-2 bg-white/5 p-2 rounded-lg border border-white/10 cursor-pointer hover:border-indigo-500/50 transition">
+                                <input type="checkbox" name="profile-minat" value="Seni/Musik" class="rounded text-indigo-600 focus:ring-indigo-500 bg-white/10 border-none">
+                                <span class="text-xs text-gray-300">Seni/Musik</span>
+                            </label>
+                            <label class="flex items-center space-x-2 bg-white/5 p-2 rounded-lg border border-white/10 cursor-pointer hover:border-indigo-500/50 transition">
+                                <input type="checkbox" name="profile-minat" value="Sosial/Relawan" class="rounded text-indigo-600 focus:ring-indigo-500 bg-white/10 border-none">
+                                <span class="text-xs text-gray-300">Sosial</span>
+                            </label>
+                            <label class="flex items-center space-x-2 bg-white/5 p-2 rounded-lg border border-white/10 cursor-pointer hover:border-indigo-500/50 transition col-span-2">
+                                <input type="checkbox" id="profile-minat-lainnya-checkbox" onchange="toggleProfileLainnyaInput(this.checked)" class="rounded text-indigo-600 focus:ring-indigo-500 bg-white/10 border-none">
+                                <span class="text-xs text-gray-300">Lainnya</span>
+                            </label>
+                        </div>
+                        
+                        <!-- Input Tambahan Khusus Menulis Sendiri -->
+                        <div id="profile-minat-lainnya-container" class="hidden mt-2">
+                            <input type="text" id="profile-minat-lainnya-text" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-xs focus:outline-none focus:border-indigo-500" placeholder="Tulis minat lainnya (pisahkan dengan koma)...">
+                        </div>
+                    </div>
                 </div>
 
-                <div class="border-t border-white/5 pt-4 text-left text-xs text-gray-400 space-y-1">
-                    <p><strong>Nama:</strong> <span id="profile-detail-name">Guest</span></p>
-                    <p><strong>Jabatan Sistem:</strong> <span id="profile-detail-role">Anggota</span></p>
+                <div class="pt-4 flex gap-2">
+                    <button type="button" onclick="closeProfileModal()" class="w-1/3 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-gray-300 transition">Batal</button>
+                    <button type="submit" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:opacity-95 font-bold text-white text-xs transition shadow-lg shadow-indigo-500/25">Simpan Perubahan 💾</button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 
@@ -3385,12 +3446,68 @@
             });
         }
 
-        // PROFILE PICTURE CROPPING
+        // PROFILE PICTURE & ACCOUNT DETAILS CONFIGURATION
+        function getFullUserRecord() {
+            if (!currentUser) return null;
+            let record = staffData.find(s => s.id === currentUser.id || s.username === currentUser.username);
+            if (!record) {
+                record = membersData.find(m => m.id === currentUser.id || m.username === currentUser.username);
+            }
+            return record;
+        }
+
+        function toggleProfileLainnyaInput(isChecked) {
+            const container = document.getElementById('profile-minat-lainnya-container');
+            if (container) {
+                if (isChecked) {
+                    container.classList.remove('hidden');
+                } else {
+                    container.classList.add('hidden');
+                    document.getElementById('profile-minat-lainnya-text').value = '';
+                }
+            }
+        }
+
         function openProfileModal() {
             if (!currentUser) return;
-            document.getElementById('profile-detail-name').innerText = currentUser.name;
-            document.getElementById('profile-detail-role').innerText = getUserFriendlyRole(currentUser.role);
             
+            const record = getFullUserRecord();
+            if (!record) {
+                showToast("Gagal memuat rincian profil pengguna!", true);
+                return;
+            }
+
+            // Populate fields
+            document.getElementById('profile-detail-name').innerText = record.name;
+            document.getElementById('profile-detail-role').innerText = getUserFriendlyRole(currentUser.role);
+            document.getElementById('profile-edit-username').value = record.username || currentUser.username || '';
+            document.getElementById('profile-edit-wa').value = record.wa || '';
+            document.getElementById('profile-edit-password').value = record.password || '';
+
+            // Handle Minat Checkboxes
+            const userMinat = Array.isArray(record.minat) ? record.minat : (record.tags ? record.tags.split('&').map(t => t.trim()) : []);
+            const standardMinat = ["Olahraga", "E-Sports", "Seni/Musik", "Sosial/Relawan"];
+            
+            document.querySelectorAll('input[name="profile-minat"]').forEach(cb => {
+                cb.checked = userMinat.includes(cb.value);
+            });
+
+            // Handle Other Minat
+            const otherMinat = userMinat.filter(m => !standardMinat.includes(m));
+            const otherCheckbox = document.getElementById('profile-minat-lainnya-checkbox');
+            const otherInput = document.getElementById('profile-minat-lainnya-text');
+            const otherContainer = document.getElementById('profile-minat-lainnya-container');
+
+            if (otherMinat.length > 0) {
+                otherCheckbox.checked = true;
+                otherContainer.classList.remove('hidden');
+                otherInput.value = otherMinat.join(', ');
+            } else {
+                otherCheckbox.checked = false;
+                otherContainer.classList.add('hidden');
+                otherInput.value = '';
+            }
+
             const updatedPhoto = findUserPhoto(currentUser.username) || currentUser.profileImage;
             document.getElementById('profile-preview-img').src = updatedPhoto || `https://placehold.co/150x150/1e1b4b/ffffff?text=${encodeURIComponent(currentUser.name[0])}`;
             document.getElementById('profile-modal').classList.remove('hidden');
@@ -3398,6 +3515,106 @@
 
         function closeProfileModal() {
             document.getElementById('profile-modal').classList.add('hidden');
+        }
+
+        function handleSaveProfile(event) {
+            event.preventDefault();
+            if (!currentUser) return;
+
+            const newUsername = document.getElementById('profile-edit-username').value.trim().toLowerCase().replace(/\s+/g, '');
+            const newWa = document.getElementById('profile-edit-wa').value.trim();
+            const newPassword = document.getElementById('profile-edit-password').value.trim();
+
+            if (!newUsername) {
+                showToast("Nama panggilan tidak boleh kosong!", true);
+                return;
+            }
+
+            // Validasi Keunikan Username (Kecuali username miliknya sendiri)
+            const currentSelfId = currentUser.id;
+            const existsInStaff = staffData.some(s => s.id !== currentSelfId && s.username === newUsername);
+            const existsInMembers = membersData.some(m => m.id !== currentSelfId && m.username === newUsername);
+
+            if (existsInStaff || existsInMembers) {
+                showToast("Nama panggilan tersebut sudah digunakan oleh pemuda lain!", true);
+                return;
+            }
+
+            // Menyusun list hobi/minat dari pilihan checkbox
+            let minatList = [];
+            document.querySelectorAll('input[name="profile-minat"]:checked').forEach(cb => {
+                minatList.push(cb.value);
+            });
+            
+            const otherCb = document.getElementById('profile-minat-lainnya-checkbox');
+            const otherText = document.getElementById('profile-minat-lainnya-text').value.trim();
+            if (otherCb && otherCb.checked && otherText) {
+                otherText.split(',').forEach(item => {
+                    const trimmed = item.trim();
+                    if (trimmed && !minatList.includes(trimmed)) {
+                        minatList.push(trimmed);
+                    }
+                });
+            }
+
+            if (minatList.length === 0) {
+                minatList = ["Sosial"];
+            }
+
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+            
+            // 1. Perbarui pada staffData (jika pengguna bersangkutan adalah pengurus)
+            let updatedStaff = null;
+            staffData = staffData.map(s => {
+                if (s.id === currentSelfId || s.username === currentUser.username) {
+                    s.username = newUsername;
+                    s.wa = newWa;
+                    s.password = newPassword;
+                    s.tags = minatList.slice(0, 2).join(' & ');
+                    updatedStaff = s;
+                }
+                return s;
+            });
+
+            // 2. Perbarui pada membersData
+            let updatedMember = null;
+            membersData = membersData.map(m => {
+                if (m.id === currentSelfId || m.username === currentUser.username) {
+                    m.username = newUsername;
+                    m.wa = newWa;
+                    m.password = newPassword;
+                    m.minat = minatList;
+                    updatedMember = m;
+                }
+                return m;
+            });
+
+            // 3. Perbarui session login aktif
+            currentUser.username = newUsername;
+            saveStateToSession();
+
+            // 4. Sinkronisasi perubahan profile ke cloud Firestore
+            if (isFirebaseEnabled()) {
+                if (updatedStaff) {
+                    firebase.firestore().doc(`artifacts/${appId}/public/data/staff/${updatedStaff.id}`).set(updatedStaff)
+                        .catch(err => console.error("Firestore Staff Sync Error:", err));
+                }
+                if (updatedMember) {
+                    firebase.firestore().doc(`artifacts/${appId}/public/data/members/${updatedMember.id}`).set(updatedMember)
+                        .catch(err => console.error("Firestore Member Sync Error:", err));
+                }
+            }
+
+            // Muat ulang tampilan UI
+            toggleUIBasedOnLogin();
+            renderPengurus();
+            renderMembers();
+            renderDiskusi();
+            renderLivechat();
+            renderArticles();
+            
+            closeProfileModal();
+            showToast("Profil dan kata sandi Anda berhasil diperbarui!");
         }
 
         function handleProfileFileSelect(event) {
