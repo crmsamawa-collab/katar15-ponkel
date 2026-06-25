@@ -1908,6 +1908,7 @@
             return currentUser.role === 'admin';
         }
 
+        // Memeriksa otorisasi kelola staff inti
         function canManageCorePengurus() {
             if (!currentUser) return false;
             return currentUser.role === 'admin';
@@ -4157,4 +4158,111 @@
             document.getElementById('fin-desc').value = "";
             document.getElementById('fin-proof-file').value = "";
             document.getElementById('fin-update-modal').classList.remove('hidden');
-            document.querySelector('#fin-update
+            document.querySelector('#fin-update-modal h3').innerText = "Transaksi Kas Baru";
+        }
+
+        function closeFinUpdateModal() {
+            document.getElementById('fin-update-modal').classList.add('hidden');
+        }
+
+        function handleSaveFinance(event) {
+            event.preventDefault();
+            const editId = document.getElementById('fin-log-edit-id').value;
+            const type = document.getElementById('fin-type').value; // 'pemasukan' atau 'pengeluaran'
+            const amount = parseInt(document.getElementById('fin-amount').value);
+            const desc = document.getElementById('fin-desc').value;
+            const proofFile = document.getElementById('fin-proof-file').files[0];
+
+            const recordLog = (base64Image) => {
+                if (editId) {
+                    const log = keuangan.logs.find(l => l.id == editId);
+                    if (log) {
+                        // Revert efek log transaksi yang lama dari total kas dan data pemasukan/pengeluaran bulanan
+                        if (log.type === 'pemasukan') {
+                            keuangan.pemasukan -= log.amount;
+                            keuangan.totalKas -= log.amount;
+                        } else {
+                            keuangan.pengeluaran -= log.amount;
+                            keuangan.totalKas += log.amount;
+                        }
+
+                        // Update value log transaksi dengan data yang baru dimasukkan
+                        log.type = type;
+                        log.desc = desc;
+                        log.amount = amount;
+                        if (base64Image) {
+                            log.proofImage = base64Image;
+                        }
+
+                        // Terapkan efek perhitungan keuangan yang baru
+                        if (type === 'pemasukan') {
+                            keuangan.pemasukan += amount;
+                            keuangan.totalKas += amount;
+                        } else {
+                            keuangan.pengeluaran += amount;
+                            keuangan.totalKas -= amount;
+                        }
+                    }
+                } else {
+                    // Mode Tambah Transaksi Baru (Mendukung transaksi Pemasukan maupun Pengeluaran)
+                    const newLog = {
+                        id: Date.now(),
+                        type: type,
+                        desc: desc,
+                        amount: amount,
+                        date: "24 Juni 2026",
+                        proofImage: base64Image || ""
+                    };
+
+                    keuangan.logs.unshift(newLog);
+
+                    if (type === 'pemasukan') {
+                        keuangan.pemasukan += amount;
+                        keuangan.totalKas += amount;
+                    } else {
+                        // Jika jenis transaksinya adalah pengeluaran, maka nilai kas total akan berkurang
+                        keuangan.pengeluaran += amount;
+                        keuangan.totalKas -= amount;
+                    }
+                }
+
+                // Simpan perubahan ke Cloud Firebase Firestore atau fallback ke UI lokal
+                if (isFirebaseEnabled()) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                    firebase.firestore().doc(`artifacts/${appId}/public/data/keuangan/config`).set(keuangan)
+                        .then(() => {
+                            showToast(editId ? "Transaksi Kas berhasil diperbarui!" : "Transaksi Kas berhasil dicatat!");
+                        })
+                        .catch(err => {
+                            console.error("Firebase Finance Save Error:", err);
+                            showToast("Gagal menyimpan data ke cloud! Harap periksa koneksi atau coba gunakan gambar yang lebih kecil.", true);
+                        });
+                } else {
+                    renderFinance();
+                    showToast(editId ? "Transaksi Kas berhasil diperbarui!" : "Transaksi Kas berhasil dicatat!");
+                }
+                saveStateToSession();
+                closeFinUpdateModal();
+            };
+
+            if (proofFile) {
+                // Kompresi otomatis ke 600px max width/height & kualitas 70% agar ukuran file < 30KB
+                compressImageFile(proofFile, 600, 600, 0.7)
+                    .then(compressedBase64 => {
+                        recordLog(compressedBase64);
+                    })
+                    .catch(err => {
+                        console.error("Kompresi gagal, menggunakan raw upload:", err);
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            recordLog(e.target.result);
+                        };
+                        reader.readAsDataURL(proofFile);
+                    });
+            } else {
+                recordLog(editId ? uploadedBase64Image : "");
+            }
+        }
+    </script>
+</body>
+</html>
