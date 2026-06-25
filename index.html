@@ -1892,7 +1892,6 @@
             return ['admin', 'ketua', 'wakil', 'sekretaris', 'bendahara'].includes(currentUser.role);
         }
 
-        // Memeriksa verifikasi anggota
         function canVerifyMembers() {
             if (!currentUser) return false;
             return ['admin', 'ketua', 'wakil', 'sekretaris', 'bendahara'].includes(currentUser.role);
@@ -2588,7 +2587,6 @@
             document.getElementById('edit-own-staff-modal').classList.remove('hidden');
         }
 
-        // Menutup edit pengurus modal
         function closeEditOwnStaffModal() {
             document.getElementById('edit-own-staff-modal').classList.add('hidden');
         }
@@ -3071,4 +3069,1200 @@
         // Edit log keuangan
         function editFinanceLog(id) {
             if (!canManageFinances()) {
-                show
+                showToast("Anda tidak memiliki otorisasi untuk mengedit transaksi kas!", true);
+                return;
+            }
+            const log = keuangan.logs.find(l => l.id == id);
+            if (!log) return;
+
+            document.getElementById('fin-log-edit-id').value = log.id;
+            document.getElementById('fin-type').value = log.type;
+            document.getElementById('fin-amount').value = log.amount;
+            document.getElementById('fin-desc').value = log.desc;
+            uploadedBase64Image = log.proofImage || "";
+
+            document.getElementById('fin-update-modal').classList.remove('hidden');
+            document.querySelector('#fin-update-modal h3').innerText = "Edit Transaksi Kas ⚙️";
+        }
+
+        // Hapus log keuangan
+        function deleteFinanceLog(id) {
+            if (!canManageFinances()) {
+                showToast("Hanya Bendahara dan Admin yang berwenang menghapus transaksi!", true);
+                return;
+            }
+            showConfirm("Apakah Anda yakin ingin menghapus catatan transaksi ini?", (isConfirmed) => {
+                if (isConfirmed) {
+                    const log = keuangan.logs.find(l => l.id === id);
+                    if (log) {
+                        if (log.type === 'pemasukan') {
+                            keuangan.pemasukan -= log.amount;
+                            keuangan.totalKas -= log.amount;
+                        } else {
+                            keuangan.pengeluaran -= log.amount;
+                            keuangan.totalKas += log.amount;
+                        }
+
+                        keuangan.logs = keuangan.logs.filter(l => l.id !== id);
+
+                        if (isFirebaseEnabled()) {
+                            const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                            firebase.firestore().doc(`artifacts/${appId}/public/data/keuangan/config`).set(keuangan);
+                        } else {
+                            renderFinance();
+                        }
+                        saveStateToSession();
+                        showToast("Catatan transaksi berhasil dihapus.");
+                    }
+                }
+            });
+        }
+
+        // Render Forum Diskusi Beserta Balasan Real-Time (Disesuaikan menggunakan Nama Panggilan/Username)
+        function renderDiskusi() {
+            const container = document.getElementById('diskusi-list-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            diskusiList.forEach((item, index) => {
+                // Gunakan Username / Nama Panggilan untuk penayangan postingan forum
+                const postAuthor = item.username || item.user;
+                const userPhoto = findUserPhoto(postAuthor);
+                const userAvatar = userPhoto 
+                    ? userPhoto 
+                    : `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(postAuthor[0])}`;
+
+                let repliesHtml = '';
+                if (item.replies && item.replies.length > 0) {
+                    repliesHtml = `
+                        <div class="mt-4 pt-4 border-t border-white/5 space-y-3 pl-4 sm:pl-8 border-l-2 border-indigo-500/30">
+                            <h5 class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">Balasan (${item.replies.length})</h5>
+                            ${item.replies.map(rep => {
+                                const repAuthor = rep.username || rep.user;
+                                const repPhoto = findUserPhoto(repAuthor);
+                                const repAvatar = repPhoto 
+                                    ? repPhoto 
+                                    : `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(repAuthor[0])}`;
+
+                                return `
+                                    <div class="bg-white/[0.02] p-3 rounded-xl border border-white/5 space-y-1">
+                                        <div class="flex justify-between items-center">
+                                            <div class="flex items-center space-x-2">
+                                                <img src="${repAvatar}" class="w-6 h-6 rounded-full object-cover border border-white/10" alt="Avatar">
+                                                <span class="font-bold text-xs text-white font-mono text-indigo-300">${repAuthor}</span>
+                                                <span class="px-1 py-0.5 rounded bg-white/10 text-[8px] text-gray-400 uppercase tracking-wide font-semibold">${rep.role}</span>
+                                            </div>
+                                            <span class="text-[9px] text-gray-500">${rep.tanggal}</span>
+                                        </div>
+                                        <p class="text-xs text-gray-300 pl-8 leading-relaxed whitespace-pre-line">${rep.isi}</p>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `;
+                } else {
+                    repliesHtml = `
+                        <div class="mt-4 pt-4 border-t border-white/5 pl-4 sm:pl-8 text-xs text-gray-500 italic">
+                            Belum ada tanggapan diskusi.
+                        </div>
+                    `;
+                }
+
+                let replyFormHtml = '';
+                if (currentUser) {
+                    replyFormHtml = `
+                        <div class="mt-3 pl-4 sm:pl-8">
+                            <form onsubmit="postReply(event, ${item.id})" class="flex gap-2">
+                                <input type="text" placeholder="Tulis masukan Anda secara konstruktif..." required class="reply-input-field flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500">
+                                <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1">
+                                    <i class="fa-solid fa-paper-plane text-[10px]"></i> Kirim
+                                </button>
+                            </form>
+                        </div>
+                    `;
+                } else {
+                    replyFormHtml = `
+                        <div class="mt-3 pl-4 sm:pl-8 text-[10px] text-gray-500 flex items-center gap-1">
+                            <i class="fa-solid fa-lock"></i> Silakan <button onclick="openLoginModal()" class="text-indigo-400 hover:underline">Login</button> untuk menanggapi.
+                        </div>
+                    `;
+                }
+
+                container.innerHTML += `
+                    <div class="glass p-5 rounded-2xl border border-white/5 space-y-4">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center space-x-3">
+                                <img src="${userAvatar}" class="w-8 h-8 rounded-full object-cover border border-white/10" alt="Avatar">
+                                <div>
+                                    <h4 class="font-bold text-sm text-white font-mono text-indigo-300">${postAuthor}</h4>
+                                    <p class="text-[10px] text-gray-500">${item.role} • ${item.tanggal}</p>
+                                </div>
+                            </div>
+                            <span class="px-2 py-1 rounded bg-white/5 text-[10px] text-gray-400"><i class="fa-solid fa-comments mr-1"></i>${item.replies.length} Balasan</span>
+                        </div>
+                        <div class="space-y-1">
+                            <h3 class="font-bold text-sm text-indigo-300">${item.judul}</h3>
+                            <p class="text-xs text-gray-300 leading-relaxed whitespace-pre-line">${item.isi}</p>
+                        </div>
+                        
+                        ${repliesHtml}
+                        ${replyFormHtml}
+
+                        ${currentUser && currentUser.role === 'admin' ? `
+                        <div class="pt-2 border-t border-white/5 text-right">
+                            <button onclick="deleteDiskusi(${item.id})" class="text-red-400 hover:text-red-500 text-[11px] font-bold"><i class="fa-solid fa-trash mr-1"></i>Hapus Topik</button>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+        }
+
+        // Post Balasan Baru
+        function postReply(event, diskusiId) {
+            event.preventDefault();
+            if (!currentUser) {
+                showToast("Harap login terlebih dahulu!", true);
+                return;
+            }
+
+            const form = event.target;
+            const input = form.querySelector('.reply-input-field');
+            const replyText = input.value.trim();
+
+            if (!replyText) return;
+
+            const diskusi = diskusiList.find(d => d.id === diskusiId);
+            if (diskusi) {
+                diskusi.replies.push({
+                    user: currentUser.username || currentUser.name,
+                    username: currentUser.username,
+                    role: getUserFriendlyRole(currentUser.role),
+                    profileImage: currentUser.profileImage || "",
+                    isi: replyText,
+                    tanggal: "Hari ini"
+                });
+
+                if (isFirebaseEnabled()) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                    firebase.firestore().doc(`artifacts/${appId}/public/data/diskusi/${diskusiId}`).update({ replies: diskusi.replies });
+                } else {
+                    showToast("Balasan Anda terkirim!");
+                }
+                saveStateToSession();
+                renderDiskusi();
+                input.value = '';
+            }
+        }
+
+        // Render Live Chat (Foto profil & Nama Panggilan/Username dinamis)
+        function renderLivechat() {
+            const container = document.getElementById('livechat-messages-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            livechatMessages.forEach(msg => {
+                // Menghubungkan log login agar chat mendeteksi username atau real name secara adaptif
+                const isCurrentUser = currentUser && (
+                    currentUser.username === msg.username || 
+                    currentUser.name === msg.user || 
+                    currentUser.username === msg.user
+                );
+                const alignmentClass = isCurrentUser ? "justify-end text-right" : "justify-start text-left";
+                const colorBubble = isCurrentUser ? "bg-indigo-600 text-white rounded-tr-none" : "bg-white/5 text-gray-300 rounded-tl-none";
+                const layoutDirection = isCurrentUser ? "flex-row-reverse space-x-reverse" : "flex-row";
+
+                const chatAuthor = msg.username || msg.user;
+                const chatPhoto = findUserPhoto(chatAuthor);
+                const chatAvatar = chatPhoto 
+                    ? chatPhoto 
+                    : `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(chatAuthor[0])}`;
+
+                container.innerHTML += `
+                    <div class="flex items-start gap-3 ${layoutDirection} ${alignmentClass}">
+                        <img src="${chatAvatar}" class="w-8 h-8 rounded-full object-cover border border-white/10" alt="Avatar">
+                        <div class="space-y-1 max-w-[80%]">
+                            <div class="flex items-center gap-1.5 text-[10px] text-gray-500 ${isCurrentUser ? 'justify-end' : 'justify-start'}">
+                                <span class="font-bold text-white font-mono text-indigo-300">${chatAuthor}</span>
+                                <span class="px-1 py-0.2 rounded bg-white/10 text-[8px] tracking-wide font-semibold uppercase">${msg.role}</span>
+                                <span>• ${msg.time}</span>
+                            </div>
+                            <div class="p-3 rounded-2xl text-xs sm:text-sm leading-relaxed ${colorBubble}">
+                                ${msg.msg}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Send Live Chat Message
+        function postLiveChatMessage(event) {
+            event.preventDefault();
+            if (!currentUser) {
+                showToast("Mohon login terlebih dahulu!", true);
+                return;
+            }
+
+            const input = document.getElementById('livechat-input');
+            const chatVal = input.value.trim();
+
+            if (!chatVal) return;
+
+            const timeNow = new Date();
+            const formatTime = `${String(timeNow.getHours()).padStart(2, '0')}:${String(timeNow.getMinutes()).padStart(2, '0')}`;
+
+            const newMsg = {
+                id: Date.now(),
+                user: currentUser.username || currentUser.name,
+                username: currentUser.username,
+                role: getUserFriendlyRole(currentUser.role),
+                profileImage: currentUser.profileImage || "",
+                msg: chatVal,
+                time: formatTime
+            };
+
+            if (isFirebaseEnabled()) {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                firebase.firestore().doc(`artifacts/${appId}/public/data/livechat/${newMsg.id}`).set(newMsg);
+            } else {
+                livechatMessages.push(newMsg);
+                renderLivechat();
+            }
+            saveStateToSession();
+            input.value = '';
+        }
+
+        // Handle Pendaftaran Form Submit
+        function handlePendaftaran(event) {
+            event.preventDefault();
+            
+            const nama = document.getElementById('nama').value;
+            const panggilan = document.getElementById('panggilan').value.trim().toLowerCase().replace(/\s+/g, '');
+            const rt = document.getElementById('rt-auto').value;
+            const noUnit = document.getElementById('no-unit').value;
+            const wa = document.getElementById('wa').value;
+            const pesan = document.getElementById('pesan').value;
+            const password = document.getElementById('reg-password').value;
+            
+            if (noUnit.length !== 4 || isNaN(noUnit)) {
+                showToast("Nomor Unit harus terdiri dari 4 digit angka!", true);
+                return;
+            }
+
+            if (!rt || rt.startsWith("RT Tidak") || rt.startsWith("RT Luar")) {
+                showToast("No Unit diluar jangkauan RT (Prefix diizinkan: 02-21)", true);
+                return;
+            }
+
+            if (!panggilan) {
+                showToast("Harap tentukan nama panggilan untuk ID Login Anda!", true);
+                return;
+            }
+
+            const checkboxes = document.querySelectorAll('input[name="minat"]:checked');
+            let minatList = [];
+            checkboxes.forEach((checkbox) => {
+                minatList.push(checkbox.value);
+            });
+
+            const lainnyaCheckbox = document.getElementById('minat-lainnya-checkbox');
+            const lainnyaText = document.getElementById('minat-lainnya-text').value.trim();
+            if (lainnyaCheckbox && lainnyaCheckbox.checked && lainnyaText !== '') {
+                minatList.push(lainnyaText);
+            }
+
+            const newMember = {
+                id: Date.now(),
+                name: nama,
+                username: panggilan,
+                rt: rt,
+                unit: noUnit,
+                minat: minatList.length > 0 ? minatList : ["Sosial"],
+                status: "Pending Verifikasi",
+                wa: wa,
+                password: password,
+                jabatan: "Anggota",
+                profileImage: ""
+            };
+
+            if (isFirebaseEnabled()) {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                firebase.firestore().doc(`artifacts/${appId}/public/data/members/${newMember.id}`).set(newMember);
+            } else {
+                membersData.push(newMember);
+                renderMembers();
+            }
+            saveStateToSession(); 
+
+            document.getElementById('alert-sukses').classList.remove('hidden');
+            document.getElementById('form-daftar').reset();
+            document.getElementById('rt-auto').value = '';
+            document.getElementById('minat-lainnya-container').classList.add('hidden');
+
+            showToast("Pendaftaran Anda telah direkam!");
+
+            setTimeout(() => {
+                document.getElementById('alert-sukses').classList.add('hidden');
+            }, 8000);
+        }
+
+        // AUTHENTICATION LOGIC
+        function openLoginModal() {
+            document.getElementById('login-modal').classList.remove('hidden');
+        }
+
+        // Menutup Login Modal
+        function closeLoginModal() {
+            document.getElementById('login-modal').classList.add('hidden');
+        }
+
+        function performDemoLoginWithData(id, name, roleCode, imgUrl, username) {
+            currentUser = {
+                id: id,
+                name: name,
+                role: roleCode,
+                username: username,
+                profileImage: imgUrl || `https://placehold.co/150x150/1e1b4b/ffffff?text=${encodeURIComponent(username ? username[0] : name[0])}`
+            };
+            completeLoginWorkflow();
+        }
+
+        function completeLoginWorkflow() {
+            toggleUIBasedOnLogin();
+            closeLoginModal(); // MENUTUP MODAL "LOGIN KATAR15" SECARA OTOMATIS
+            
+            saveStateToSession(); 
+            renderArticles();
+            const currentRtTabActive = document.querySelector('.rt-tab-btn.bg-indigo-600')?.id?.replace('tab-', '') || 'RT-01';
+            switchRtTab(currentRtTabActive);
+            renderDiskusi();
+            renderMembers();
+            renderLivechat();
+            renderPengurus();
+
+            window.location.hash = "#beranda";
+            handleNavigation();
+
+            showToast(`Selamat datang kembali, ${currentUser.username || currentUser.name}!`);
+        }
+
+        function logout() {
+            showConfirm("Apakah Anda yakin ingin keluar?", (isConfirmed) => {
+                if (isConfirmed) {
+                    currentUser = null;
+                    window.location.hash = "#beranda";
+
+                    toggleUIBasedOnLogin();
+                    saveStateToSession(); 
+
+                    renderArticles();
+                    const currentRtTabActive = document.querySelector('.rt-tab-btn.bg-indigo-600')?.id?.replace('tab-', '') || 'RT-01';
+                    switchRtTab(currentRtTabActive);
+                    renderDiskusi();
+                    renderMembers();
+                    renderLivechat();
+                    renderPengurus();
+
+                    handleNavigation();
+
+                    showToast("Anda telah keluar dari akun.");
+                }
+            });
+        }
+
+        // PROFILE PICTURE & ACCOUNT DETAILS CONFIGURATION
+        function getFullUserRecord() {
+            if (!currentUser) return null;
+            let record = staffData.find(s => s.id === currentUser.id || s.username === currentUser.username);
+            if (!record) {
+                record = membersData.find(m => m.id === currentUser.id || m.username === currentUser.username);
+            }
+            return record;
+        }
+
+        function toggleProfileLainnyaInput(isChecked) {
+            const container = document.getElementById('profile-minat-lainnya-container');
+            if (container) {
+                if (isChecked) {
+                    container.classList.remove('hidden');
+                } else {
+                    container.classList.add('hidden');
+                    document.getElementById('profile-minat-lainnya-text').value = '';
+                }
+            }
+        }
+
+        function openProfileModal() {
+            if (!currentUser) return;
+            
+            const record = getFullUserRecord();
+            if (!record) {
+                showToast("Gagal memuat rincian profil pengguna!", true);
+                return;
+            }
+
+            // Populate fields
+            document.getElementById('profile-detail-name').innerText = record.name;
+            document.getElementById('profile-detail-role').innerText = getUserFriendlyRole(currentUser.role);
+            document.getElementById('profile-edit-username').value = record.username || currentUser.username || '';
+            document.getElementById('profile-edit-wa').value = record.wa || '';
+            document.getElementById('profile-edit-password').value = record.password || '';
+
+            // Handle Minat Checkboxes
+            const userMinat = Array.isArray(record.minat) ? record.minat : (record.tags ? record.tags.split('&').map(t => t.trim()) : []);
+            const standardMinat = ["Olahraga", "E-Sports", "Seni/Musik", "Sosial/Relawan"];
+            
+            document.querySelectorAll('input[name="profile-minat"]').forEach(cb => {
+                cb.checked = userMinat.includes(cb.value);
+            });
+
+            // Handle Other Minat
+            const otherMinat = userMinat.filter(m => !standardMinat.includes(m));
+            const otherCheckbox = document.getElementById('profile-minat-lainnya-checkbox');
+            const otherInput = document.getElementById('profile-minat-lainnya-text');
+            const otherContainer = document.getElementById('profile-minat-lainnya-container');
+
+            if (otherMinat.length > 0) {
+                otherCheckbox.checked = true;
+                otherContainer.classList.remove('hidden');
+                otherInput.value = otherMinat.join(', ');
+            } else {
+                otherCheckbox.checked = false;
+                otherContainer.classList.add('hidden');
+                otherInput.value = '';
+            }
+
+            const updatedPhoto = findUserPhoto(currentUser.username) || currentUser.profileImage;
+            document.getElementById('profile-preview-img').src = updatedPhoto || `https://placehold.co/150x150/1e1b4b/ffffff?text=${encodeURIComponent(currentUser.username[0])}`;
+            document.getElementById('profile-modal').classList.remove('hidden');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profile-modal').classList.add('hidden');
+        }
+
+        function handleSaveProfile(event) {
+            event.preventDefault();
+            if (!currentUser) return;
+
+            const newUsername = document.getElementById('profile-edit-username').value.trim().toLowerCase().replace(/\s+/g, '');
+            const newWa = document.getElementById('profile-edit-wa').value.trim();
+            const newPassword = document.getElementById('profile-edit-password').value.trim();
+
+            if (!newUsername) {
+                showToast("Nama panggilan tidak boleh kosong!", true);
+                return;
+            }
+
+            // Validasi Keunikan Username (Kecuali username miliknya sendiri)
+            const currentSelfId = currentUser.id;
+            const existsInStaff = staffData.some(s => s.id !== currentSelfId && s.username === newUsername);
+            const existsInMembers = membersData.some(m => m.id !== currentSelfId && m.username === newUsername);
+
+            if (existsInStaff || existsInMembers) {
+                showToast("Nama panggilan tersebut sudah digunakan oleh pemuda lain!", true);
+                return;
+            }
+
+            // Menyusun list hobi/minat dari pilihan checkbox
+            let minatList = [];
+            document.querySelectorAll('input[name="profile-minat"]:checked').forEach(cb => {
+                minatList.push(cb.value);
+            });
+            
+            const otherCb = document.getElementById('profile-minat-lainnya-checkbox');
+            const otherText = document.getElementById('profile-minat-lainnya-text').value.trim();
+            if (otherCb && otherCb.checked && otherText) {
+                otherText.split(',').forEach(item => {
+                    const trimmed = item.trim();
+                    if (trimmed && !minatList.includes(trimmed)) {
+                        minatList.push(trimmed);
+                    }
+                });
+            }
+
+            if (minatList.length === 0) {
+                minatList = ["Sosial"];
+            }
+
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+            
+            // 1. Perbarui pada staffData (jika pengguna bersangkutan adalah pengurus)
+            let updatedStaff = null;
+            staffData = staffData.map(s => {
+                if (s.id === currentSelfId || s.username === currentUser.username) {
+                    s.username = newUsername;
+                    s.wa = newWa;
+                    s.password = newPassword;
+                    s.tags = minatList.slice(0, 2).join(' & ');
+                    updatedStaff = s;
+                }
+                return s;
+            });
+
+            // 2. Perbarui pada membersData
+            let updatedMember = null;
+            membersData = membersData.map(m => {
+                if (m.id === currentSelfId || m.username === currentUser.username) {
+                    m.username = newUsername;
+                    m.wa = newWa;
+                    m.password = newPassword;
+                    m.minat = minatList;
+                    updatedMember = m;
+                }
+                return m;
+            });
+
+            // 3. Perbarui session login aktif
+            currentUser.username = newUsername;
+            saveStateToSession();
+
+            // 4. Sinkronisasi perubahan profile ke cloud Firestore
+            if (isFirebaseEnabled()) {
+                if (updatedStaff) {
+                    firebase.firestore().doc(`artifacts/${appId}/public/data/staff/${updatedStaff.id}`).set(updatedStaff)
+                        .catch(err => console.error("Firestore Staff Sync Error:", err));
+                }
+                if (updatedMember) {
+                    firebase.firestore().doc(`artifacts/${appId}/public/data/members/${updatedMember.id}`).set(updatedMember)
+                        .catch(err => console.error("Firestore Member Sync Error:", err));
+                }
+            }
+
+            // Muat ulang tampilan UI
+            toggleUIBasedOnLogin();
+            renderPengurus();
+            renderMembers();
+            renderDiskusi();
+            renderLivechat();
+            renderArticles();
+            
+            closeProfileModal();
+            showToast("Profil dan kata sandi Anda berhasil diperbarui!");
+        }
+
+        function handleProfileFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    closeProfileModal();
+                    
+                    const workspaceImg = document.getElementById('cropper-workspace-image');
+                    workspaceImg.src = e.target.result;
+                    
+                    document.getElementById('cropper-modal').classList.remove('hidden');
+                    
+                    if (cropperInstance) {
+                        cropperInstance.destroy();
+                    }
+                    setTimeout(() => {
+                        cropperInstance = new Cropper(workspaceImg, {
+                            aspectRatio: 1,
+                            viewMode: 1,
+                            background: false,
+                            autoCropArea: 1
+                        });
+                    }, 100);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function cancelCropping() {
+            if (cropperInstance) {
+                const wasEditingStaff = cropperInstance.isEditingStaff;
+                cropperInstance.destroy();
+                cropperInstance = null;
+                document.getElementById('cropper-modal').classList.add('hidden');
+                if (wasEditingStaff) {
+                    document.getElementById('edit-own-staff-modal').classList.remove('hidden');
+                } else {
+                    openProfileModal();
+                }
+            } else {
+                document.getElementById('cropper-modal').classList.add('hidden');
+                openProfileModal();
+            }
+        }
+
+        function applyCroppedImage() {
+            if (!cropperInstance) return;
+            
+            const canvas = cropperInstance.getCroppedCanvas({
+                width: 150,
+                height: 150
+            });
+            const base64Img = canvas.toDataURL();
+            
+            if (cropperInstance.isEditingStaff) {
+                document.getElementById('edit-own-staff-preview').src = base64Img;
+                uploadedBase64Image = base64Img; 
+                
+                cropperInstance.destroy();
+                cropperInstance = null;
+                document.getElementById('cropper-modal').classList.add('hidden');
+                document.getElementById('edit-own-staff-modal').classList.remove('hidden');
+            } else {
+                currentUser.profileImage = base64Img;
+                saveStateToSession(); 
+
+                document.getElementById('user-avatar-img').src = base64Img;
+                document.getElementById('profile-preview-img').src = base64Img;
+                updateAuthAvatarUI();
+
+                // Sinkronisasi aktif ke Firestore
+                if (isFirebaseEnabled()) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                    
+                    const inStaff = staffData.find(s => s.id === currentUser.id || s.username === currentUser.username);
+                    if (inStaff) {
+                        firebase.firestore().doc(`artifacts/${appId}/public/data/staff/${inStaff.id}`).update({ profileImage: base64Img })
+                            .catch(err => console.error(err));
+                    }
+
+                    const inMembers = membersData.find(m => m.id === currentUser.id || m.username === currentUser.username);
+                    if (inMembers) {
+                        firebase.firestore().doc(`artifacts/${appId}/public/data/members/${inMembers.id}`).update({ profileImage: base64Img })
+                            .catch(err => console.error(err));
+                    }
+                }
+
+                cropperInstance.destroy();
+                cropperInstance = null;
+                document.getElementById('cropper-modal').classList.add('hidden');
+                openProfileModal();
+            }
+            showToast("Foto profil diperbarui!");
+        }
+
+        function updateAuthAvatarUI() {
+            const authAvatar = document.getElementById('forum-user-avatar');
+            if (authAvatar && currentUser) {
+                const photo = findUserPhoto(currentUser.username) || currentUser.profileImage;
+                authAvatar.src = photo || `https://placehold.co/100x100/1e1b4b/ffffff?text=${encodeURIComponent(currentUser.username[0])}`;
+            }
+        }
+
+        function getUserFriendlyRole(roleCode) {
+            const mapping = {
+                'admin': 'Admin Utama',
+                'ketua': 'Ketua',
+                'wakil': 'Wakil',
+                'sekretaris': 'Sekretaris',
+                'bendahara': 'Bendahara',
+                'koordinator_rt': 'Koor. Remaja RT',
+                'warga': 'Anggota'
+            };
+            return mapping[roleCode] || 'Anggota';
+        }
+
+        // ADMIN BRANDING SETTINGS ACTIONS
+        function openBrandingModal() {
+            if (currentUser.role !== 'admin') return;
+            document.getElementById('brand-input-title').value = appBranding.title;
+            document.getElementById('brand-input-subtitle').value = appBranding.subtitle;
+            document.getElementById('brand-input-logo').value = appBranding.logoText;
+            document.getElementById('brand-input-logo-icon').value = appBranding.logoIcon;
+            document.getElementById('branding-modal').classList.remove('hidden');
+        }
+
+        function closeBrandingModal() {
+            document.getElementById('branding-modal').classList.add('hidden');
+        }
+
+        function handleSaveBranding(event) {
+            event.preventDefault();
+            appBranding.title = document.getElementById('brand-input-title').value;
+            appBranding.subtitle = document.getElementById('brand-input-subtitle').value;
+            appBranding.logoText = document.getElementById('brand-input-logo').value;
+            appBranding.logoIcon = document.getElementById('brand-input-logo-icon').value;
+
+            applySavedBranding();
+            if (isFirebaseEnabled()) {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                firebase.firestore().doc(`artifacts/${appId}/public/data/branding/config`).set(appBranding);
+            } else {
+                saveStateToSession(); 
+            }
+            closeBrandingModal();
+            showToast("Branding aplikasi diterapkan!");
+        }
+
+        function applySavedBranding() {
+            document.getElementById('brand-title').innerText = appBranding.title;
+            document.getElementById('brand-subtitle').innerText = appBranding.subtitle;
+            
+            const logoContainer = document.getElementById('brand-logo-container');
+            if (logoContainer) {
+                if (appBranding.logoImage) {
+                    logoContainer.innerHTML = `<img src="${appBranding.logoImage}" class="w-full h-full object-cover rounded-xl" alt="Logo">`;
+                } else if (appBranding.logoIcon) {
+                    logoContainer.innerHTML = `<i class="${appBranding.logoIcon} text-white text-sm sm:text-base"></i>`;
+                } else {
+                    logoContainer.innerHTML = `<span id="brand-logo-text" class="font-extrabold text-white text-sm sm:text-lg">${appBranding.logoText}</span>`;
+                }
+            }
+            
+            const heroTitle = document.getElementById('hero-display-title');
+            if (heroTitle) heroTitle.innerText = appBranding.title;
+            
+            const heroSubtitle = document.getElementById('hero-display-subtitle');
+            if (heroSubtitle) heroSubtitle.innerText = `Kami merangkul seluruh pemuda-pemudi di RW 15 sampai ke unit terkecil RT! Dikelola dengan sistem 100% transparan, saling dukung, dan tanpa kubu-kubuan. Yuk, ikut andil dalam transformasi sosial yang seru dan asyik!`;
+        }
+
+        // CONTROL VIEW UTILITY FOR ADMIN PRIVILEGES
+        function toggleAdminFeatures() {
+            const isAuthorizedUser = currentUser && ['admin', 'ketua', 'wakil', 'sekretaris', 'bendahara'].includes(currentUser.role);
+            const isSuperAdminOnly = currentUser && currentUser.role === 'admin';
+
+            const adminBanner = document.getElementById('admin-banner');
+            const bannerRoleName = document.getElementById('banner-role-name');
+            if (currentUser && currentUser.role !== 'warga') {
+                if (adminBanner) adminBanner.classList.remove('hidden');
+                if (bannerRoleName) bannerRoleName.innerText = getUserFriendlyRole(currentUser.role);
+            } else {
+                if (adminBanner) adminBanner.classList.add('hidden');
+            }
+
+            const emptyDbBtn = document.getElementById('admin-reset-all-db-btn');
+            if (currentUser && currentUser.username === 'edhos') {
+                if (emptyDbBtn) emptyDbBtn.classList.remove('hidden');
+            } else {
+                if (emptyDbBtn) emptyDbBtn.classList.add('hidden');
+            }
+
+            const brandBtn = document.getElementById('admin-brand-btn');
+            if (isSuperAdminOnly) {
+                if (brandBtn) brandBtn.classList.remove('hidden');
+            } else {
+                if (brandBtn) brandBtn.classList.add('hidden');
+            }
+
+            const resetPwBtn = document.getElementById('admin-reset-pw-btn');
+            if (canResetPasswords()) {
+                if (resetPwBtn) resetPwBtn.classList.remove('hidden');
+            } else {
+                if (resetPwBtn) resetPwBtn.classList.add('hidden');
+            }
+
+            const staffAction = document.getElementById('admin-actions-katar');
+            if (isSuperAdminOnly) {
+                if (staffAction) staffAction.classList.remove('hidden');
+                document.querySelectorAll('.staff-delete-btn').forEach(btn => btn.classList.remove('hidden'));
+            } else {
+                if (staffAction) staffAction.classList.add('hidden');
+                document.querySelectorAll('.staff-delete-btn').forEach(btn => btn.classList.add('hidden'));
+            }
+
+            const thActions = document.getElementById('th-admin-actions');
+            const actionCells = document.querySelectorAll('.member-actions-cell');
+            if (canVerifyMembers()) {
+                if (thActions) thActions.classList.remove('hidden');
+                actionCells.forEach(cell => cell.classList.remove('hidden'));
+            } else {
+                if (thActions) thActions.classList.add('hidden');
+                actionCells.forEach(cell => cell.classList.add('hidden'));
+            }
+
+            const finUpdateBtn = document.getElementById('admin-update-fin-btn');
+            if (canManageFinances()) {
+                if (finUpdateBtn) finUpdateBtn.classList.remove('hidden');
+            } else {
+                if (finUpdateBtn) finUpdateBtn.classList.add('hidden');
+            }
+        }
+
+        // --- SISTEM KOSONGKAN DATABASE CLOUD ---
+        function triggerEmptyDatabase() {
+            if (!currentUser || currentUser.username !== 'edhos') {
+                showToast("Hanya Super-Admin Ahmad Nandar (edhos) yang berhak mengosongkan seluruh database!", true);
+                return;
+            }
+            showConfirm("PERINGATAN SANGAT KRITIS! Apakah Anda yakin ingin menghapus seluruh isi database cloud (Kecuali akun edhos)?", (isConfirmed) => {
+                if (isConfirmed) {
+                    emptyAllDatabaseCollections();
+                }
+            });
+        }
+
+        function emptyAllDatabaseCollections() {
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+            showToast("Membersihkan database cloud...", false);
+
+            if (isFirebaseEnabled()) {
+                const db = firebase.firestore();
+
+                db.collection(`artifacts/${appId}/public/data/articles`).get().then(snap => {
+                    snap.forEach(doc => doc.ref.delete());
+                });
+
+                db.collection(`artifacts/${appId}/public/data/members`).get().then(snap => {
+                    snap.forEach(doc => {
+                        const data = doc.data();
+                        if (data.username !== 'edhos') {
+                            doc.ref.delete();
+                        }
+                    });
+                });
+
+                db.collection(`artifacts/${appId}/public/data/staff`).get().then(snap => {
+                    snap.forEach(doc => {
+                        const data = doc.data();
+                        if (data.username !== 'edhos') {
+                            doc.ref.delete();
+                        }
+                    });
+                });
+
+                const resetKeuangan = { totalKas: 0, pemasukan: 0, pengeluaran: 0, logs: [] };
+                db.doc(`artifacts/${appId}/public/data/keuangan/config`).set(resetKeuangan);
+
+                db.collection(`artifacts/${appId}/public/data/diskusi`).get().then(snap => {
+                    snap.forEach(doc => doc.ref.delete());
+                });
+
+                db.collection(`artifacts/${appId}/public/data/livechat`).get().then(snap => {
+                    snap.forEach(doc => doc.ref.delete());
+                });
+
+                const defaultRTs = ["RT-01", "RT-02", "RT-03", "RT-04", "RT-05"];
+                defaultRTs.forEach(rtKey => {
+                    const emptyRt = {
+                        ketua: subRtData[rtKey]?.ketua || "Belum Ditentukan",
+                        slogan: "Bersama Kita Maju",
+                        anggota: 0,
+                        proker: "Belum Ditentukan",
+                        informasi: []
+                    };
+                    db.doc(`artifacts/${appId}/public/data/subRtData/${rtKey}`).set(emptyRt);
+                });
+
+                showToast("Database cloud dibersihkan!", false);
+            } else {
+                articlesList = [];
+                membersData = membersData.filter(m => m.username === 'edhos');
+                keuangan = { totalKas: 0, pemasukan: 0, pengeluaran: 0, logs: [] };
+                diskusiList = [];
+                livechatMessages = [];
+                for (let rtKey in subRtData) {
+                    subRtData[rtKey].anggota = 0;
+                    subRtData[rtKey].informasi = [];
+                }
+
+                renderArticles();
+                renderMembers();
+                renderFinance();
+                renderDiskusi();
+                renderLivechat();
+                switchRtTab('RT-01');
+                showToast("Pembersihan database lokal berhasil!", false);
+            }
+            saveStateToSession();
+        }
+
+        // Save New Post in Forum
+        function postDiskusi(event) {
+            event.preventDefault();
+            if (!currentUser) {
+                showToast("Harap login terlebih dahulu.", true);
+                return;
+            }
+
+            const judul = document.getElementById('diskusi-judul').value;
+            const isi = document.getElementById('diskusi-isi').value;
+
+            const newPost = {
+                id: Date.now(),
+                user: currentUser.username || currentUser.name,
+                username: currentUser.username,
+                role: getUserFriendlyRole(currentUser.role),
+                profileImage: currentUser.profileImage || "",
+                judul: judul,
+                isi: isi,
+                tanggal: "Hari ini",
+                replies: []
+            };
+
+            if (isFirebaseEnabled()) {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                firebase.firestore().doc(`artifacts/${appId}/public/data/diskusi/${newPost.id}`).set(newPost);
+            } else {
+                diskusiList.unshift(newPost);
+                renderDiskusi();
+                showToast("Aspirasi Anda berhasil diterbitkan!");
+            }
+            saveStateToSession();
+
+            document.getElementById('diskusi-judul').value = '';
+            document.getElementById('diskusi-isi').value = '';
+        }
+
+        function deleteDiskusi(id) {
+            showConfirm("Apakah Anda yakin ingin menghapus aspirasi ini?", (isConfirmed) => {
+                if (isConfirmed) {
+                    if (isFirebaseEnabled()) {
+                        const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                        firebase.firestore().doc(`artifacts/${appId}/public/data/diskusi/${id}`).delete();
+                    } else {
+                        diskusiList = diskusiList.filter(item => item.id !== id);
+                        renderDiskusi();
+                        showToast("Topik diskusi berhasil dihapus.");
+                    }
+                    saveStateToSession();
+                }
+            });
+        }
+
+        // Approve Member
+        function approveMember(id) {
+            if (!canVerifyMembers()) {
+                showToast("Role Anda tidak memiliki otorisasi verifikasi anggota!", true);
+                return;
+            }
+            const member = membersData.find(m => m.id === id);
+            if (member) {
+                if (isFirebaseEnabled()) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                    firebase.firestore().doc(`artifacts/${appId}/public/data/members/${id}`).update({ status: 'Aktif' });
+                } else {
+                    member.status = 'Aktif';
+                    renderMembers();
+                    showToast(`${member.username || member.name} berhasil disetujui bergabung!`);
+                }
+                saveStateToSession();
+            }
+        }
+
+        // Delete Member
+        function deleteMember(id) {
+            const member = membersData.find(m => m.id === id);
+            if (member) {
+                if (member.username === 'edhos') {
+                    showToast("Akun Super-Admin Ahmad Nandar (edhos) tidak bisa dihapus!", true);
+                    return;
+                }
+                
+                if (member.username === 'jx' && currentUser && currentUser.role === 'ketua') {
+                    showToast("Ketua tidak diperbolehkan menghapus akun jx!", true);
+                    return;
+                }
+
+                if (!canVerifyMembers()) {
+                    showToast("Role Anda tidak memiliki otorisasi manajemen anggota!", true);
+                    return;
+                }
+
+                showConfirm("Apakah Anda yakin ingin menghapus anggota ini?", (isConfirmed) => {
+                    if (isConfirmed) {
+                        if (isFirebaseEnabled()) {
+                            const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                            firebase.firestore().doc(`artifacts/${appId}/public/data/members/${id}`).delete();
+                        } else {
+                            membersData = membersData.filter(m => m.id !== id);
+                            renderMembers();
+                            showToast("Anggota berhasil dihapus.");
+                        }
+                        saveStateToSession();
+                    }
+                });
+            }
+        }
+
+        // STAFF MANIPULATION MODALS
+        function openAddStaffModal() {
+            if (!canManageCorePengurus()) {
+                showToast("Hanya Admin Utama yang berwenang memodifikasi pengurus katar inti!", true);
+                return;
+            }
+            document.getElementById('add-staff-modal').classList.remove('hidden');
+        }
+
+        function closeAddStaffModal() {
+            document.getElementById('add-staff-modal').classList.add('hidden');
+        }
+
+        function handleSaveStaff(event) {
+            event.preventDefault();
+            const name = document.getElementById('staff-name').value;
+            const role = document.getElementById('staff-role').value;
+            const detail = document.getElementById('staff-detail').value;
+            const quote = document.getElementById('staff-quote').value;
+            const tags = document.getElementById('staff-tags').value;
+
+            const newStaff = {
+                id: Date.now(),
+                name: name,
+                username: name.split(' ')[0].toLowerCase(),
+                role: role,
+                password: "123",
+                detail: detail,
+                quote: quote,
+                tags: tags,
+                wa: "081222223333",
+                profileImage: ""
+            };
+
+            if (isFirebaseEnabled()) {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                firebase.firestore().doc(`artifacts/${appId}/public/data/staff/${newStaff.id}`).set(newStaff);
+            } else {
+                staffData.push(newStaff);
+                renderPengurus();
+                showToast("Struktur pengurus berhasil diperbarui!");
+            }
+            saveStateToSession();
+            closeAddStaffModal();
+        }
+
+        function deleteStaff(id) {
+            const staff = staffData.find(s => s.id === id);
+            if (staff) {
+                if (staff.username === 'edhos') {
+                    showToast("Akun Super-Admin Ahmad Nandar (edhos) tidak bisa dihapus!", true);
+                    return;
+                }
+
+                if (!canManageCorePengurus()) {
+                    showToast("Hanya Admin Utama yang berwenang menghapus pengurus katar inti!", true);
+                    return;
+                }
+
+                showConfirm("Hapus pengurus ini dari struktur katar?", (isConfirmed) => {
+                    if (isConfirmed) {
+                        if (isFirebaseEnabled()) {
+                            const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                            firebase.firestore().doc(`artifacts/${appId}/public/data/staff/${id}`).delete();
+                        } else {
+                            staffData = staffData.filter(s => s.id !== id);
+                            renderPengurus();
+                            showToast("Pengurus dihapus.");
+                        }
+                        saveStateToSession();
+                    }
+                });
+            }
+        }
+
+        // FINANCE UPDATE MODALS & INTEGRATED STORAGE FOR INCOMING/OUTGOING TX
+        function openFinUpdateModal() {
+            if (!canManageFinances()) {
+                showToast("Hanya Bendahara dan Admin Utama yang dapat memodifikasi kas transparansi!", true);
+                return;
+            }
+            document.getElementById('fin-log-edit-id').value = "";
+            document.getElementById('fin-type').value = "pemasukan";
+            document.getElementById('fin-amount').value = "";
+            document.getElementById('fin-desc').value = "";
+            document.getElementById('fin-proof-file').value = "";
+            document.getElementById('fin-update-modal').classList.remove('hidden');
+            document.querySelector('#fin-update-modal h3').innerText = "Transaksi Kas Baru";
+        }
+
+        function closeFinUpdateModal() {
+            document.getElementById('fin-update-modal').classList.add('hidden');
+        }
+
+        function handleSaveFinance(event) {
+            event.preventDefault();
+            const editId = document.getElementById('fin-log-edit-id').value;
+            const type = document.getElementById('fin-type').value; // 'pemasukan' atau 'pengeluaran'
+            const amount = parseInt(document.getElementById('fin-amount').value);
+            const desc = document.getElementById('fin-desc').value;
+            const proofFile = document.getElementById('fin-proof-file').files[0];
+
+            const recordLog = (base64Image) => {
+                if (editId) {
+                    const log = keuangan.logs.find(l => l.id == editId);
+                    if (log) {
+                        // Revert efek log transaksi yang lama dari total kas dan data pemasukan/pengeluaran bulanan
+                        if (log.type === 'pemasukan') {
+                            keuangan.pemasukan -= log.amount;
+                            keuangan.totalKas -= log.amount;
+                        } else {
+                            keuangan.pengeluaran -= log.amount;
+                            keuangan.totalKas += log.amount;
+                        }
+
+                        // Update value log transaksi dengan data yang baru dimasukkan
+                        log.type = type;
+                        log.desc = desc;
+                        log.amount = amount;
+                        if (base64Image) {
+                            log.proofImage = base64Image;
+                        }
+
+                        // Terapkan efek perhitungan keuangan yang baru
+                        if (type === 'pemasukan') {
+                            keuangan.pemasukan += amount;
+                            keuangan.totalKas += amount;
+                        } else {
+                            keuangan.pengeluaran += amount;
+                            keuangan.totalKas -= amount;
+                        }
+                    }
+                } else {
+                    // Mode Tambah Transaksi Baru (Mendukung transaksi Pemasukan maupun Pengeluaran)
+                    const newLog = {
+                        id: Date.now(),
+                        type: type,
+                        desc: desc,
+                        amount: amount,
+                        date: "24 Juni 2026",
+                        proofImage: base64Image || ""
+                    };
+
+                    keuangan.logs.unshift(newLog);
+
+                    if (type === 'pemasukan') {
+                        keuangan.pemasukan += amount;
+                        keuangan.totalKas += amount;
+                    } else {
+                        // Jika jenis transaksinya adalah pengeluaran, maka nilai kas total akan berkurang
+                        keuangan.pengeluaran += amount;
+                        keuangan.totalKas -= amount;
+                    }
+                }
+
+                // Simpan perubahan ke Cloud Firebase Firestore atau fallback ke UI lokal
+                if (isFirebaseEnabled()) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'katar15-default-id';
+                    firebase.firestore().doc(`artifacts/${appId}/public/data/keuangan/config`).set(keuangan)
+                        .then(() => {
+                            showToast(editId ? "Transaksi Kas berhasil diperbarui!" : "Transaksi Kas berhasil dicatat!");
+                        })
+                        .catch(err => {
+                            console.error("Firebase Finance Save Error:", err);
+                            showToast("Gagal menyimpan data ke cloud! Harap periksa koneksi atau coba gunakan gambar yang lebih kecil.", true);
+                        });
+                } else {
+                    renderFinance();
+                    showToast(editId ? "Transaksi Kas berhasil diperbarui!" : "Transaksi Kas berhasil dicatat!");
+                }
+                saveStateToSession();
+                closeFinUpdateModal();
+            };
+
+            if (proofFile) {
+                // Kompresi otomatis ke 600px max width/height & kualitas 70% agar ukuran file < 30KB
+                compressImageFile(proofFile, 600, 600, 0.7)
+                    .then(compressedBase64 => {
+                        recordLog(compressedBase64);
+                    })
+                    .catch(err => {
+                        console.error("Kompresi gagal, menggunakan raw upload:", err);
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            recordLog(e.target.result);
+                        };
+                        reader.readAsDataURL(proofFile);
+                    });
+            } else {
+                recordLog(editId ? uploadedBase64Image : "");
+            }
+        }
+    </script>
+</body>
+</html>
