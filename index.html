@@ -1218,6 +1218,50 @@
         let rtInfoUploadedBase64 = ""; 
         let cropperInstance = null; 
 
+        // Fungsi pembantu untuk mengompres gambar berbasis Canvas guna mencegah limit dokumen Firestore (1MB)
+        function compressImageFile(file, maxWidth, maxHeight, quality) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function (event) {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = function () {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > height) {
+                            if (width > maxWidth) {
+                                height = Math.round((height * maxWidth) / width);
+                                width = maxWidth;
+                            }
+                        } else {
+                            if (height > maxHeight) {
+                                width = Math.round((width * maxHeight) / height);
+                                height = maxHeight;
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Kompresi hasil gambar akhir ke format JPEG dengan kualitas teroptimasi
+                        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                        resolve(dataUrl);
+                    };
+                    img.onerror = function (err) {
+                        reject(err);
+                    };
+                };
+                reader.onerror = function (err) {
+                    reject(err);
+                };
+            });
+        }
+
         // Konfigurasi Branding Aplikasi Terintegrasi
         let appBranding = {
             title: "KATAR RW 15",
@@ -1878,40 +1922,54 @@
             document.getElementById('proof-viewer-modal').classList.add('hidden');
         }
 
-        // Preview local image (Beranda Article)
+        // Preview local image (Beranda Article) dengan kompresi otomatis
         function previewImageLocal(event) {
             const file = event.target.files[0];
             const previewContainer = document.getElementById('article-image-preview-container');
             const previewImg = document.getElementById('article-image-preview');
 
             if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    uploadedBase64Image = e.target.result;
+                compressImageFile(file, 800, 800, 0.75).then(compressed => {
+                    uploadedBase64Image = compressed;
                     previewImg.src = uploadedBase64Image;
                     previewContainer.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
+                }).catch(err => {
+                    console.warn("Gagal mengompres gambar warta, menggunakan raw file:", err);
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        uploadedBase64Image = e.target.result;
+                        previewImg.src = uploadedBase64Image;
+                        previewContainer.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                });
             } else {
                 uploadedBase64Image = "";
                 previewContainer.classList.add('hidden');
             }
         }
 
-        // Preview local image (RT Info Article)
+        // Preview local image (RT Info Article) dengan kompresi otomatis
         function previewRtImageLocal(event) {
             const file = event.target.files[0];
             const previewContainer = document.getElementById('rt-info-preview-container');
             const previewImg = document.getElementById('rt-info-preview-img');
 
             if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    rtInfoUploadedBase64 = e.target.result;
+                compressImageFile(file, 800, 800, 0.75).then(compressed => {
+                    rtInfoUploadedBase64 = compressed;
                     previewImg.src = rtInfoUploadedBase64;
                     previewContainer.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
+                }).catch(err => {
+                    console.warn("Gagal mengompres gambar RT, menggunakan raw file:", err);
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        rtInfoUploadedBase64 = e.target.result;
+                        previewImg.src = rtInfoUploadedBase64;
+                        previewContainer.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                });
             } else {
                 rtInfoUploadedBase64 = "";
                 previewContainer.classList.add('hidden');
@@ -3286,6 +3344,7 @@
 
         function completeLoginWorkflow() {
             toggleUIBasedOnLogin();
+            closeLoginModal(); // MENUTUP MODAL "LOGIN KATAR15" SECARA OTOMATIS
             
             saveStateToSession(); 
             renderArticles();
@@ -3933,7 +3992,7 @@
                         })
                         .catch(err => {
                             console.error("Firebase Finance Save Error:", err);
-                            showToast("Gagal menyimpan data ke cloud!", true);
+                            showToast("Gagal menyimpan data ke cloud! Harap periksa koneksi atau coba gunakan gambar yang lebih kecil.", true);
                         });
                 } else {
                     renderFinance();
@@ -3944,11 +4003,19 @@
             };
 
             if (proofFile) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    recordLog(e.target.result);
-                };
-                reader.readAsDataURL(proofFile);
+                // Kompresi otomatis ke 600px max width/height & kualitas 70% agar ukuran file < 30KB
+                compressImageFile(proofFile, 600, 600, 0.7)
+                    .then(compressedBase64 => {
+                        recordLog(compressedBase64);
+                    })
+                    .catch(err => {
+                        console.error("Kompresi gagal, menggunakan raw upload:", err);
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            recordLog(e.target.result);
+                        };
+                        reader.readAsDataURL(proofFile);
+                    });
             } else {
                 recordLog(editId ? uploadedBase64Image : "");
             }
