@@ -509,7 +509,7 @@
                         <div class="flex items-center space-x-3 mb-4">
                             <img id="forum-user-avatar" src="https://placehold.co/1e1b4b" class="w-9 h-9 rounded-full object-cover border border-white/10" alt="Avatar">
                             <div>
-                                <h4 class="font-bold text-sm text-white" id="auth-username">User Active</h4>
+                                <h4 class="font-bold text-sm text-white font-mono text-indigo-300" id="auth-username">User Active</h4>
                                 <p class="text-[10px] text-gray-400">Tulis aspirasi segar Anda hari ini</p>
                             </div>
                         </div>
@@ -1038,7 +1038,7 @@
         </div>
     </div>
 
-    <!-- MODAL: CORE STAFF MEMBER OWN PROFILE EDITOR -->
+    <!-- CORE STAFF MEMBER OWN PROFILE EDITOR -->
     <div id="edit-own-staff-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="relative glass-premium max-w-md w-full p-5 sm:p-8 rounded-3xl border border-indigo-500/30">
             <button onclick="closeEditOwnStaffModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white">
@@ -1380,7 +1380,7 @@
             { id: 1, name: "Alif Ramadhan", username: "alif", role: "Ketua", password: "123", detail: "Warga RT 02 • Mahasiswa Sistem Informasi", quote: "Gak perlu formal-formal amat, yang penting aksi nyata buat Samawa.", tags: "Mobile Legends & Ngopi", wa: "6281222223333", profileImage: "" },
             { id: 2, name: "Fuji Astuti", username: "fuji", role: "Wakil", password: "123", detail: "Warga RT 04 • Designer Grafis", quote: "Ada ide acara seru? Yuk langsung kita gaskan, gak pake birokrasi berbelit!", tags: "Seni & K-Pop", wa: "6281233334444", profileImage: "" },
             { id: 3, name: "Rian Pratama", username: "rian", role: "Sekretaris", password: "123", detail: "Warga RT 01 • Freelancer", quote: "Data katar rapi dan bisa dipantau siapa aja lewat drive bersama.", tags: "Futsal & Videografi", wa: "6281244445555", profileImage: "" },
-            { id: 4, name: "Zahra Amalia", username: "zahra", role: "Bendahara", password: "123", detail: "Warga RT 03 • Pengusaha Kuliner", quote: "Setiap rupiah uang kas dicatat detail dan dipublish tiap bulan.", tags: "Memasak & Akuntansi", wa: "6281255556666", profileImage: "" }
+            { id: 4, name: "Zahra Amalia", username: "zahra", role: "Bendahara", password: "123", detail: "Warga RT 03 • Pengusaha Kuliner", quote: "Setiap rupiah uang kas dicatat detail and dipublish tiap bulan.", tags: "Memasak & Akuntansi", wa: "6281255556666", profileImage: "" }
         ];
 
         // Data Anggota Terdaftar
@@ -1404,7 +1404,7 @@
             ]
         };
 
-        // Data Forum Diskusi
+        // Data Forum Diskusi (Dummy diselaraskan menggunakan Username)
         let diskusiList = [
             {
                 id: 1,
@@ -1433,7 +1433,7 @@
             }
         ];
 
-        // Data Live Chat
+        // Data Live Chat (Dummy diselaraskan menggunakan Username)
         let livechatMessages = [
             { id: 1, user: "Alif Ramadhan", username: "alif", role: "Ketua", msg: "Woii malam minggu besok jadinya nobar sepak bola di mana kita?", time: "20:05" },
             { id: 2, user: "Fuji Astuti", username: "fuji", role: "Wakil", msg: "Di lapangan utama aja Lif, nanti aku buatin flyernya.", time: "20:07" },
@@ -1839,7 +1839,7 @@
                 if (heroCtaMember) heroCtaMember.classList.remove('hidden');
                 if (heroSecondaryCta) heroSecondaryCta.classList.add('hidden'); 
 
-                // Tampilkan user status & logout
+                // Tampilkan user status & logout (Menggunakan Nama Panggilan/Username)
                 if (userStatus) {
                     userStatus.classList.remove('hidden');
                     document.getElementById('user-display-name').innerText = currentUser.username || currentUser.name;
@@ -3005,7 +3005,7 @@
                 if (isFirebaseEnabled()) {
                     firebase.firestore().doc(`artifacts/${appId}/public/data/members/${memberId}`).update({ jabatan: newJabatan });
                 } else {
-                    showToast(`Jabatan ${member.username || member.name} diperbarui menjadi ${newJabatan}!`);
+                    showToast("Jabatan pemuda berhasil diperbarui!");
                 }
                 saveStateToSession();
                 renderMembers();
