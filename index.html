@@ -2382,7 +2382,7 @@
         // RT Coordinator Actions
         function openRtCoordinatorModal(rtKey) {
             if (!canManageCoordinators()) {
-                showToast("Hanya Admin Utama yang dapat mengedit Koordinator RT!", true);
+                showToast("Hanya Admin yang dapat mengedit Koordinator RT!", true);
                 return;
             }
 
@@ -2851,7 +2851,7 @@
                 if (member.username === 'edhos') {
                     jabatanSelectorHtml = `
                         <span class="px-2.5 py-1 rounded bg-white/5 text-xs text-amber-400 font-extrabold border border-amber-400/20">
-                            Super Admin
+                            Admin
                         </span>
                     `;
                 } else if (member.username === 'jx' && currentUser && currentUser.role === 'ketua') {
@@ -3722,7 +3722,7 @@
 
         function getUserFriendlyRole(roleCode) {
             const mapping = {
-                'admin': 'Admin Utama',
+                'admin': 'Admin',
                 'ketua': 'Ketua',
                 'wakil': 'Wakil',
                 'sekretaris': 'Sekretaris',
@@ -4048,7 +4048,7 @@
         // STAFF MANIPULATION MODALS
         function openAddStaffModal() {
             if (!canManageCorePengurus()) {
-                showToast("Hanya Admin Utama yang berwenang memodifikasi pengurus katar inti!", true);
+                showToast("Hanya Admin yang berwenang memodifikasi pengurus katar inti!", true);
                 return;
             }
             document.getElementById('add-staff-modal').classList.remove('hidden');
@@ -4100,7 +4100,7 @@
                 }
 
                 if (!canManageCorePengurus()) {
-                    showToast("Hanya Admin Utama yang berwenang menghapus pengurus katar inti!", true);
+                    showToast("Hanya Admin yang berwenang menghapus pengurus katar inti!", true);
                     return;
                 }
 
@@ -4123,7 +4123,7 @@
         // FINANCE UPDATE MODALS & INTEGRATED STORAGE FOR INCOMING/OUTGOING TX
         function openFinUpdateModal() {
             if (!canManageFinances()) {
-                showToast("Hanya Bendahara dan Admin Utama yang dapat memodifikasi kas transparansi!", true);
+                showToast("Hanya Bendahara dan Admin yang dapat memodifikasi kas transparansi!", true);
                 return;
             }
             document.getElementById('fin-log-edit-id').value = "";
